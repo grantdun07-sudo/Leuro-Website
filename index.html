@@ -1,0 +1,2382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leuro Assistant – AI for Educators</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --color-primary:    #5A3E76;
+  --color-primary-dk: #432D58;
+  --color-primary-lt: #7B5A9E;
+  --color-primary-xl: #EDE7F4;
+  --color-accent:     #E6B347;
+  --color-accent-lt:  #FDF3DC;
+  --color-accent-dk:  #C99A2E;
+  --color-text:       #363636;
+  --color-text-mid:   #6B6B6B;
+  --color-text-muted: #9B9B9B;
+  --color-background: #F9F9F7;
+  --color-surface:    #FFFFFF;
+  --color-border:     #E4E2E8;
+  --color-border-lt:  #F0EEF4;
+  --color-green:      #2DC653;
+  --color-green-lt:   #D4F0DC;
+  --color-red:        #E05454;
+  --color-red-lt:     #FFE8E8;
+  --font-family:      'Poppins', sans-serif;
+  --sidebar-w:        252px;
+  --sidebar-w-col:    64px;
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
+  --shadow-sm: 0 1px 4px rgba(90,62,118,0.07);
+  --shadow-md: 0 4px 16px rgba(90,62,118,0.10);
+  --shadow-lg: 0 8px 28px rgba(90,62,118,0.14);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-family);background:var(--color-background);color:var(--color-text);height:100vh;height:100dvh;display:flex;overflow:hidden;font-size:14px}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--color-primary-dk);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;transition:width 0.26s cubic-bezier(.4,0,.2,1);position:relative;z-index:100}
+.sidebar.collapsed{width:var(--sidebar-w-col)}
+.logo-area{padding:18px 16px 16px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:10px;min-height:64px;flex-shrink:0}
+.logo-icon{width:36px;height:36px;background:var(--color-accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;box-shadow:0 3px 10px rgba(230,179,71,0.35)}
+.logo-text{overflow:hidden;white-space:nowrap}
+.logo-name{font-size:1rem;font-weight:700;color:#fff;line-height:1.1}
+.logo-sub{font-size:0.6rem;font-weight:500;color:var(--color-accent);letter-spacing:0.12em;text-transform:uppercase}
+.sidebar-toggle{position:absolute;top:20px;right:-12px;width:24px;height:24px;background:var(--color-accent);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:var(--color-primary-dk);font-weight:700;box-shadow:var(--shadow-md);z-index:110;transition:transform 0.26s;font-family:var(--font-family)}
+.sidebar.collapsed .sidebar-toggle{transform:rotate(180deg)}
+.user-card{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:10px;overflow:hidden;flex-shrink:0}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent),var(--color-accent-dk));display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;color:var(--color-primary-dk);flex-shrink:0}
+.user-info{flex:1;min-width:0;overflow:hidden}
+.user-name{font-size:0.78rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:0.62rem;color:rgba(255,255,255,0.5);margin-top:1px}
+.lang-toggle{display:flex;background:rgba(0,0,0,0.2);border-radius:6px;padding:2px;flex-shrink:0}
+.lang-btn{padding:3px 7px;font-size:0.6rem;font-weight:600;letter-spacing:0.05em;border-radius:4px;cursor:pointer;border:none;background:none;color:rgba(255,255,255,0.5);font-family:var(--font-family);transition:all 0.18s}
+.lang-btn.active{background:var(--color-accent);color:var(--color-primary-dk)}
+.nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;overflow-x:hidden}
+.nav::-webkit-scrollbar{width:3px}
+.nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+.nav-section-label{font-size:0.55rem;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;color:rgba(255,255,255,0.3);padding:10px 10px 4px;white-space:nowrap;overflow:hidden;transition:opacity 0.2s}
+.sidebar.collapsed .nav-section-label{opacity:0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:all 0.18s;font-size:0.8rem;font-weight:500;color:rgba(255,255,255,0.55);border:1px solid transparent;white-space:nowrap;overflow:hidden;position:relative}
+.nav-item:hover{background:rgba(255,255,255,0.08);color:#fff}
+.nav-item.active{background:rgba(255,255,255,0.12);color:#fff;border-color:rgba(255,255,255,0.08)}
+.nav-icon{font-size:1.05rem;width:22px;text-align:center;flex-shrink:0}
+.nav-label{flex:1}
+.nav-badge{margin-left:auto;background:var(--color-accent);color:var(--color-primary-dk);font-size:0.55rem;font-weight:700;padding:1px 6px;border-radius:10px;flex-shrink:0}
+.sidebar.collapsed .nav-label,.sidebar.collapsed .nav-badge{display:none}
+.sidebar.collapsed .nav-item{justify-content:center;padding:10px 0}
+.sidebar.collapsed .nav-item:hover::after{content:attr(data-label);position:absolute;left:calc(var(--sidebar-w-col) - 4px);background:var(--color-primary-dk);color:#fff;font-size:0.75rem;font-weight:600;padding:6px 12px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;white-space:nowrap;z-index:200;box-shadow:var(--shadow-md);border-left:3px solid var(--color-accent)}
+.sidebar-footer{padding:12px 10px;border-top:1px solid rgba(255,255,255,0.08);flex-shrink:0;overflow:hidden}
+.plan-chip{background:rgba(230,179,71,0.15);border:1px solid rgba(230,179,71,0.3);border-radius:var(--radius-sm);padding:8px 10px;display:flex;align-items:center;gap:8px}
+.plan-chip-icon{font-size:0.9rem;flex-shrink:0}
+.plan-chip-text{overflow:hidden}
+.plan-chip-title{font-size:0.7rem;font-weight:700;color:var(--color-accent);white-space:nowrap}
+.plan-chip-sub{font-size:0.6rem;color:rgba(255,255,255,0.4);white-space:nowrap}
+.sidebar.collapsed .plan-chip{justify-content:center;padding:8px 0}
+.sidebar.collapsed .plan-chip-text{display:none}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:90}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;min-height:0}
+.topbar{padding:0 24px;height:64px;border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:14px;background:var(--color-surface);flex-shrink:0;box-shadow:var(--shadow-sm);position:sticky;top:0;z-index:50}
+.topbar-hamburger{display:none;width:36px;height:36px;border-radius:var(--radius-sm);border:1px solid var(--color-border);background:transparent;cursor:pointer;align-items:center;justify-content:center;font-size:1.1rem;color:var(--color-text-mid)}
+.page-title{font-size:1rem;font-weight:700;flex:1;color:var(--color-text)}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.date-chip{font-size:0.72rem;color:var(--color-text-mid);background:var(--color-background);padding:6px 12px;border-radius:var(--radius-sm);border:1px solid var(--color-border);font-weight:500}
+.icon-btn{width:36px;height:36px;border-radius:var(--radius-sm);border:1px solid var(--color-border);background:transparent;color:var(--color-text-mid);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all 0.18s;position:relative}
+.icon-btn:hover{background:var(--color-primary-xl);color:var(--color-primary);border-color:var(--color-primary)}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--color-accent);border-radius:50%;border:1.5px solid var(--color-surface)}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;padding:22px 24px;display:flex;flex-direction:column;gap:20px;min-height:0;-webkit-overflow-scrolling:touch}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:var(--color-border);border-radius:2px}
+
+/* CARDS */
+.card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--color-border-lt);display:flex;align-items:center;gap:10px}
+.card-title{font-size:0.85rem;font-weight:700;flex:1;color:var(--color-text)}
+.card-icon{font-size:1rem}
+.card-action{font-size:0.72rem;color:var(--color-primary);cursor:pointer;font-weight:600;background:none;border:none;font-family:var(--font-family);transition:opacity 0.18s}
+.card-action:hover{opacity:0.7}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:16px 18px;box-shadow:var(--shadow-sm);transition:all 0.2s}
+.stat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.stat-label{font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:8px}
+.stat-value{font-size:1.8rem;font-weight:800;line-height:1}
+.stat-sub{font-size:0.67rem;color:var(--color-text-muted);margin-top:5px}
+.c-purple{color:var(--color-primary)}.c-gold{color:var(--color-accent-dk)}.c-green{color:var(--color-green)}.c-text{color:var(--color-text)}
+
+/* LAYOUT */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+
+/* AI STRIP */
+.ai-strip{background:linear-gradient(135deg,var(--color-primary-xl),#FAF8FC);border:1px solid rgba(90,62,118,0.18);border-radius:var(--radius-lg);padding:16px 20px;display:flex;align-items:center;gap:16px}
+.ai-avatar{width:42px;height:42px;border-radius:var(--radius-md);background:linear-gradient(135deg,var(--color-primary),var(--color-primary-lt));display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;box-shadow:0 4px 12px rgba(90,62,118,0.25)}
+.ai-text{flex:1}
+.ai-greeting{font-size:0.88rem;font-weight:700;color:var(--color-primary);margin-bottom:3px}
+.ai-sub{font-size:0.72rem;color:var(--color-text-mid)}
+.ai-input-wrap{display:flex;gap:8px;flex:1.5}
+.ai-input{flex:1;background:var(--color-surface);border:1px solid rgba(90,62,118,0.25);border-radius:var(--radius-sm);padding:9px 14px;color:var(--color-text);font-family:var(--font-family);font-size:0.8rem;transition:border-color 0.18s}
+.ai-input:focus{outline:none;border-color:var(--color-primary)}
+.ai-input::placeholder{color:var(--color-text-muted)}
+.ai-send{background:var(--color-primary);border:none;border-radius:var(--radius-sm);padding:9px 18px;color:#fff;font-size:0.78rem;font-weight:700;font-family:var(--font-family);cursor:pointer;transition:all 0.2s;white-space:nowrap;box-shadow:0 3px 10px rgba(90,62,118,0.25)}
+.ai-send:hover{background:var(--color-primary-lt)}
+
+/* TIMETABLE */
+
+/* ─── TIMETABLE EDIT UI ─── */
+.period-row.editable{cursor:pointer}
+.period-row.editable:hover{background:var(--color-primary-xl);border-color:rgba(90,62,118,0.25)}
+.period-row.editable:active{background:var(--color-primary-xl)}
+.edit-indicator{font-size:0.62rem;color:var(--color-primary);font-weight:600;white-space:nowrap;opacity:0;transition:opacity 0.15s;display:flex;align-items:center;gap:3px}
+.period-row.editable:hover .edit-indicator{opacity:1}
+.period-row-actions{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.period-edit-btn{width:30px;height:30px;border-radius:7px;border:1.5px solid rgba(90,62,118,0.25);background:var(--color-primary-xl);color:var(--color-primary);font-size:0.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;font-family:var(--font-family)}
+.period-edit-btn:hover,.period-edit-btn:active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.period-delete-btn{width:30px;height:30px;border-radius:7px;border:1.5px solid rgba(224,84,84,0.2);background:var(--color-red-lt);color:var(--color-red);font-size:0.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;font-family:var(--font-family)}
+.period-delete-btn:hover,.period-delete-btn:active{background:var(--color-red);color:#fff;border-color:var(--color-red)}
+.add-period-bar{padding:10px 14px 14px;display:flex;align-items:center;gap:12px}
+.add-period-btn{display:flex;align-items:center;gap:6px;padding:10px 18px;border-radius:var(--radius-sm);border:2px dashed var(--color-primary);background:var(--color-primary-xl);color:var(--color-primary);font-size:0.8rem;font-weight:700;cursor:pointer;transition:all 0.18s;font-family:var(--font-family);width:100%;justify-content:center}
+.add-period-btn:hover,.add-period-btn:active{background:var(--color-primary);color:#fff;border-style:solid}
+.save-day-status{font-size:0.7rem;color:var(--color-green);font-weight:600}
+.type-chip{display:inline-block;font-size:0.58rem;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:4px;vertical-align:middle}
+.chip-free{background:var(--color-green-lt);color:var(--color-green)}
+.chip-admin{background:var(--color-accent-lt);color:var(--color-accent-dk)}
+.modal-lg{max-width:520px;width:95%}
+.tt-save-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--color-primary-dk);color:#fff;padding:9px 22px;border-radius:99px;font-size:0.78rem;font-weight:600;font-family:var(--font-family);opacity:0;transition:all 0.25s;pointer-events:none;z-index:999;box-shadow:var(--shadow-lg)}
+.tt-save-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* Unlock hint bar */
+.unlock-hint{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--color-accent-lt);border-bottom:1px solid rgba(230,179,71,0.25);font-size:0.75rem;color:var(--color-accent-dk);font-weight:500}
+.unlock-hint b{font-weight:700}
+/* Mobile: stack period rows */
+@media(max-width:600px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .select-row{grid-template-columns:1fr}
+  .three-col{grid-template-columns:1fr}
+  .quick-actions{grid-template-columns:1fr 1fr}
+}
+  .period-time{font-size:0.62rem;display:none}
+  .period-num{font-size:0.68rem;flex-shrink:0;min-width:28px}
+  .subject-name{font-size:0.76rem}
+  .period-task{font-size:0.64rem;max-width:160px}
+  .tt-lock-bar{flex-wrap:wrap;gap:8px;padding:10px 12px}
+  .lock-status{width:100%;order:3;font-size:0.65rem}
+  .lock-warning{font-size:0.68rem;padding:5px 10px}
+}
+.timetable-body{padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.period-row{display:flex;align-items:center;gap:8px;padding:11px 12px;border-radius:var(--radius-sm);background:var(--color-background);border:1px solid var(--color-border-lt);transition:all 0.18s;cursor:default;width:100%;box-sizing:border-box}
+.period-row:hover{border-color:var(--color-border);box-shadow:var(--shadow-sm)}
+.period-row.done{opacity:0.5}
+.period-row.carryover{border-color:rgba(230,179,71,0.4);background:var(--color-accent-lt)}
+.period-row.active-period{border-color:rgba(90,62,118,0.35);background:var(--color-primary-xl)}
+.period-num{font-size:0.7rem;font-weight:700;color:var(--color-text-muted)}
+.period-time{font-size:0.65rem;color:var(--color-text-muted)}.period-time.col{display:none}
+.period-subject{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;overflow:hidden}
+.subject-name{font-size:0.8rem;font-weight:600;color:var(--color-text)}
+.period-task{font-size:0.68rem;color:var(--color-text-mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.carryover-badge{font-size:0.6rem;font-weight:700;background:var(--color-accent-lt);color:var(--color-accent-dk);padding:2px 8px;border-radius:10px;border:1px solid rgba(230,179,71,0.4);white-space:nowrap}
+.period-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--color-border);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.18s;flex-shrink:0;font-size:0.7rem;background:var(--color-surface)}
+.period-check:hover{border-color:var(--color-primary)}
+.period-check.checked{background:var(--color-green);border-color:var(--color-green)}
+.period-check.checked::after{content:'✓';color:#fff;font-weight:700}
+
+/* QUICK ACTIONS */
+.quick-actions{padding:14px 18px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.action-btn{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:var(--radius-md);border:1px solid var(--color-border);background:var(--color-background);cursor:pointer;transition:all 0.2s;text-align:left;color:var(--color-text);font-family:var(--font-family)}
+.action-btn:hover{background:var(--color-primary-xl);border-color:var(--color-primary);transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.action-btn-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.icon-purple{background:var(--color-primary-xl)}.icon-gold{background:var(--color-accent-lt)}.icon-green{background:var(--color-green-lt)}.icon-red{background:var(--color-red-lt)}
+.action-btn-title{font-size:0.78rem;font-weight:600;color:var(--color-text)}
+.action-btn-sub{font-size:0.65rem;color:var(--color-text-muted);margin-top:2px}
+
+/* REMINDERS */
+.reminders-body{padding:12px 18px;display:flex;flex-direction:column;gap:8px}
+.reminder-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-sm);background:var(--color-background);border-left:3px solid transparent;transition:all 0.18s}
+.reminder-item.urgent{border-left-color:var(--color-red)}.reminder-item.soon{border-left-color:var(--color-accent)}.reminder-item.info{border-left-color:var(--color-primary)}
+.reminder-item:hover{background:var(--color-border-lt)}
+.reminder-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-red{background:var(--color-red)}.dot-amber{background:var(--color-accent)}.dot-purple{background:var(--color-primary)}
+.reminder-text{flex:1}
+.reminder-title{font-size:0.78rem;font-weight:600;color:var(--color-text)}
+.reminder-meta{font-size:0.65rem;color:var(--color-text-muted);margin-top:2px}
+.reminder-time{font-size:0.68rem;color:var(--color-text-mid);font-weight:600;white-space:nowrap}
+
+/* DOCS */
+.docs-body{padding:12px 18px;display:flex;flex-direction:column;gap:8px}
+.doc-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-sm);background:var(--color-background);border:1px solid var(--color-border-lt);cursor:pointer;transition:all 0.18s}
+.doc-item:hover{border-color:var(--color-border);box-shadow:var(--shadow-sm)}
+.doc-icon{width:34px;height:34px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:0.95rem;flex-shrink:0}
+.doc-text{flex:1;min-width:0}
+.doc-name{font-size:0.78rem;font-weight:600;color:var(--color-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.doc-meta{font-size:0.65rem;color:var(--color-text-muted);margin-top:2px}
+.doc-chip{font-size:0.6rem;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0}
+.chip-ws{background:var(--color-primary-xl);color:var(--color-primary)}.chip-lp{background:var(--color-green-lt);color:var(--color-green)}.chip-dl{background:var(--color-accent-lt);color:var(--color-accent-dk)}
+
+/* MODERATION */
+.mod-body{padding:14px 18px;display:flex;flex-direction:column;gap:10px}
+.mod-item{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--color-background);border:1px solid var(--color-border-lt)}
+.mod-progress-wrap{flex:1}
+.mod-title{font-size:0.78rem;font-weight:600;margin-bottom:7px;color:var(--color-text)}
+.mod-bar{height:5px;background:var(--color-border);border-radius:10px;overflow:hidden}
+.mod-bar-fill{height:100%;border-radius:10px;transition:width 0.5s}
+.bar-purple{background:var(--color-primary)}.bar-gold{background:var(--color-accent)}.bar-green{background:var(--color-green)}
+.mod-stat{font-size:0.65rem;color:var(--color-text-muted);margin-top:5px}
+.mod-pct{font-size:0.9rem;font-weight:800;white-space:nowrap}
+
+/* TABS */
+.tab-row{display:flex;gap:4px;padding:12px 18px 0;border-bottom:1px solid var(--color-border-lt);overflow-x:auto;scrollbar-width:none}.tab-row::-webkit-scrollbar{display:none}
+.tab{font-size:0.73rem;font-weight:600;padding:7px 14px;border-radius:var(--radius-sm) var(--radius-sm) 0 0;cursor:pointer;color:var(--color-text-muted);border:1px solid transparent;border-bottom:none;transition:all 0.18s;font-family:var(--font-family)}
+.tab.active{color:var(--color-primary);background:var(--color-primary-xl);border-color:rgba(90,62,118,0.2)}
+
+/* FORMS */
+.form-body{padding:18px;display:flex;flex-direction:column;gap:14px}
+.input-label{font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:5px;display:block}
+.select-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.select-row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.select-input,.text-input,.number-input{background:var(--color-background);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:9px 12px;color:var(--color-text);font-family:var(--font-family);font-size:0.8rem;width:100%;appearance:none;cursor:pointer;transition:border-color 0.18s}
+.select-input:focus,.text-input:focus,.number-input:focus{outline:none;border-color:var(--color-primary);background:var(--color-surface)}
+.select-input option{background:var(--color-surface)}
+.textarea-input{background:var(--color-background);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:10px 12px;color:var(--color-text);font-family:var(--font-family);font-size:0.8rem;width:100%;resize:none;height:64px;transition:border-color 0.18s}
+.textarea-input:focus{outline:none;border-color:var(--color-primary);background:var(--color-surface)}
+.textarea-input::placeholder{color:var(--color-text-muted)}
+.btn-primary{background:var(--color-primary);color:#fff;border:none;border-radius:var(--radius-sm);padding:11px 18px;font-family:var(--font-family);font-size:0.8rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s;box-shadow:0 3px 10px rgba(90,62,118,0.25)}
+.btn-primary:hover{background:var(--color-primary-lt);transform:translateY(-1px)}
+.btn-secondary{background:var(--color-background);color:var(--color-primary);border:1px solid var(--color-primary);border-radius:var(--radius-sm);padding:10px 18px;font-family:var(--font-family);font-size:0.8rem;font-weight:700;cursor:pointer;transition:all 0.18s}
+.btn-secondary:hover{background:var(--color-primary-xl)}
+.btn-gold{background:var(--color-accent);color:var(--color-primary-dk);border:none;border-radius:var(--radius-sm);padding:11px 18px;font-family:var(--font-family);font-size:0.8rem;font-weight:700;cursor:pointer;transition:all 0.2s;box-shadow:0 3px 10px rgba(230,179,71,0.3)}
+.btn-gold:hover{background:var(--color-accent-dk);color:#fff}
+
+/* TIMETABLE SETUP WIZARD */
+.setup-steps{display:flex;gap:0;padding:20px 18px 16px;border-bottom:1px solid var(--color-border-lt)}
+.step-indicator{display:flex;align-items:center;flex:1}
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;flex-shrink:0;border:2px solid var(--color-border);color:var(--color-text-muted);background:var(--color-surface);transition:all 0.25s}
+.step-dot.active{border-color:var(--color-primary);background:var(--color-primary);color:#fff}
+.step-dot.done{border-color:var(--color-green);background:var(--color-green);color:#fff}
+.step-label{margin-left:8px;font-size:0.7rem;font-weight:600;color:var(--color-text-muted);white-space:nowrap;transition:color 0.25s}
+.step-dot.active+.step-label{color:var(--color-primary)}
+.step-dot.done+.step-label{color:var(--color-green)}
+.step-line{flex:1;height:2px;background:var(--color-border);margin:0 10px;border-radius:1px}
+.step-line.done{background:var(--color-green)}
+.step-panel{display:none}
+.step-panel.active{display:block}
+
+/* TIMETABLE GRID */
+.tt-grid-wrap{padding:0 18px 18px;overflow-x:auto}
+.tt-grid{border-collapse:collapse;width:100%;min-width:500px}
+.tt-grid th{font-size:0.7rem;font-weight:700;color:var(--color-primary);padding:10px 8px;text-align:center;background:var(--color-primary-xl);border:1px solid var(--color-border)}
+.tt-grid td{padding:6px;border:1px solid var(--color-border);vertical-align:top;min-width:130px}
+.tt-grid td.period-label{font-size:0.7rem;font-weight:700;color:var(--color-text-muted);text-align:center;background:var(--color-background);min-width:60px}
+.cell-type-select{width:100%;font-size:0.7rem;border:1px solid var(--color-border);border-radius:5px;padding:4px 6px;background:var(--color-background);color:var(--color-text);font-family:var(--font-family);cursor:pointer;margin-bottom:4px}
+.cell-type-select:focus{outline:none;border-color:var(--color-primary)}
+.cell-sub-select{width:100%;font-size:0.68rem;border:1px solid var(--color-border-lt);border-radius:4px;padding:3px 5px;background:var(--color-surface);color:var(--color-text);font-family:var(--font-family);margin-bottom:3px;cursor:pointer}
+.cell-sub-select:focus{outline:none;border-color:var(--color-primary)}
+.cell-note{width:100%;font-size:0.68rem;border:1px solid var(--color-border-lt);border-radius:4px;padding:3px 5px;background:var(--color-accent-lt);color:var(--color-text);font-family:var(--font-family);resize:none;height:38px}
+.cell-note:focus{outline:none;border-color:var(--color-accent)}
+.custom-subj-row{display:flex;align-items:center;gap:4px;margin-bottom:3px;animation:fadeUp 0.18s ease both}
+.custom-subj-input{flex:1;font-size:0.68rem;border:1px solid var(--color-primary);border-radius:4px;padding:4px 7px;background:var(--color-primary-xl);color:var(--color-text);font-family:var(--font-family);outline:none;min-width:0}
+.custom-subj-input::placeholder{color:var(--color-text-muted)}
+.custom-subj-save{font-size:0.62rem;font-weight:700;padding:4px 8px;background:var(--color-primary);color:#fff;border:none;border-radius:4px;cursor:pointer;font-family:var(--font-family);white-space:nowrap;transition:background 0.15s}
+.custom-subj-save:hover{background:var(--color-primary-lt)}
+.custom-subj-cancel{font-size:0.65rem;padding:4px 6px;background:transparent;color:var(--color-text-muted);border:1px solid var(--color-border);border-radius:4px;cursor:pointer;transition:all 0.15s}
+.custom-subj-cancel:hover{background:var(--color-red-lt);color:var(--color-red);border-color:var(--color-red)}
+.cell-tag{display:inline-block;font-size:0.6rem;font-weight:700;padding:2px 7px;border-radius:4px;margin-bottom:3px}
+.cell-teaching{background:var(--color-primary-xl);color:var(--color-primary)}
+.cell-free{background:var(--color-green-lt);color:var(--color-green)}
+.cell-admin{background:var(--color-accent-lt);color:var(--color-accent-dk)}
+
+/* LOCK BAR */
+.tt-lock-bar{display:flex;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid var(--color-border-lt);background:var(--color-background)}
+.lock-btn{display:flex;align-items:center;gap:8px;padding:7px 14px;border-radius:var(--radius-sm);border:2px solid var(--color-accent);background:transparent;cursor:pointer;font-family:var(--font-family);font-weight:700;font-size:0.75rem;color:var(--color-accent-dk);transition:all 0.2s}
+.lock-btn:hover{background:var(--color-accent-lt)}
+.lock-btn.unlocked{border-color:var(--color-border);color:var(--color-text-muted)}
+.lock-btn.unlocked:hover{background:var(--color-background)}
+.lock-warning{font-size:0.7rem;color:var(--color-red);background:var(--color-red-lt);padding:6px 12px;border-radius:var(--radius-sm);border:1px solid rgba(224,84,84,0.2);display:none;font-weight:500}
+.lock-warning.visible{display:block}
+.lock-status{font-size:0.72rem;color:var(--color-text-muted);margin-left:auto}
+
+/* MODAL */
+
+
+/* ─── WORKSHEET & MEMO ─── */
+.ws-tab-bar{display:flex;align-items:center;gap:6px;padding:14px 18px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg) var(--radius-lg) 0 0;box-shadow:var(--shadow-sm);flex-wrap:wrap}
+.ws-tab{padding:7px 18px;border-radius:var(--radius-sm);border:1.5px solid var(--color-border);background:var(--color-background);color:var(--color-text-mid);font-size:0.8rem;font-weight:600;cursor:pointer;font-family:var(--font-family);transition:all 0.18s}
+.ws-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.ws-doc-card{border-radius:0 0 var(--radius-lg) var(--radius-lg);border-top:none;padding:24px}
+/* Worksheet document styles */
+.ws-doc{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:0}
+.ws-header-block{border:2px solid var(--color-primary);border-radius:var(--radius-md);overflow:hidden;margin-bottom:18px}
+.ws-header-top{background:var(--color-primary);padding:12px 18px;display:flex;justify-content:space-between;align-items:center}
+.ws-school{font-size:0.9rem;font-weight:700;color:#fff}
+.ws-branding{font-size:0.65rem;color:rgba(255,255,255,0.7);text-align:right}
+.ws-header-meta{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--color-border)}
+.ws-meta-cell{padding:7px 14px;font-size:0.75rem;border-right:1px solid var(--color-border)}
+.ws-meta-cell:nth-child(even){border-right:none}
+.ws-meta-label{font-weight:700;color:var(--color-primary);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:2px}
+.ws-meta-val{color:var(--color-text)}
+.ws-learner-row{display:grid;grid-template-columns:1fr 1fr;padding:8px 14px;background:var(--color-background);border-top:1px solid var(--color-border)}
+.ws-learner-field{font-size:0.75rem;display:flex;align-items:center;gap:8px}
+.ws-learner-label{font-weight:700;color:var(--color-text);white-space:nowrap}
+.ws-learner-line{flex:1;border-bottom:1.5px solid var(--color-text);min-width:80px;height:18px}
+.ws-instructions{background:var(--color-accent-lt);border:1px solid rgba(230,179,71,0.3);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:16px;font-size:0.78rem;color:var(--color-text);line-height:1.6}
+.ws-instructions[contenteditable="true"]:focus{outline:2px solid var(--color-accent);background:var(--color-accent-lt)}
+.ws-section-title{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--color-primary);border-bottom:2px solid var(--color-primary);padding-bottom:4px;margin:16px 0 10px}
+.ws-section-title[contenteditable="true"]:focus{outline:none;border-bottom-color:var(--color-accent)}
+.ws-question{margin-bottom:14px;display:flex;flex-direction:column;gap:4px}
+.ws-q-row{display:flex;align-items:flex-start;gap:8px}
+.ws-q-num{font-size:0.78rem;font-weight:800;color:var(--color-primary);min-width:22px;padding-top:1px}
+.ws-q-marks{font-size:0.65rem;color:var(--color-text-muted);font-weight:600;white-space:nowrap;margin-left:auto;padding-top:2px;flex-shrink:0}
+.ws-q-marks[contenteditable="true"]:focus{outline:1px solid var(--color-accent);border-radius:3px;padding:1px 4px}
+.ws-q-text{flex:1;font-size:0.8rem;line-height:1.55;color:var(--color-text)}
+.ws-q-text[contenteditable="true"]:focus{outline:none;background:var(--color-primary-xl);border-radius:4px;padding:2px 6px}
+.ws-answer-space{margin-left:30px;display:flex;flex-direction:column;gap:5px}
+.ws-answer-line{border-bottom:1px solid var(--color-border);height:18px;width:100%}
+.ws-mcq-options{margin-left:30px;display:flex;flex-direction:column;gap:3px}
+.ws-mcq-opt{font-size:0.77rem;display:flex;align-items:center;gap:7px;color:var(--color-text)}
+.ws-mcq-opt input[type=radio]{accent-color:var(--color-primary)}
+.ws-total-row{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:20px;padding-top:12px;border-top:2px solid var(--color-primary)}
+.ws-total-label{font-size:0.78rem;font-weight:700;color:var(--color-text)}
+.ws-total-marks{font-size:1rem;font-weight:800;color:var(--color-primary)}
+/* Memo styles */
+.memo-q{display:flex;flex-direction:column;gap:3px;margin-bottom:12px;padding:10px 14px;border-radius:var(--radius-sm);background:var(--color-background);border-left:3px solid var(--color-green)}
+.memo-q-row{display:flex;align-items:flex-start;gap:8px}
+.memo-q-num{font-size:0.78rem;font-weight:800;color:var(--color-primary);min-width:22px}
+.memo-q-text{font-size:0.78rem;color:var(--color-text-mid);flex:1}
+.memo-answer{font-size:0.82rem;font-weight:600;color:var(--color-green);padding-left:30px;line-height:1.5}
+.memo-answer[contenteditable="true"]:focus{outline:none;background:var(--color-green-lt);border-radius:3px;padding:2px 6px 2px 30px}
+.memo-marks-badge{font-size:0.62rem;font-weight:700;background:var(--color-green-lt);color:var(--color-green);padding:1px 7px;border-radius:10px;white-space:nowrap;margin-left:auto}
+.edit-hint{font-size:0.68rem;color:var(--color-text-muted);padding:8px 0 0;text-align:center;font-style:italic}
+@media(max-width:600px){
+  .ws-tab-bar{padding:10px 12px;gap:5px}
+  .ws-tab{font-size:0.72rem;padding:6px 12px}
+  .ws-doc-card{padding:14px}
+  .ws-header-meta{grid-template-columns:1fr}
+  .ws-meta-cell{border-right:none}
+  .ws-learner-row{grid-template-columns:1fr}
+}
+
+/* ─── LESSON PLAN PREVIEW ─── */
+.lesson-preview-body{padding:20px;display:flex;flex-direction:column;gap:0}
+.lp-section-header{background:var(--color-primary);color:#fff;padding:10px 16px;font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-top:14px;border-radius:var(--radius-sm) var(--radius-sm) 0 0}
+.lp-section-header:first-child{margin-top:0}
+.lp-table{width:100%;border-collapse:collapse;border:1px solid var(--color-border);border-radius:0 0 var(--radius-sm) var(--radius-sm);overflow:hidden;margin-bottom:4px}
+.lp-table td{padding:9px 14px;border:1px solid var(--color-border);font-size:0.78rem;vertical-align:top;line-height:1.5}
+.lp-table td.lp-field{font-weight:700;background:var(--color-primary-xl);color:var(--color-primary);width:38%;font-size:0.73rem;white-space:nowrap}
+.lp-table td.lp-value{color:var(--color-text);background:var(--color-surface)}
+.lp-table td.lp-value.editable{background:var(--color-background)}
+.lp-table td.lp-value[contenteditable="true"]{outline:none;border-left:3px solid var(--color-accent)}
+.lp-table td.lp-value[contenteditable="true"]:focus{background:var(--color-accent-lt)}
+.lp-header-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.lp-pdf-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--color-border-lt);background:var(--color-background)}
+.lp-generating{display:flex;align-items:center;gap:12px;padding:24px 20px;color:var(--color-text-mid);font-size:0.82rem}
+.lp-spinner{width:20px;height:20px;border:2px solid var(--color-border);border-top-color:var(--color-primary);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:300;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--color-surface);border-radius:var(--radius-lg);padding:28px;max-width:400px;width:90%;box-shadow:var(--shadow-lg);animation:modalIn 0.22s ease both}
+@keyframes modalIn{from{opacity:0;transform:scale(0.95) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal h3{font-size:1rem;font-weight:700;margin-bottom:10px;color:var(--color-text)}
+.modal p{font-size:0.8rem;color:var(--color-text-mid);line-height:1.6;margin-bottom:20px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end}
+
+/* SCREENS */
+.screen{display:none}
+.screen.visible{display:contents}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.stat-card,.card,.ai-strip{animation:fadeUp 0.35s ease both}
+.stat-card:nth-child(1){animation-delay:0.04s}.stat-card:nth-child(2){animation-delay:0.08s}.stat-card:nth-child(3){animation-delay:0.12s}.stat-card:nth-child(4){animation-delay:0.16s}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  /* ── DEFINITIVE MOBILE FIX ──
+     Switch from flex to block layout entirely.
+     display:flex on body is what traps scroll on mobile browsers. */
+  html{height:auto!important;overflow:auto!important}
+  body{display:block!important;height:auto!important;min-height:100dvh!important;overflow-y:auto!important;overflow-x:hidden!important;background:var(--color-background)}
+  .main{display:block!important;height:auto!important;min-height:0!important;overflow:visible!important;width:100%!important}
+  .content{display:block!important;height:auto!important;overflow:visible!important;padding:12px!important;min-height:0!important}
+  .card{overflow:visible!important}
+  .topbar{position:sticky!important;top:0!important;z-index:50!important;width:100%!important}
+  /* Sidebar stays fixed overlay */
+  .sidebar{position:fixed!important;left:0!important;top:0!important;bottom:0!important;height:100dvh!important;z-index:200!important;transform:translateX(-100%)!important;transition:transform 0.28s cubic-bezier(.4,0,.2,1)!important;width:var(--sidebar-w)!important;overflow-y:auto!important}
+  .sidebar.mobile-open{transform:translateX(0)!important}
+  .sidebar.collapsed{width:var(--sidebar-w)!important}
+  .sidebar-toggle{display:none!important}
+  .sidebar-overlay{display:block;opacity:0;pointer-events:none;transition:opacity 0.28s}
+  .sidebar.mobile-open~.sidebar-overlay{opacity:1;pointer-events:all}
+  .topbar-hamburger{display:flex!important}
+  /* Content layout fixes */
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .two-col{grid-template-columns:1fr!important}
+  .ai-input-wrap{display:none}
+  .date-chip{display:none}
+  /* Timetable specific */
+  .tt-lock-bar{flex-wrap:wrap;gap:6px;padding:8px 12px}
+  .lock-warning{font-size:0.68rem;width:100%;order:4}
+  .lock-status{font-size:0.65rem;order:3}
+  .tab-row{overflow-x:auto!important;-webkit-overflow-scrolling:touch;padding:8px 12px 0!important;gap:4px}
+  .tab{flex-shrink:0;font-size:0.7rem;padding:6px 12px}
+  .timetable-body{padding:8px 10px!important}
+  .period-row{padding:10px 10px!important;grid-template-columns:32px 1fr auto!important;gap:6px!important}
+  .period-num{font-size:0.68rem;flex-shrink:0;min-width:28px}
+  .subject-name{font-size:0.78rem}
+  .period-task{font-size:0.63rem;max-width:none}
+  .add-period-bar{padding:8px 10px 12px!important}
+  .unlock-hint{padding:8px 12px;font-size:0.72rem}
+}
+@media(max-width:600px){
+  .quick-actions{grid-template-columns:1fr}
+  .select-row{grid-template-columns:1fr}
+}
+
+/* ─── AUTH SCREEN ─── */
+#authScreen{position:fixed;inset:0;background:linear-gradient(135deg,var(--color-primary-dk) 0%,var(--color-primary) 55%,var(--color-primary-lt) 100%);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;transition:opacity 0.3s}
+#authScreen.fading{opacity:0;pointer-events:none}
+.auth-card{background:var(--color-surface);border-radius:var(--radius-lg);box-shadow:0 20px 60px rgba(0,0,0,0.32);width:100%;max-width:430px;overflow:hidden;animation:modalIn 0.38s ease both}
+.auth-logo-area{background:var(--color-primary-dk);padding:30px 28px 22px;text-align:center}
+.auth-logo-icon{width:56px;height:56px;background:var(--color-accent);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.75rem;margin:0 auto 14px;box-shadow:0 6px 20px rgba(230,179,71,0.4)}
+.auth-logo-name{font-size:1.65rem;font-weight:800;color:#fff;line-height:1}
+.auth-logo-sub{font-size:0.62rem;font-weight:700;color:var(--color-accent);letter-spacing:0.18em;text-transform:uppercase;margin-top:3px}
+.auth-logo-tagline{font-size:0.73rem;color:rgba(255,255,255,0.52);margin-top:10px}
+.auth-tabs{display:flex;border-bottom:1px solid var(--color-border)}
+.auth-tab{flex:1;padding:14px 10px;text-align:center;font-size:0.82rem;font-weight:700;cursor:pointer;color:var(--color-text-muted);border:none;border-bottom:2.5px solid transparent;background:none;font-family:var(--font-family);transition:all 0.18s}
+.auth-tab.active{color:var(--color-primary);border-bottom-color:var(--color-primary);background:var(--color-primary-xl)}
+.auth-form{padding:22px 28px 28px;display:flex;flex-direction:column;gap:13px}
+.auth-field{display:flex;flex-direction:column;gap:5px}
+.auth-msg{font-size:0.75rem;padding:9px 12px;border-radius:var(--radius-sm);display:none;line-height:1.5}
+.auth-msg.visible{display:block}
+.auth-msg.error{color:var(--color-red);background:var(--color-red-lt);border:1px solid rgba(224,84,84,0.25)}
+.auth-msg.success{color:var(--color-green);background:var(--color-green-lt);border:1px solid rgba(45,198,83,0.25)}
+.btn-signout{background:none;border:1px solid rgba(255,255,255,0.15);border-radius:4px;color:rgba(255,255,255,0.38);font-size:0.6rem;font-weight:600;padding:3px 7px;cursor:pointer;font-family:var(--font-family);flex-shrink:0;white-space:nowrap;transition:all 0.18s}
+.btn-signout:hover{border-color:rgba(224,84,84,0.5);color:rgba(224,84,84,0.85)}
+</style>
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- PDF Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+
+<!-- ═══════════ AUTH SCREEN ═══════════ -->
+<div id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo-area">
+      <div class="auth-logo-icon">🎓</div>
+      <div class="auth-logo-name">Leuro</div>
+      <div class="auth-logo-sub">Assistant</div>
+      <div class="auth-logo-tagline">AI tools for South African educators</div>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="loginTab" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab" id="registerTab" onclick="switchAuthTab('register')">Register</button>
+    </div>
+    <!-- LOGIN PANEL -->
+    <div id="authLoginPanel">
+      <form class="auth-form" onsubmit="handleLogin(event)">
+        <div class="auth-field">
+          <label class="input-label">Email Address</label>
+          <input type="email" class="text-input" id="loginEmail" placeholder="you@email.com" required autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <label class="input-label">Password</label>
+          <input type="password" class="text-input" id="loginPassword" placeholder="Your password" required autocomplete="current-password">
+        </div>
+        <div class="auth-msg error" id="loginError"></div>
+        <button type="submit" class="btn-primary" id="loginBtn">Sign In to Leuro →</button>
+      </form>
+    </div>
+    <!-- REGISTER PANEL -->
+    <div id="authRegisterPanel" style="display:none">
+      <form class="auth-form" onsubmit="handleRegister(event)">
+        <div class="auth-field">
+          <label class="input-label">Full Name</label>
+          <input type="text" class="text-input" id="regName" placeholder="e.g. Ms. N. Molefe" required autocomplete="name">
+        </div>
+        <div class="auth-field">
+          <label class="input-label">School</label>
+          <input type="text" class="text-input" id="regSchool" placeholder="e.g. Kempton Park Primary School" autocomplete="organization">
+        </div>
+        <div class="auth-field">
+          <label class="input-label">Email Address</label>
+          <input type="email" class="text-input" id="regEmail" placeholder="you@email.com" required autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <label class="input-label">Password</label>
+          <input type="password" class="text-input" id="regPassword" placeholder="Minimum 6 characters" required minlength="6" autocomplete="new-password">
+        </div>
+        <div class="auth-field">
+          <label class="input-label">Confirm Password</label>
+          <input type="password" class="text-input" id="regConfirm" placeholder="Repeat your password" required autocomplete="new-password">
+        </div>
+        <div class="auth-msg" id="registerMsg"></div>
+        <button type="submit" class="btn-primary" id="registerBtn">Create Account →</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <button class="sidebar-toggle" id="sidebarToggle">&#8249;</button>
+
+  <div class="logo-area">
+    <div class="logo-icon">🎓</div>
+    <div class="logo-text">
+      <div class="logo-name">Leuro</div>
+      <div class="logo-sub">Assistant</div>
+    </div>
+  </div>
+
+  <div class="user-card">
+    <div class="avatar" id="userAvatar">--</div>
+    <div class="user-info">
+      <div class="user-name" id="userName">Loading...</div>
+      <div class="user-role" id="userRole">Leuro Teacher</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;flex-shrink:0">
+      <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+        <button class="lang-btn" onclick="setLang('af',this)">AF</button>
+      </div>
+      <button class="btn-signout" onclick="signOut()" title="Sign out">Sign Out</button>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-section-label">Main</div>
+    <div class="nav-item active" data-label="Dashboard" onclick="switchScreen('dashboard',this)"><span class="nav-icon">🏠</span><span class="nav-label">Dashboard</span></div>
+    <div class="nav-item" data-label="My Timetable" onclick="switchScreen('timetable',this)"><span class="nav-icon">📅</span><span class="nav-label">My Timetable</span></div>
+    <div class="nav-item" data-label="Lesson Prep" onclick="switchScreen('lesson',this)"><span class="nav-icon">📝</span><span class="nav-label">Lesson Prep</span></div>
+    <div class="nav-item" data-label="Worksheets & Memos" onclick="switchScreen('worksheets',this)"><span class="nav-icon">📄</span><span class="nav-label">Worksheets & Memos</span></div>
+    <div class="nav-section-label">Planning</div>
+    <div class="nav-item" data-label="Lesson Planning" onclick="switchScreen('planning',this)"><span class="nav-icon">🗂️</span><span class="nav-label">Lesson Planning</span></div>
+    <div class="nav-item" data-label="Moderation" onclick="switchScreen('moderation',this)"><span class="nav-icon">🔍</span><span class="nav-label">Moderation</span><span class="nav-badge">3</span></div>
+    <div class="nav-item" data-label="Reminders" onclick="switchScreen('reminders',this)"><span class="nav-icon">🔔</span><span class="nav-label">Reminders</span><span class="nav-badge">2</span></div>
+    <div class="nav-section-label">Account</div>
+    <div class="nav-item" data-label="Reports" onclick="switchScreen('reports',this)"><span class="nav-icon">📊</span><span class="nav-label">Reports</span></div>
+    <div class="nav-item" data-label="Settings" onclick="switchScreen('settings',this)"><span class="nav-icon">⚙️</span><span class="nav-label">Settings</span></div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="plan-chip">
+      <div class="plan-chip-icon">✅</div>
+      <div class="plan-chip-text">
+        <div class="plan-chip-title">Premium Active</div>
+        <div class="plan-chip-sub">Renews 1 Jun 2026</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <button class="topbar-hamburger" onclick="openMobileSidebar()">☰</button>
+    <div class="page-title" id="pageTitle">Dashboard</div>
+    <div class="topbar-actions">
+      <div class="date-chip">📅 Monday, 5 May 2026</div>
+      <div class="icon-btn">🔔<span class="notif-dot"></span></div>
+      <div class="icon-btn">❓</div>
+    </div>
+  </div>
+
+  <div class="content" id="mainContent">
+
+    <!-- DASHBOARD -->
+    <div class="screen visible" id="screen-dashboard">
+      <div class="ai-strip">
+        <div class="ai-avatar">🤖</div>
+        <div class="ai-text"><div class="ai-greeting" id="dashGreeting">Good morning, Ms. Molefe! You have 8 periods today.</div><div class="ai-sub">3 tasks pending · 1 carry-over from Friday · Moderation due this week</div></div>
+        <div class="ai-input-wrap"><input class="ai-input" placeholder="Ask Leuro Assistant anything…"><button class="ai-send">Ask →</button></div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Periods Today</div><div class="stat-value c-purple">8</div><div class="stat-sub">3 completed · 5 remaining</div></div>
+        <div class="stat-card"><div class="stat-label">Tasks Pending</div><div class="stat-value c-gold">3</div><div class="stat-sub">1 carry-over from Fri</div></div>
+        <div class="stat-card"><div class="stat-label">Docs Generated</div><div class="stat-value c-text">14</div><div class="stat-sub">This month</div></div>
+        <div class="stat-card"><div class="stat-label">Moderation</div><div class="stat-value c-green">67%</div><div class="stat-sub">3 items outstanding</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><span class="card-icon">📅</span><div class="card-title">Today's Periods</div><button class="card-action" onclick="switchScreen('timetable',null)">View All →</button></div>
+          <div class="timetable-body">
+            <div class="period-row done"><div class="period-num">P1</div><div class="period-time">07:30–08:10</div><div class="period-subject"><div class="subject-name">Afrikaans HT · Gr 6</div><div class="period-task">Dialogue writing — revision</div></div><div class="period-check checked"></div></div>
+            <div class="period-row done"><div class="period-num">P2</div><div class="period-time">08:10–08:50</div><div class="period-subject"><div class="subject-name">English HL · Gr 5</div><div class="period-task">Reading comprehension</div></div><div class="period-check checked"></div></div>
+            <div class="period-row done"><div class="period-num">P3</div><div class="period-time">08:50–09:30</div><div class="period-subject"><div class="subject-name">Maths · Gr 7</div><div class="period-task">Fractions worksheet correction</div></div><div class="period-check checked"></div></div>
+            <div class="period-row active-period"><div class="period-num">P4</div><div class="period-time">09:30–10:10</div><div class="period-subject"><div class="subject-name">NS&T · Gr 6</div><div class="period-task">Mixtures — introduce separation methods</div></div><div class="period-check"></div></div>
+            <div class="period-row carryover"><div class="period-num">P5</div><div class="period-time">10:30–11:10</div><div class="period-subject"><div class="subject-name">Afrikaans HT · Gr 7</div><div class="period-task">Opstel — peer review (carried over)</div></div><div class="carryover-badge">⟳ Carry-over</div></div>
+            <div class="period-row"><div class="period-num">P6</div><div class="period-time">11:10–11:50</div><div class="period-subject"><div class="subject-name">English HL · Gr 7</div><div class="period-task">Introduce poetry unit</div></div><div class="period-check"></div></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div class="card">
+            <div class="card-header"><span class="card-icon">⚡</span><div class="card-title">Quick Actions</div></div>
+            <div class="quick-actions">
+              <button class="action-btn" onclick="switchScreen('lesson',null)"><div class="action-btn-icon icon-purple">📝</div><div><div class="action-btn-title">Generate Lesson</div><div class="action-btn-sub">CAPS-aligned plan</div></div></button>
+              <button class="action-btn" onclick="switchScreen('worksheets',null)"><div class="action-btn-icon icon-gold">📄</div><div><div class="action-btn-title">New Worksheet</div><div class="action-btn-sub">With memo included</div></div></button>
+              <button class="action-btn" onclick="switchScreen('reminders',null)"><div class="action-btn-icon icon-green">🔔</div><div><div class="action-btn-title">Set Reminder</div><div class="action-btn-sub">Deadlines & tasks</div></div></button>
+              <button class="action-btn" onclick="switchScreen('moderation',null)"><div class="action-btn-icon icon-red">🔍</div><div><div class="action-btn-title">Moderation</div><div class="action-btn-sub">3 items pending</div></div></button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-icon">🔔</span><div class="card-title">Upcoming Reminders</div><button class="card-action" onclick="switchScreen('reminders',null)">All →</button></div>
+            <div class="reminders-body">
+              <div class="reminder-item urgent"><div class="reminder-dot dot-red"></div><div class="reminder-text"><div class="reminder-title">Term 2 Moderation Pack due</div><div class="reminder-meta">HOD submission · Gr 6 & 7</div></div><div class="reminder-time">Tomorrow</div></div>
+              <div class="reminder-item soon"><div class="reminder-dot dot-amber"></div><div class="reminder-text"><div class="reminder-title">Gr 5 Test — mark & capture</div><div class="reminder-meta">English HL · 28 scripts</div></div><div class="reminder-time">Wed</div></div>
+              <div class="reminder-item info"><div class="reminder-dot dot-purple"></div><div class="reminder-text"><div class="reminder-title">SBA marks to HOD</div><div class="reminder-meta">All subjects · Term 2</div></div><div class="reminder-time">Fri</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><span class="card-icon">📁</span><div class="card-title">Recent Documents</div><button class="card-action">View All →</button></div>
+          <div class="docs-body">
+            <div class="doc-item"><div class="doc-icon" style="background:var(--color-primary-xl)">📄</div><div class="doc-text"><div class="doc-name">Gr6 NS&T — Separation Methods Worksheet</div><div class="doc-meta">Generated today · EN & AF · With memo</div></div><span class="doc-chip chip-ws">Worksheet</span></div>
+            <div class="doc-item"><div class="doc-icon" style="background:var(--color-green-lt)">🗂️</div><div class="doc-text"><div class="doc-name">Gr7 Afrikaans — Week 18 Lesson Plan</div><div class="doc-meta">Generated Fri · CAPS aligned</div></div><span class="doc-chip chip-lp">Lesson Plan</span></div>
+            <div class="doc-item"><div class="doc-icon" style="background:var(--color-primary-xl)">📝</div><div class="doc-text"><div class="doc-name">Gr5 English — Poetry Summary Notes</div><div class="doc-meta">Generated Thu · Includes memo</div></div><span class="doc-chip chip-ws">Worksheet</span></div>
+            <div class="doc-item"><div class="doc-icon" style="background:var(--color-green-lt)">🗂️</div><div class="doc-text"><div class="doc-name">Gr6 Maths — Fractions Lesson Plan</div><div class="doc-meta">Generated Mon · 2 periods</div></div><span class="doc-chip chip-lp">Lesson Plan</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-icon">🔍</span><div class="card-title">Moderation Tracker</div><button class="card-action" onclick="switchScreen('moderation',null)">Manage →</button></div>
+          <div class="mod-body">
+            <div class="mod-item"><div class="mod-progress-wrap"><div class="mod-title">Gr 6 · Afrikaans HT — Term 2 SBA</div><div class="mod-bar"><div class="mod-bar-fill bar-green" style="width:80%"></div></div><div class="mod-stat">4 of 5 tasks moderated</div></div><div class="mod-pct c-green">80%</div></div>
+            <div class="mod-item"><div class="mod-progress-wrap"><div class="mod-title">Gr 7 · English HL — Term 2 SBA</div><div class="mod-bar"><div class="mod-bar-fill bar-gold" style="width:40%"></div></div><div class="mod-stat">2 of 5 tasks moderated</div></div><div class="mod-pct c-gold">40%</div></div>
+            <div class="mod-item"><div class="mod-progress-wrap"><div class="mod-title">Gr 5 · NS&T — Term 2 SBA</div><div class="mod-bar"><div class="mod-bar-fill bar-purple" style="width:60%"></div></div><div class="mod-stat">3 of 5 tasks moderated</div></div><div class="mod-pct c-purple">60%</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIMETABLE -->
+    <div class="screen" id="screen-timetable">
+      <div class="ai-strip"><div class="ai-avatar">&#128197;</div><div class="ai-text"><div class="ai-greeting">My Timetable</div><div class="ai-sub">Tick off completed periods. Unlock to edit, add or remove periods. Each day saves independently.</div></div></div>
+      <div class="card">
+        <div class="tt-lock-bar">
+          <button class="lock-btn" id="lockBtn" onclick="toggleLock()"><span id="lockIcon">&#128274;</span><span id="lockLabel">Timetable Locked</span></button>
+          <div class="lock-warning" id="lockWarning">&#9888;&#65039; Timetable is unlocked. Tap any period to edit.</div>
+          <span class="lock-status" id="lockStatus">Display only &middot; Unlock to edit</span>
+        </div>
+        <div class="tab-row" id="ttTabRow"></div>
+        <div id="ttBody"></div>
+      </div>
+    </div>
+
+    <!-- LESSON PREP -->
+    <div class="screen" id="screen-lesson">
+      <div class="ai-strip"><div class="ai-avatar">&#128221;</div><div class="ai-text"><div class="ai-greeting">Lesson Prep Generator</div><div class="ai-sub">Generate a CAPS-aligned lesson plan and download it as a print-ready A4 PDF.</div></div></div>
+
+      <!-- GENERATOR FORM -->
+      <div class="two-col" id="lessonFormSection">
+        <div class="card">
+          <div class="card-header"><span class="card-icon">&#128221;</span><div class="card-title">New Lesson Plan</div></div>
+          <div class="form-body">
+            <div class="select-row-2">
+              <div><label class="input-label">Grade</label>
+                <select class="select-input" id="lp_grade">
+                  <option value="">Select...</option>
+                  <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option>
+                  <option>Grade 4</option><option>Grade 5</option><option selected>Grade 6</option>
+                  <option>Grade 7</option><option>Grade 8</option><option>Grade 9</option>
+                  <option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
+                </select>
+              </div>
+              <div><label class="input-label">Language</label>
+                <select class="select-input" id="lp_lang">
+                  <option>English</option><option>Afrikaans</option>
+                </select>
+              </div>
+            </div>
+            <div><label class="input-label">Subject</label>
+              <select class="select-input" id="lp_subject">
+                <option value="">Select subject...</option>
+                <option>Natural Sciences &amp; Technology</option>
+                <option>Afrikaans Home Language</option>
+                <option>English Home Language</option>
+                <option>Mathematics</option>
+                <option>Social Sciences</option>
+                <option>Life Skills</option>
+                <option>Arts &amp; Culture</option>
+              </select>
+            </div>
+            <div class="select-row">
+              <div><label class="input-label">Term</label>
+                <select class="select-input" id="lp_term"><option>1</option><option selected>2</option><option>3</option><option>4</option></select>
+              </div>
+              <div><label class="input-label">Week</label>
+                <select class="select-input" id="lp_week">
+                  <option>1</option><option>2</option><option>3</option><option>4</option>
+                  <option>5</option><option>6</option><option>7</option><option>8</option>
+                  <option>9</option><option>10</option><option selected>18</option>
+                </select>
+              </div>
+              <div><label class="input-label">Duration (min)</label>
+                <select class="select-input" id="lp_duration">
+                  <option>30</option><option selected>40</option><option>45</option><option>60</option>
+                </select>
+              </div>
+            </div>
+            <div><label class="input-label">Topic / CAPS Section</label>
+              <textarea class="textarea-input" id="lp_topic" placeholder="e.g. Separation of mixtures — filtration and evaporation"></textarea>
+            </div>
+            <div><label class="input-label">Additional Notes for AI (optional)</label>
+              <textarea class="textarea-input" id="lp_notes" placeholder="e.g. Class has 28 learners, some need additional support with vocabulary..."></textarea>
+            </div>
+            <button class="btn-primary" onclick="generateLessonPlan()">&#129302; Generate CAPS Lesson Plan</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-icon">&#128193;</span><div class="card-title">Recent Lesson Plans</div></div>
+          <div class="docs-body">
+            <div class="doc-item" onclick="loadSamplePlan()"><div class="doc-icon" style="background:var(--color-green-lt)">&#128196;</div><div class="doc-text"><div class="doc-name">Gr6 NS&amp;T — Separation of Mixtures</div><div class="doc-meta">Today &middot; CAPS aligned &middot; 40 min</div></div><span class="doc-chip chip-lp">View PDF</span></div>
+            <div class="doc-item"><div class="doc-icon" style="background:var(--color-green-lt)">&#128196;</div><div class="doc-text"><div class="doc-name">Gr7 Afrikaans — Week 18 Plan</div><div class="doc-meta">Fri &middot; 2 periods</div></div><span class="doc-chip chip-lp">PDF</span></div>
+            <div class="doc-item"><div class="doc-icon" style="background:var(--color-green-lt)">&#128196;</div><div class="doc-text"><div class="doc-name">Gr6 Maths — Fractions</div><div class="doc-meta">Mon &middot; 40 min</div></div><span class="doc-chip chip-lp">PDF</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LESSON PLAN PREVIEW (shown after generation) -->
+      <div id="lessonPlanPreview" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">&#128196;</span>
+            <div class="card-title" id="previewTitle">Lesson Plan Preview</div>
+            <div style="display:flex;gap:8px;margin-left:auto">
+              <button class="btn-secondary" onclick="closeLessonPreview()" style="padding:6px 12px;font-size:0.72rem">&#8592; Edit</button>
+              <button class="btn-gold" onclick="downloadLessonPDF()" style="padding:6px 14px;font-size:0.72rem">&#8659; Download PDF</button>
+            </div>
+          </div>
+          <div id="lessonPlanContent" class="lesson-preview-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKSHEETS -->
+    <div class="screen" id="screen-worksheets">
+      <div class="ai-strip"><div class="ai-avatar">&#128196;</div><div class="ai-text"><div class="ai-greeting">Worksheets &amp; Memos</div><div class="ai-sub">Generate a CAPS-aligned worksheet and memo. Edit inline, then export as separate PDFs.</div></div></div>
+
+      <!-- GENERATOR FORM -->
+      <div class="two-col" id="wsFormSection">
+        <div class="card">
+          <div class="card-header"><span class="card-icon">&#128196;</span><div class="card-title">Generate Worksheet</div></div>
+          <div class="form-body">
+            <div class="select-row-2">
+              <div><label class="input-label">Grade</label>
+                <select class="select-input" id="ws_grade">
+                  <option value="">Select...</option>
+                  <option>Grade 4</option><option>Grade 5</option><option selected>Grade 6</option>
+                  <option>Grade 7</option><option>Grade 8</option><option>Grade 9</option>
+                  <option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
+                </select>
+              </div>
+              <div><label class="input-label">Language</label>
+                <select class="select-input" id="ws_lang">
+                  <option>English</option><option>Afrikaans</option><option>Both</option>
+                </select>
+              </div>
+            </div>
+            <div><label class="input-label">Subject</label>
+              <select class="select-input" id="ws_subject">
+                <option value="">Select subject...</option>
+                <option>Natural Sciences &amp; Technology</option>
+                <option>Afrikaans Home Language</option>
+                <option>English Home Language</option>
+                <option>Mathematics</option>
+                <option>Social Sciences</option>
+                <option>Life Skills</option>
+              </select>
+            </div>
+            <div><label class="input-label">Topic / CAPS Section</label>
+              <textarea class="textarea-input" id="ws_topic" placeholder="e.g. Separation of mixtures — filtration and evaporation"></textarea>
+            </div>
+            <div class="select-row">
+              <div><label class="input-label">Question Types</label>
+                <select class="select-input" id="ws_qtype">
+                  <option>Mixed</option><option>MCQ Only</option>
+                  <option>Short Answer</option><option>True/False + Short Answer</option>
+                </select>
+              </div>
+              <div><label class="input-label">Number of Questions</label>
+                <select class="select-input" id="ws_qcount">
+                  <option>5</option><option selected>8</option><option>10</option><option>12</option>
+                </select>
+              </div>
+              <div><label class="input-label">Total Marks</label>
+                <select class="select-input" id="ws_marks">
+                  <option>20</option><option selected>30</option><option>40</option><option>50</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn-primary" onclick="generateWorksheet()">&#129302; Generate Worksheet &amp; Memo</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-icon">&#128193;</span><div class="card-title">Recent Worksheets</div></div>
+          <div class="docs-body">
+            <div class="doc-item" onclick="loadSampleWorksheet()"><div class="doc-icon" style="background:var(--color-primary-xl)">&#128196;</div><div class="doc-text"><div class="doc-name">Gr6 NS&amp;T — Separation of Mixtures</div><div class="doc-meta">Today &middot; 8 questions &middot; 30 marks</div></div><span class="doc-chip chip-ws">Open</span></div>
+            <div class="doc-item"><div class="doc-icon" style="background:var(--color-primary-xl)">&#128196;</div><div class="doc-text"><div class="doc-name">Gr5 English — Poetry Comprehension</div><div class="doc-meta">Thu &middot; 10 questions &middot; 40 marks</div></div><span class="doc-chip chip-ws">Open</span></div>
+            <div class="doc-item"><div class="doc-icon" style="background:var(--color-primary-xl)">&#128196;</div><div class="doc-text"><div class="doc-name">Gr7 Maths — Fractions Test</div><div class="doc-meta">Mon &middot; 12 questions &middot; 50 marks</div></div><span class="doc-chip chip-ws">Open</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EDITABLE WORKSHEET + MEMO PREVIEW -->
+      <div id="wsPreview" style="display:none">
+        <!-- Tabs: Worksheet | Memo -->
+        <div class="ws-tab-bar">
+          <button class="ws-tab active" id="wsTab" onclick="showWsTab('ws')">&#128196; Worksheet</button>
+          <button class="ws-tab" id="memoTab" onclick="showWsTab('memo')">&#9745; Memo</button>
+          <div style="flex:1"></div>
+          <button class="btn-secondary" onclick="closeWsPreview()" style="padding:6px 12px;font-size:0.72rem;margin-right:8px">&#8592; Back</button>
+          <button class="btn-primary" onclick="exportWsPDF()" style="padding:6px 14px;font-size:0.72rem;margin-right:6px">&#8659; Worksheet PDF</button>
+          <button class="btn-gold" onclick="exportMemoPDF()" style="padding:6px 14px;font-size:0.72rem">&#8659; Memo PDF</button>
+        </div>
+        <!-- Worksheet view -->
+        <div id="wsContent" class="card ws-doc-card"></div>
+        <!-- Memo view -->
+        <div id="memoContent" class="card ws-doc-card" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- MODERATION -->
+    <div class="screen" id="screen-moderation">
+      <div class="ai-strip"><div class="ai-avatar">🔍</div><div class="ai-text"><div class="ai-greeting">Moderation Tracker</div><div class="ai-sub">Track SBA moderation per subject and grade. Auto-reminders when packs are due.</div></div></div>
+      <div class="card">
+        <div class="card-header"><span class="card-icon">🔍</span><div class="card-title">Term 2 Moderation Overview</div><button class="card-action">+ Add Subject</button></div>
+        <div class="mod-body">
+          <div class="mod-item"><div class="mod-progress-wrap"><div class="mod-title">Gr 6 · Afrikaans HT — Term 2 SBA</div><div class="mod-bar"><div class="mod-bar-fill bar-green" style="width:80%"></div></div><div class="mod-stat">4 of 5 tasks moderated · Due: Wed 8 May</div></div><div class="mod-pct c-green">80%</div></div>
+          <div class="mod-item"><div class="mod-progress-wrap"><div class="mod-title">Gr 7 · English HL — Term 2 SBA</div><div class="mod-bar"><div class="mod-bar-fill bar-gold" style="width:40%"></div></div><div class="mod-stat">2 of 5 tasks moderated · Due: Tue 7 May</div></div><div class="mod-pct c-gold">40%</div></div>
+          <div class="mod-item"><div class="mod-progress-wrap"><div class="mod-title">Gr 5 · NS&T — Term 2 SBA</div><div class="mod-bar"><div class="mod-bar-fill bar-purple" style="width:60%"></div></div><div class="mod-stat">3 of 5 tasks moderated · Due: Fri 10 May</div></div><div class="mod-pct c-purple">60%</div></div>
+          <div class="mod-item"><div class="mod-progress-wrap"><div class="mod-title">Gr 6 · Maths — Term 2 SBA</div><div class="mod-bar"><div class="mod-bar-fill bar-green" style="width:100%"></div></div><div class="mod-stat">5 of 5 tasks moderated · Submitted ✓</div></div><div class="mod-pct c-green">100%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REMINDERS -->
+    <div class="screen" id="screen-reminders">
+      <div class="ai-strip"><div class="ai-avatar">🔔</div><div class="ai-text"><div class="ai-greeting">Reminders</div><div class="ai-sub">Set deadlines, SBA alerts, and moderation reminders. Leuro Assistant notifies you automatically.</div></div></div>
+      <div class="card">
+        <div class="card-header"><span class="card-icon">🔔</span><div class="card-title">All Reminders</div><button class="card-action">+ Add Reminder</button></div>
+        <div class="reminders-body" style="padding:14px 18px">
+          <div class="reminder-item urgent"><div class="reminder-dot dot-red"></div><div class="reminder-text"><div class="reminder-title">Term 2 Moderation Pack due — Gr 6 & 7</div><div class="reminder-meta">HOD submission · All subjects</div></div><div class="reminder-time">Tomorrow, 8am</div></div>
+          <div class="reminder-item soon"><div class="reminder-dot dot-amber"></div><div class="reminder-text"><div class="reminder-title">Gr 5 English Test — mark & capture</div><div class="reminder-meta">28 scripts · SBA recording sheet</div></div><div class="reminder-time">Wed, 9am</div></div>
+          <div class="reminder-item info"><div class="reminder-dot dot-purple"></div><div class="reminder-text"><div class="reminder-title">SBA marks to HOD — all subjects</div><div class="reminder-meta">Term 2 deadline</div></div><div class="reminder-time">Fri, 12pm</div></div>
+          <div class="reminder-item info"><div class="reminder-dot dot-purple"></div><div class="reminder-text"><div class="reminder-title">Staff meeting — curriculum review</div><div class="reminder-meta">Boardroom · 30 min</div></div><div class="reminder-time">Thu, 2pm</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLANNING -->
+    <div class="screen" id="screen-planning">
+      <div class="ai-strip"><div class="ai-avatar">🗂️</div><div class="ai-text"><div class="ai-greeting">Lesson Planning</div><div class="ai-sub">Build weekly and term plans with AI. Fully CAPS-aligned per phase and subject.</div></div></div>
+      <div class="card"><div class="card-header"><span class="card-icon">🗂️</span><div class="card-title">Week 18 — Term 2 Plan</div><button class="card-action">+ New Plan</button></div><div style="padding:20px;color:var(--color-text-muted);font-size:0.82rem">Weekly planning view — coming in next patch build.</div></div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="screen" id="screen-reports">
+      <div class="ai-strip"><div class="ai-avatar">📊</div><div class="ai-text"><div class="ai-greeting">Reports</div><div class="ai-sub">Track productivity, document output, and moderation completion across terms.</div></div></div>
+      <div class="card"><div class="card-header"><span class="card-icon">📊</span><div class="card-title">Term 2 Activity Summary</div></div><div style="padding:20px;color:var(--color-text-muted);font-size:0.82rem">Reports view — coming in next patch build.</div></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="screen" id="screen-settings">
+      <div class="ai-strip"><div class="ai-avatar">⚙️</div><div class="ai-text"><div class="ai-greeting">Settings</div><div class="ai-sub">Manage your profile, school details, timetable, and notification preferences.</div></div></div>
+
+      <!-- TIMETABLE SETUP CARD -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon">📅</span>
+          <div class="card-title">Timetable Setup</div>
+          <button class="card-action" id="changeTTBtn" onclick="showChangeTTModal()" style="display:none">Change Timetable</button>
+        </div>
+
+        <div class="setup-steps">
+          <div class="step-indicator"><div class="step-dot active" id="dot1">1</div><span class="step-label" id="lbl1">Cycle Configuration</span></div>
+          <div class="step-line" id="line1"></div>
+          <div class="step-indicator"><div class="step-dot" id="dot2">2</div><span class="step-label" id="lbl2">Populate Periods</span></div>
+          <div class="step-line" id="line2"></div>
+          <div class="step-indicator"><div class="step-dot" id="dot3">3</div><span class="step-label" id="lbl3">Save & Activate</span></div>
+        </div>
+
+        <!-- STEP 1 -->
+        <div class="step-panel active" id="step1">
+          <div class="form-body">
+            <p style="font-size:0.78rem;color:var(--color-text-mid);line-height:1.6">Configure your teaching cycle. Days will be labelled automatically and you can rename each one. The number of periods applies equally to all days. Breaks and lunch are not included.</p>
+            <div class="select-row-2">
+              <div><label class="input-label">Days in Cycle</label><input type="number" class="number-input" id="cycledays" min="5" max="10" value="5" oninput="updateDayNames()"><div style="font-size:0.63rem;color:var(--color-text-muted);margin-top:4px">Range: 5–10 days</div></div>
+              <div><label class="input-label">Periods Per Day</label><input type="number" class="number-input" id="cycleperiods" min="5" max="14" value="8"><div style="font-size:0.63rem;color:var(--color-text-muted);margin-top:4px">Range: 5–14 periods</div></div>
+            </div>
+            <div><label class="input-label">Rename Days (optional)</label><div id="dayNamesWrap" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px"></div></div>
+            <div style="display:flex;justify-content:flex-end"><button class="btn-primary" onclick="goStep(2)">Next: Populate Periods →</button></div>
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step-panel" id="step2">
+          <div style="padding:14px 18px 10px;font-size:0.78rem;color:var(--color-text-mid);line-height:1.6">Fill each cell. Choose <strong>Teaching</strong> (Subject / Grade / Class), <strong>Free Period</strong>, or <strong>Admin Period</strong>. Teaching cells feed into your task and carry-over system.</div>
+          <div class="tt-grid-wrap"><table class="tt-grid" id="ttGrid"></table></div>
+          <div style="padding:14px 18px;display:flex;gap:10px;justify-content:space-between">
+            <button class="btn-secondary" onclick="goStep(1)">← Back</button>
+            <button class="btn-primary" onclick="goStep(3)">Next: Review & Save →</button>
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step-panel" id="step3">
+          <div class="form-body">
+            <div style="background:var(--color-primary-xl);border:1px solid rgba(90,62,118,0.18);border-radius:var(--radius-md);padding:16px">
+              <div style="font-size:0.85rem;font-weight:700;color:var(--color-primary);margin-bottom:6px">✅ Timetable Ready to Save</div>
+              <div style="font-size:0.75rem;color:var(--color-text-mid);line-height:1.6">Your timetable has been configured. Once saved, the structure will be locked by default — you can still edit subject, grade, and class per period at any time. To make structural changes, unlock via the timetable screen.</div>
+            </div>
+            <div style="background:var(--color-accent-lt);border:1px solid rgba(230,179,71,0.3);border-radius:var(--radius-md);padding:14px;font-size:0.75rem;color:var(--color-accent-dk);line-height:1.6"><strong>📌 Note:</strong> Only one active timetable per account. Your previous timetable data is archived, not deleted. Carry-over history is preserved.</div>
+            <div style="display:flex;gap:10px;justify-content:space-between">
+              <button class="btn-secondary" onclick="goStep(2)">← Back</button>
+              <button class="btn-gold" onclick="saveTimetable()">🔒 Save & Activate Timetable</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile + Notifications -->
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><span class="card-icon">👤</span><div class="card-title">Profile</div></div>
+          <div class="form-body">
+            <div><label class="input-label">Full Name</label><input type="text" class="text-input" id="profileName" placeholder="e.g. Ms. N. Molefe"></div>
+            <div><label class="input-label">Post Level</label><select class="select-input"><option>Post Level 1</option><option>Post Level 2 (HOD)</option><option>Deputy Principal</option></select></div>
+            <div><label class="input-label">School</label><input type="text" class="text-input" id="profileSchool" placeholder="e.g. Kempton Park Primary School"></div>
+            <button class="btn-primary" id="saveProfileBtn" onclick="saveProfile(event)">Save Profile</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-icon">🔔</span><div class="card-title">Notifications</div></div>
+          <div class="form-body" style="gap:0">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--color-border-lt);font-size:0.8rem;color:var(--color-text-mid)">Email reminders<strong style="color:var(--color-primary)">ON</strong></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--color-border-lt);font-size:0.8rem;color:var(--color-text-mid)">Moderation due alerts<strong style="color:var(--color-primary)">ON</strong></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--color-border-lt);font-size:0.8rem;color:var(--color-text-mid)">Carry-over notifications<strong style="color:var(--color-primary)">ON</strong></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:0.8rem;color:var(--color-text-mid)">CAPS calendar auto-reminders<strong style="color:var(--color-text-muted)">OFF</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="changeTTModal">
+  <div class="modal">
+    <h3>⚠️ Change Timetable?</h3>
+    <p>This will replace your current active timetable. Your carry-over history and previous timetable data will be preserved and archived — nothing will be deleted.</p>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('changeTTModal')">Cancel</button>
+      <button class="btn-primary" onclick="confirmChangeTT()">Yes, Change Timetable</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── NAVIGATION ───
+const titles={dashboard:'Dashboard',timetable:'My Timetable',lesson:'Lesson Prep',worksheets:'Worksheets & Memos',planning:'Lesson Planning',moderation:'Moderation',reminders:'Reminders',reports:'Reports',settings:'Settings'};
+function switchScreen(name,navEl){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('visible'));
+  document.getElementById('screen-'+name).classList.add('visible');
+  document.getElementById('pageTitle').textContent=titles[name]||name;
+  if(navEl){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));navEl.classList.add('active');}
+  document.getElementById('mainContent').scrollTop=0;
+  closeMobileSidebar();
+  if(name==='timetable'){initTimetableTabs();renderTimetable();}
+}
+
+// ─── SIDEBAR COLLAPSE (PATCH 1) ───
+let collapsed=false;
+document.getElementById('sidebarToggle').addEventListener('click',()=>{
+  collapsed=!collapsed;
+  document.getElementById('sidebar').classList.toggle('collapsed',collapsed);
+});
+function openMobileSidebar(){document.getElementById('sidebar').classList.add('mobile-open');}
+function closeMobileSidebar(){document.getElementById('sidebar').classList.remove('mobile-open');}
+
+// ─── LANG ───
+function setLang(lang,btn){document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+
+// ─── TIMETABLE DATA MODEL ───
+const TT_DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+let currentDay = 'Monday';
+let ttLocked = true;
+let editingPeriod = null; // {day, idx}
+
+const timetableData = {
+  Monday: [
+    {start:'07:30',end:'08:10',type:'teaching',subject:'Afrikaans HT',grade:'Grade 6',cls:'A',notes:'',done:true,carryover:false},
+    {start:'08:10',end:'08:50',type:'teaching',subject:'English HL',grade:'Grade 5',cls:'B',notes:'',done:true,carryover:false},
+    {start:'08:50',end:'09:30',type:'teaching',subject:'Mathematics',grade:'Grade 7',cls:'A',notes:'',done:true,carryover:false},
+    {start:'09:30',end:'10:10',type:'teaching',subject:'Natural Sciences & Technology',grade:'Grade 6',cls:'A',notes:'',done:false,carryover:false},
+    {start:'10:30',end:'11:10',type:'teaching',subject:'Afrikaans HT',grade:'Grade 7',cls:'B',notes:'Opstel peer review',done:false,carryover:true},
+    {start:'11:10',end:'11:50',type:'teaching',subject:'English HL',grade:'Grade 7',cls:'A',notes:'',done:false,carryover:false},
+    {start:'11:50',end:'12:30',type:'teaching',subject:'Afrikaans HT',grade:'Grade 5',cls:'A',notes:'',done:false,carryover:false},
+    {start:'13:30',end:'14:10',type:'teaching',subject:'Natural Sciences & Technology',grade:'Grade 5',cls:'A',notes:'',done:false,carryover:false},
+  ],
+  Tuesday:   [{start:'07:30',end:'08:10',type:'teaching',subject:'Mathematics',grade:'Grade 6',cls:'A',notes:'',done:false,carryover:false},{start:'08:10',end:'08:50',type:'free',subject:'',grade:'',cls:'',notes:'Prep time',done:false,carryover:false},{start:'08:50',end:'09:30',type:'teaching',subject:'English HL',grade:'Grade 6',cls:'B',notes:'',done:false,carryover:false},{start:'09:30',end:'10:10',type:'teaching',subject:'Life Skills',grade:'Grade 5',cls:'A',notes:'',done:false,carryover:false},{start:'10:30',end:'11:10',type:'admin',subject:'',grade:'',cls:'',notes:'HOD meeting',done:false,carryover:false},{start:'11:10',end:'12:30',type:'teaching',subject:'Afrikaans HT',grade:'Grade 6',cls:'A',notes:'',done:false,carryover:false}],
+  Wednesday: [{start:'07:30',end:'08:10',type:'teaching',subject:'English HL',grade:'Grade 5',cls:'A',notes:'',done:false,carryover:false},{start:'08:10',end:'09:30',type:'teaching',subject:'Mathematics',grade:'Grade 7',cls:'B',notes:'',done:false,carryover:false},{start:'09:30',end:'10:10',type:'teaching',subject:'Natural Sciences & Technology',grade:'Grade 6',cls:'A',notes:'',done:false,carryover:false},{start:'10:30',end:'11:50',type:'free',subject:'',grade:'',cls:'',notes:'',done:false,carryover:false},{start:'11:50',end:'12:30',type:'teaching',subject:'Afrikaans HT',grade:'Grade 7',cls:'A',notes:'',done:false,carryover:false}],
+  Thursday:  [{start:'07:30',end:'08:10',type:'teaching',subject:'Life Skills',grade:'Grade 6',cls:'A',notes:'',done:false,carryover:false},{start:'08:10',end:'09:30',type:'teaching',subject:'Afrikaans HT',grade:'Grade 5',cls:'B',notes:'',done:false,carryover:false},{start:'09:30',end:'10:10',type:'admin',subject:'',grade:'',cls:'',notes:'SBA capturing',done:false,carryover:false},{start:'10:30',end:'11:10',type:'teaching',subject:'English HL',grade:'Grade 7',cls:'A',notes:'',done:false,carryover:false},{start:'11:10',end:'12:30',type:'teaching',subject:'Mathematics',grade:'Grade 6',cls:'A',notes:'',done:false,carryover:false}],
+  Friday:    [{start:'07:30',end:'08:10',type:'teaching',subject:'Afrikaans HT',grade:'Grade 7',cls:'B',notes:'',done:false,carryover:false},{start:'08:10',end:'08:50',type:'teaching',subject:'English HL',grade:'Grade 6',cls:'A',notes:'',done:false,carryover:false},{start:'08:50',end:'09:30',type:'free',subject:'',grade:'',cls:'',notes:'',done:false,carryover:false},{start:'09:30',end:'10:10',type:'teaching',subject:'Natural Sciences & Technology',grade:'Grade 7',cls:'A',notes:'',done:false,carryover:false},{start:'10:30',end:'11:10',type:'teaching',subject:'Mathematics',grade:'Grade 5',cls:'A',notes:'',done:false,carryover:false}],
+};
+
+// ─── RENDER TIMETABLE ───
+function initTimetableTabs(){
+  const tabRow = document.getElementById('ttTabRow');
+  if(!tabRow) return;
+  tabRow.innerHTML = TT_DAYS.map(day =>
+    `<div class="tab${day===currentDay?' active':''}" onclick="switchDay('${day}',this)">${day}</div>`
+  ).join('');
+}
+
+function switchDay(day, el){
+  currentDay = day;
+  document.querySelectorAll('#ttTabRow .tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  renderTimetable();
+}
+
+function renderTimetable(){
+  const body = document.getElementById('ttBody');
+  if(!body) return;
+  const periods = timetableData[currentDay];
+  let html = '';
+
+  // Unlock hint banner
+  if(!ttLocked){
+    html += `<div class="unlock-hint">&#128161; <span><b>Unlocked</b> &mdash; tap any period row to edit it</span></div>`;
+  }
+
+  html += '<div class="timetable-body" id="ttPeriodList">';
+
+  periods.forEach((p, idx) => {
+    const isTeaching = p.type === 'teaching';
+    const label = isTeaching
+      ? `${p.subject} &middot; ${p.grade}${p.cls ? ' / '+p.cls : ''}`
+      : (p.type === 'free' ? 'Free Period' : 'Admin Period');
+    const task = p.notes || '';
+
+    const rowClasses = [
+      'period-row',
+      !ttLocked ? 'editable' : '',
+      p.done ? 'done' : '',
+      p.carryover ? 'carryover' : '',
+      (!p.done && !p.carryover && idx === 3 && ttLocked) ? 'active-period' : ''
+    ].filter(Boolean).join(' ');
+
+    const typeTag = !isTeaching
+      ? `<span class="type-chip ${p.type==='free'?'chip-free':'chip-admin'}">${p.type==='free'?'Free':'Admin'}</span>`
+      : '';
+
+    // RIGHT SIDE: locked = checkbox for teaching; unlocked = delete btn only (whole row taps to edit)
+    let rightEl = '';
+    if(ttLocked){
+      if(isTeaching){
+        rightEl = `<div class="period-check${p.done?' checked':''}" onclick="event.stopPropagation();toggleDone('${currentDay}',${idx})"></div>`;
+      } else if(p.carryover){
+        rightEl = `<span class="carryover-badge">&#10227; Carry-over</span>`;
+      }
+    } else {
+      rightEl = `<button class="period-delete-btn" onclick="event.stopPropagation();deletePeriod('${currentDay}',${idx})" title="Remove">&#10005;</button>`;
+    }
+
+    const rowClick = !ttLocked ? `onclick="openEdit('${currentDay}',${idx})"` : '';
+
+    html += `<div class="${rowClasses}" id="prow_${currentDay}_${idx}" ${rowClick}>
+      <div class="period-num">P${idx+1}</div>
+      <div class="period-subject">
+        <div class="subject-name">${typeTag}${label}</div>
+        <div style="font-size:0.63rem;color:var(--color-text-muted);margin-top:1px;font-weight:500">${p.start}&ndash;${p.end}</div>
+        ${task ? `<div class="period-task" style="margin-top:2px">${task}</div>` : ''}
+      </div>
+      <div class="period-row-actions" style="flex-shrink:0">${rightEl}</div>
+    </div>`;
+  });
+
+  html += '</div>';
+
+  if(!ttLocked){
+    html += `<div class="add-period-bar">
+      <button class="add-period-btn" onclick="addPeriod('${currentDay}')">&#43;&nbsp; Add Period to ${currentDay}</button>
+    </div>`;
+  }
+
+  body.innerHTML = html;
+}
+
+function toggleDone(day, idx){
+  timetableData[day][idx].done = !timetableData[day][idx].done;
+  renderTimetable();
+}
+
+// ─── EDIT MODAL ───
+function openEdit(day, idx){
+  if(ttLocked) return;
+  editingPeriod = {day, idx};
+  const p = timetableData[day][idx];
+  const m = document.getElementById('periodEditModal');
+
+  document.getElementById('editStart').value = p.start;
+  document.getElementById('editEnd').value = p.end;
+  document.getElementById('editType').value = p.type;
+  renderEditFields(p);
+  m.classList.add('open');
+}
+
+function renderEditFields(p){
+  const wrap = document.getElementById('editFieldsWrap');
+  if(p.type === 'teaching'){
+    // Build CAPS subject options
+    let subjectOpts = '<option value="">Subject...</option>';
+    for(const [phase, subjects] of Object.entries(CAPS_SUBJECTS)){
+      subjectOpts += `<optgroup label="${phase}">`;
+      subjects.forEach(s => { subjectOpts += `<option value="${s}"${p.subject===s?' selected':''}>${s}</option>`; });
+      subjectOpts += '</optgroup>';
+    }
+    if(customSubjects.length){
+      subjectOpts += '<optgroup label="&#9135; My Custom Subjects &#9135;">';
+      customSubjects.forEach(s=>{ subjectOpts += `<option value="${s}"${p.subject===s?' selected':''}>${s}</option>`; });
+      subjectOpts += '</optgroup>';
+    }
+    subjectOpts += '<optgroup label="&#9135;&#9135;&#9135;&#9135;&#9135;&#9135;&#9135;&#9135;&#9135;"><option value="__add__">&#65291; Add Custom Subject</option></optgroup>';
+
+    wrap.innerHTML = `
+      <div><label class="input-label">Subject</label>
+        <select class="select-input" id="editSubject" onchange="handleEditSubjectChange(this)">
+          ${subjectOpts}
+        </select>
+        <div class="custom-subj-row" id="editCustomRow" style="display:none">
+          <input class="custom-subj-input" id="editCustomInp" type="text" placeholder="Type subject name...">
+          <button class="custom-subj-save" onclick="saveEditCustom()">Save</button>
+          <button class="custom-subj-cancel" onclick="document.getElementById('editCustomRow').style.display='none'">&#10005;</button>
+        </div>
+      </div>
+      <div class="select-row-2">
+        <div><label class="input-label">Grade</label>
+          <select class="select-input" id="editGrade">
+            <option value="">Grade...</option>
+            ${[1,2,3,4,5,6,7,8,9,10,11,12].map(g=>`<option${p.grade==='Grade '+g?' selected':''}>${'Grade '+g}</option>`).join('')}
+          </select>
+        </div>
+        <div><label class="input-label">Class</label>
+          <select class="select-input" id="editClass">
+            <option value="">Class...</option>
+            ${['A','B','C','D','E','F'].map(c=>`<option${p.cls===c?' selected':''}>${c}</option>`).join('')}
+          </select>
+        </div>
+      </div>`;
+  } else {
+    wrap.innerHTML = `<div><label class="input-label">Notes</label>
+      <textarea class="textarea-input" id="editNotes" placeholder="Add notes for this period...">${p.notes||''}</textarea></div>`;
+  }
+}
+
+function handleEditSubjectChange(sel){
+  if(sel.value==='__add__'){
+    sel.value='';
+    document.getElementById('editCustomRow').style.display='flex';
+    document.getElementById('editCustomInp').focus();
+  }
+}
+
+function saveEditCustom(){
+  const val = document.getElementById('editCustomInp').value.trim();
+  if(!val) return;
+  if(!customSubjects.includes(val)) customSubjects.push(val);
+  // Re-render fields with saved value pre-selected
+  const p = timetableData[editingPeriod.day][editingPeriod.idx];
+  p.subject = val;
+  renderEditFields({...p, subject: val});
+}
+
+function saveEdit(){
+  if(!editingPeriod) return;
+  const {day, idx} = editingPeriod;
+  const p = timetableData[day][idx];
+  p.start = document.getElementById('editStart').value || p.start;
+  p.end   = document.getElementById('editEnd').value   || p.end;
+  p.type  = document.getElementById('editType').value;
+  if(p.type === 'teaching'){
+    p.subject = document.getElementById('editSubject')?.value || p.subject;
+    p.grade   = document.getElementById('editGrade')?.value   || p.grade;
+    p.cls     = document.getElementById('editClass')?.value   || p.cls;
+    p.notes   = '';
+  } else {
+    p.subject = ''; p.grade = ''; p.cls = '';
+    p.notes = document.getElementById('editNotes')?.value || '';
+  }
+  document.getElementById('periodEditModal').classList.remove('open');
+  editingPeriod = null;
+  renderTimetable();
+  showSaveFeedback(day);
+}
+
+function cancelEdit(){
+  document.getElementById('periodEditModal').classList.remove('open');
+  editingPeriod = null;
+}
+
+function showSaveFeedback(day){
+  // Brief "Saved" toast
+  let toast = document.getElementById('ttSaveToast');
+  if(!toast){ toast=document.createElement('div'); toast.id='ttSaveToast'; toast.className='tt-save-toast'; document.body.appendChild(toast); }
+  toast.textContent = day + ' saved';
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'), 2000);
+}
+
+// ─── ADD / DELETE PERIODS ───
+function addPeriod(day){
+  const periods = timetableData[day];
+  const lastEnd = periods.length ? periods[periods.length-1].end : '07:30';
+  // Auto-calculate start = last end, end = last end + 40min
+  const [h,m] = lastEnd.split(':').map(Number);
+  const newStart = lastEnd;
+  const endMin = m+40; const newEnd = `${String(h+(endMin>=60?1:0)).padStart(2,'0')}:${String(endMin%60).padStart(2,'0')}`;
+  timetableData[day].push({start:newStart,end:newEnd,type:'teaching',subject:'',grade:'',cls:'',notes:'',done:false,carryover:false});
+  renderTimetable();
+  // Auto-open edit for the new period
+  openEdit(day, timetableData[day].length-1);
+}
+
+function deletePeriod(day, idx){
+  if(!confirm(`Remove Period ${idx+1} from ${day}?`)) return;
+  timetableData[day].splice(idx,1);
+  renderTimetable();
+  showSaveFeedback(day);
+}
+
+// ─── TABS ───
+function setTab(el){ switchDay(el.textContent, el); }
+
+// ─── TIMETABLE LOCK ───
+function toggleLock(){
+  ttLocked = !ttLocked;
+  const btn  = document.getElementById('lockBtn');
+  const warn = document.getElementById('lockWarning');
+  const changeTTBtn = document.getElementById('changeTTBtn');
+  if(ttLocked){
+    btn.classList.remove('unlocked');
+    document.getElementById('lockIcon').textContent  = '🔒';
+    document.getElementById('lockLabel').textContent = 'Timetable Locked';
+    document.getElementById('lockStatus').textContent= 'Display only · Unlock to edit';
+    warn.classList.remove('visible');
+    if(changeTTBtn) changeTTBtn.style.display='none';
+  } else {
+    btn.classList.add('unlocked');
+    document.getElementById('lockIcon').textContent  = '🔓';
+    document.getElementById('lockLabel').textContent = 'Timetable Unlocked';
+    document.getElementById('lockStatus').textContent= 'Tap any period to edit';
+    warn.classList.add('visible');
+    if(changeTTBtn) changeTTBtn.style.display='inline';
+  }
+  renderTimetable();
+}
+
+// Init timetable + auth on load
+document.addEventListener('DOMContentLoaded', ()=>{ initTimetableTabs(); renderTimetable(); initAuth(); });
+
+// ─── SETUP WIZARD (PATCH 3) ───
+function goStep(n){
+  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('step'+n).classList.add('active');
+  // Update dots
+  for(let i=1;i<=3;i++){
+    const dot=document.getElementById('dot'+i);
+    if(i<n){dot.className='step-dot done';dot.textContent='✓';}
+    else if(i===n){dot.className='step-dot active';dot.textContent=i;}
+    else{dot.className='step-dot';dot.textContent=i;}
+  }
+  for(let i=1;i<=2;i++){
+    const line=document.getElementById('line'+i);
+    if(line) line.classList.toggle('done',i<n);
+  }
+  if(n===2) buildGrid();
+}
+
+function updateDayNames(){
+  const n=Math.min(Math.max(parseInt(document.getElementById('cycledays').value)||5,5),10);
+  const wrap=document.getElementById('dayNamesWrap');
+  const cols=Math.min(n,5);
+  wrap.style.gridTemplateColumns=`repeat(${cols},1fr)`;
+  wrap.innerHTML='';
+  for(let i=1;i<=n;i++){
+    const inp=document.createElement('input');
+    inp.type='text';inp.className='text-input';inp.value='Day '+i;inp.placeholder='Day '+i;
+    inp.style.textAlign='center';inp.style.fontWeight='600';
+    wrap.appendChild(inp);
+  }
+}
+updateDayNames();
+
+// ─── CAPS SUBJECT MASTER LIST ───
+const CAPS_SUBJECTS = {
+  'Foundation Phase (Gr 1–3)': [
+    'Home Language','First Additional Language','Mathematics','Life Skills'
+  ],
+  'Intermediate Phase (Gr 4–6)': [
+    'Home Language','First Additional Language','Mathematics',
+    'Natural Sciences & Technology','Social Sciences','Life Skills','Arts & Culture'
+  ],
+  'Senior Phase (Gr 7–9)': [
+    'Home Language','First Additional Language','Mathematics',
+    'Natural Sciences','Technology','Social Sciences',
+    'Economic & Management Sciences','Life Orientation',
+    'Arts & Culture','Creative Arts'
+  ],
+  'FET Phase (Gr 10–12)': [
+    'Home Language','First Additional Language','Mathematics',
+    'Mathematical Literacy','Life Orientation','Physical Sciences',
+    'Life Sciences','Geography','History','Accounting','Business Studies',
+    'Economics','Consumer Studies','Hospitality Studies','Tourism',
+    'Engineering Graphics & Design','Information Technology',
+    'Computer Applications Technology','Dramatic Arts','Music','Visual Arts',
+    'Agricultural Sciences','Agricultural Technology','Civil Technology',
+    'Electrical Technology','Mechanical Technology','Religion Studies'
+  ]
+};
+
+// Teacher's saved custom subjects (persists in memory for this session)
+let customSubjects = [];
+
+// Build the subject <select> HTML for a given cell id
+function buildSubjectSelectHTML(cellId) {
+  let html = `<select class="cell-sub-select caps-subject-select" id="subj_${cellId}" onchange="handleSubjectChange('${cellId}',this)">`;
+  html += '<option value="">Subject…</option>';
+  for (const [phase, subjects] of Object.entries(CAPS_SUBJECTS)) {
+    html += `<optgroup label="${phase}">`;
+    subjects.forEach(s => { html += `<option value="${s}">${s}</option>`; });
+    html += '</optgroup>';
+  }
+  if (customSubjects.length > 0) {
+    html += '<optgroup label="─ My Custom Subjects ─">';
+    customSubjects.forEach(s => { html += `<option value="${s}">${s}</option>`; });
+    html += '</optgroup>';
+  }
+  html += '<optgroup label="─────────────────">';
+  html += '<option value="__add_custom__">＋ Add Custom Subject</option>';
+  html += '</optgroup>';
+  html += '</select>';
+  // Custom subject inline input (hidden by default)
+  html += `<div class="custom-subj-row" id="customrow_${cellId}" style="display:none">
+    <input class="custom-subj-input" id="custominp_${cellId}" type="text" placeholder="Type subject name…" onkeydown="handleCustomKey(event,'${cellId}')">
+    <button class="custom-subj-save" onclick="saveCustomSubject('${cellId}')">Save</button>
+    <button class="custom-subj-cancel" onclick="cancelCustomSubject('${cellId}')">✕</button>
+  </div>`;
+  return html;
+}
+
+function handleSubjectChange(cellId, sel) {
+  if (sel.value === '__add_custom__') {
+    sel.value = ''; // reset dropdown
+    document.getElementById('customrow_' + cellId).style.display = 'flex';
+    document.getElementById('custominp_' + cellId).focus();
+  }
+}
+
+function saveCustomSubject(cellId) {
+  const inp = document.getElementById('custominp_' + cellId);
+  const val = inp.value.trim();
+  if (!val) return;
+  if (!customSubjects.includes(val)) customSubjects.push(val);
+  // Rebuild all subject selects on the grid
+  refreshAllSubjectSelects();
+  // Select the new subject in this cell
+  const sel = document.getElementById('subj_' + cellId);
+  if (sel) sel.value = val;
+  cancelCustomSubject(cellId);
+}
+
+function cancelCustomSubject(cellId) {
+  const row = document.getElementById('customrow_' + cellId);
+  if (row) { row.style.display = 'none'; document.getElementById('custominp_' + cellId).value = ''; }
+}
+
+function handleCustomKey(e, cellId) {
+  if (e.key === 'Enter') saveCustomSubject(cellId);
+  if (e.key === 'Escape') cancelCustomSubject(cellId);
+}
+
+function refreshAllSubjectSelects() {
+  // Find all subject selects currently rendered and rebuild their options
+  document.querySelectorAll('.caps-subject-select').forEach(sel => {
+    const cellId = sel.id.replace('subj_', '');
+    const currentVal = sel.value;
+    // Rebuild options
+    sel.innerHTML = '';
+    let tempDiv = document.createElement('div');
+    tempDiv.innerHTML = buildSubjectSelectHTML(cellId);
+    const newSel = tempDiv.querySelector('select');
+    sel.innerHTML = newSel.innerHTML;
+    sel.value = currentVal; // restore selection
+  });
+}
+
+function buildGrid(){
+  const days=Math.min(Math.max(parseInt(document.getElementById('cycledays').value)||5,5),10);
+  const periods=Math.min(Math.max(parseInt(document.getElementById('cycleperiods').value)||8,5),14);
+  const dayInputs=document.querySelectorAll('#dayNamesWrap input');
+  const dayNames=Array.from(dayInputs).map((inp,i)=>inp.value||'Day '+(i+1));
+  const table=document.getElementById('ttGrid');
+  let html='<tr><th>Period</th>';
+  for(let d=0;d<days;d++) html+=`<th>${dayNames[d]}</th>`;
+  html+='</tr>';
+  for(let p=1;p<=periods;p++){
+    html+=`<tr><td class="period-label">P${p}</td>`;
+    for(let d=0;d<days;d++){
+      const id=`c_d${d}_p${p}`;
+      html+=`<td>
+        <select class="cell-type-select" id="t_${id}" onchange="updateCell('${id}')">
+          <option value="teaching">Teaching</option>
+          <option value="free">Free Period</option>
+          <option value="admin">Admin Period</option>
+        </select>
+        <div id="${id}">
+          ${buildSubjectSelectHTML(id)}
+          <select class="cell-sub-select"><option value="">Grade…</option><option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option><option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option><option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option></select>
+          <select class="cell-sub-select"><option value="">Class…</option><option>A</option><option>B</option><option>C</option><option>D</option></select>
+        </div>
+      </td>`;
+    }
+    html+='</tr>';
+  }
+  table.innerHTML=html;
+}
+
+function updateCell(id){
+  const type=document.getElementById('t_'+id).value;
+  const content=document.getElementById(id);
+  if(type==='teaching'){
+    content.innerHTML=
+      buildSubjectSelectHTML(id)+
+      `<select class="cell-sub-select"><option value="">Grade…</option><option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option><option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option><option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option></select>
+       <select class="cell-sub-select"><option value="">Class…</option><option>A</option><option>B</option><option>C</option><option>D</option></select>`;
+  } else {
+    const label=type==='free'?'Free Period':'Admin Period';
+    const cls=type==='free'?'cell-free':'cell-admin';
+    content.innerHTML=`<span class="cell-tag ${cls}">${label}</span><textarea class="cell-note" placeholder="Add a note…"></textarea>`;
+  }
+}
+
+function saveTimetable(){
+  goStep(1);
+  document.getElementById('changeTTBtn').style.display='inline';
+  switchScreen('timetable',document.querySelector('[data-label="My Timetable"]'));
+  ttLocked=true;
+  document.getElementById('lockBtn').classList.remove('unlocked');
+  document.getElementById('lockIcon').textContent='🔒';
+  document.getElementById('lockLabel').textContent='Timetable Locked';
+  document.getElementById('lockStatus').textContent='Structure protected · Content editable';
+  document.getElementById('lockWarning').classList.remove('visible');
+}
+
+// ─── MODAL ───
+function showChangeTTModal(){
+  if(ttLocked){alert('Please unlock the timetable first before making changes.');return;}
+  document.getElementById('changeTTModal').classList.add('open');
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function confirmChangeTT(){
+  closeModal('changeTTModal');
+  switchScreen('settings',document.querySelector('[data-label="Settings"]'));
+  goStep(1);
+}
+
+// ════════════════════════════════════════════
+// LESSON PLAN GENERATOR + CAPS PDF EXPORT
+// ════════════════════════════════════════════
+function getTeacherProfile(){
+  return{
+    name:document.getElementById('profileName')?.value||'Ms. N. Molefe',
+    school:document.getElementById('profileSchool')?.value||'Kempton Park Primary School'
+  };
+}
+
+function buildLessonData(grade,subject,term,week,duration,topic){
+  const today=new Date().toLocaleDateString('en-ZA',{day:'2-digit',month:'long',year:'numeric'});
+  const p=getTeacherProfile();
+  return{
+    school:p.school, educator:p.name, subject:subject||'Natural Sciences & Technology',
+    grade:grade||'Grade 6', term:term||'2', week:week||'18',
+    date:today, duration:(duration||'40')+' minutes',
+    topic:topic||'Separation of Mixtures',
+    subTopic:'Filtration and Evaporation',
+    capsRef:'NS&T Grade 6 Term 2 — Matter & Materials: Mixtures (CAPS p. 42)',
+    objectives:'1. Identify that mixtures can be separated using different methods.\n2. Explain how filtration separates an insoluble solid from a liquid.\n3. Describe how evaporation separates a dissolved solid from a liquid.',
+    priorKnowledge:'Learners should know the difference between a mixture and a pure substance (Gr 5 Term 3). They should be able to identify soluble and insoluble substances.',
+    resources:'Textbook (NS&T Gr 6), filter paper, funnels, beakers, sand, salt, water, hot plate, safety goggles, Leuro Assistant worksheets.',
+    teacherActivities:'1. Introduction (5 min): Recap mixtures — think-pair-share: "How would you separate sand from water?"\n2. Demonstration (10 min): Demonstrate filtration using sand and water. Label apparatus on the board.\n3. Explanation (10 min): Explain evaporation using salt water. Show diagram linking to water cycle.\n4. Guided Practice (10 min): Learners complete observation table on worksheet.\n5. Closure (5 min): Summarise key points. Q&A. Preview next lesson.',
+    learnerActivities:'1. Think-pair-share: Discuss how to separate a mixture.\n2. Observe teacher demonstration — record observations in table.\n3. Label diagram of filtration apparatus.\n4. Complete worksheet: match separation method to mixture type.\n5. Write one sentence summarising what they learned.',
+    differentiation:'Support: Pre-labelled diagrams and word banks provided. Extension: Research industrial uses of filtration (e.g. water purification). EAL learners: Bilingual vocabulary list provided.',
+    assessment:'Informal: Observation during activity. Worksheet completion (formative). Exit ticket: Name one method of separation and explain when you would use it.',
+    reflection:''
+  };
+}
+
+let currentLessonData=null;
+
+function generateLessonPlan(){
+  const grade=document.getElementById('lp_grade')?.value;
+  const subject=document.getElementById('lp_subject')?.value;
+  const term=document.getElementById('lp_term')?.value;
+  const week=document.getElementById('lp_week')?.value;
+  const duration=document.getElementById('lp_duration')?.value;
+  const topic=document.getElementById('lp_topic')?.value;
+  if(!grade||!subject){alert('Please select a Grade and Subject first.');return;}
+  document.getElementById('lessonFormSection').style.display='none';
+  const preview=document.getElementById('lessonPlanPreview');
+  preview.style.display='block';
+  document.getElementById('previewTitle').textContent=grade+' — '+subject+(topic?': '+topic:'');
+  document.getElementById('lessonPlanContent').innerHTML='<div class="lp-generating"><div class="lp-spinner"></div>Generating CAPS-aligned lesson plan...</div>';
+  setTimeout(()=>{
+    currentLessonData=buildLessonData(grade,subject,term,week,duration,topic);
+    renderLessonPreview(currentLessonData);
+  },900);
+}
+
+function loadSamplePlan(){
+  currentLessonData=buildLessonData('Grade 6','Natural Sciences & Technology','2','18','40','Separation of Mixtures — Filtration and Evaporation');
+  document.getElementById('lessonFormSection').style.display='none';
+  document.getElementById('lessonPlanPreview').style.display='block';
+  document.getElementById('previewTitle').textContent='Gr6 NS&T — Separation of Mixtures';
+  renderLessonPreview(currentLessonData);
+}
+
+function closeLessonPreview(){
+  document.getElementById('lessonPlanPreview').style.display='none';
+  document.getElementById('lessonFormSection').style.display='';
+}
+
+function renderLessonPreview(d){
+  document.getElementById('lessonPlanContent').innerHTML=`
+  <div class="lesson-preview-body">
+    <div class="lp-section-header">&#127979; Header Information</div>
+    <table class="lp-table">
+      <tr><td class="lp-field">School Name</td><td class="lp-value" contenteditable="true">${d.school}</td><td class="lp-field">Educator</td><td class="lp-value" contenteditable="true">${d.educator}</td></tr>
+      <tr><td class="lp-field">Subject</td><td class="lp-value">${d.subject}</td><td class="lp-field">Grade</td><td class="lp-value">${d.grade}</td></tr>
+      <tr><td class="lp-field">Term</td><td class="lp-value">${d.term}</td><td class="lp-field">Week</td><td class="lp-value">${d.week}</td></tr>
+      <tr><td class="lp-field">Date</td><td class="lp-value" contenteditable="true">${d.date}</td><td class="lp-field">Duration</td><td class="lp-value">${d.duration}</td></tr>
+    </table>
+    <div class="lp-section-header">&#128214; Content &amp; CAPS Alignment</div>
+    <table class="lp-table">
+      <tr><td class="lp-field">Topic</td><td class="lp-value" contenteditable="true" colspan="3">${d.topic}</td></tr>
+      <tr><td class="lp-field">Sub-topic</td><td class="lp-value" contenteditable="true" colspan="3">${d.subTopic}</td></tr>
+      <tr><td class="lp-field">CAPS Reference</td><td class="lp-value" contenteditable="true" colspan="3">${d.capsRef}</td></tr>
+      <tr><td class="lp-field">Learning Objectives</td><td class="lp-value" contenteditable="true" colspan="3" style="white-space:pre-line">${d.objectives}</td></tr>
+      <tr><td class="lp-field">Prior Knowledge Required</td><td class="lp-value" contenteditable="true" colspan="3">${d.priorKnowledge}</td></tr>
+      <tr><td class="lp-field">Resources &amp; Materials</td><td class="lp-value" contenteditable="true" colspan="3">${d.resources}</td></tr>
+    </table>
+    <div class="lp-section-header">&#128101; Teaching &amp; Learning Activities</div>
+    <table class="lp-table">
+      <tr><td class="lp-field">Teacher Activities</td><td class="lp-value" contenteditable="true" style="white-space:pre-line">${d.teacherActivities}</td></tr>
+      <tr><td class="lp-field">Learner Activities</td><td class="lp-value" contenteditable="true" style="white-space:pre-line">${d.learnerActivities}</td></tr>
+    </table>
+    <div class="lp-section-header">&#9745; Support &amp; Assessment</div>
+    <table class="lp-table">
+      <tr><td class="lp-field">Differentiation / Support</td><td class="lp-value" contenteditable="true">${d.differentiation}</td></tr>
+      <tr><td class="lp-field">Assessment</td><td class="lp-value" contenteditable="true">${d.assessment}</td></tr>
+    </table>
+    <div class="lp-section-header">&#9998; Post-Lesson Reflection</div>
+    <table class="lp-table">
+      <tr><td class="lp-field">Reflection / Notes</td><td class="lp-value" contenteditable="true" style="min-height:60px">${d.reflection||'Complete after the lesson...'}</td></tr>
+    </table>
+    <div class="lp-pdf-actions">
+      <span style="font-size:0.68rem;color:var(--color-text-muted)">Tap any cell to edit before downloading.</span>
+      <button class="btn-secondary" onclick="closeLessonPreview()" style="padding:7px 12px;font-size:0.73rem">&#8592; Back</button>
+      <button class="btn-gold" onclick="downloadLessonPDF()" style="padding:7px 16px;font-size:0.73rem">&#8659; Download PDF</button>
+    </div>
+  </div>`;
+}
+
+function downloadLessonPDF(){
+  if(!currentLessonData){alert('Generate a lesson plan first.');return;}
+  const d=currentLessonData;
+  const cells=document.querySelectorAll('#lessonPlanContent .lp-value[contenteditable]');
+  function gc(i){return cells[i]?cells[i].innerText.trim():'';}
+
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const PW=210,ML=14,MR=14,CW=PW-ML-MR;
+  let y=0;
+
+  // Header bar
+  doc.setFillColor(67,45,88);
+  doc.rect(0,0,PW,28,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(255,255,255);
+  doc.text(gc(0)||d.school,ML,11);
+  doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(230,179,71);
+  doc.text('CAPS LESSON PLAN',ML,18);
+  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);
+  doc.text('LEURO ASSISTANT',PW-MR,10,{align:'right'});
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(200,200,230);
+  doc.text('AI for South African Educators',PW-MR,16,{align:'right'});
+  doc.setDrawColor(230,179,71);doc.setLineWidth(0.8);doc.line(0,28,PW,28);
+  y=34;
+
+  const PURPLE=[90,62,118],PLUM=[237,231,244],WHITE=[255,255,255],BORDER=[228,226,232],TEXT=[54,54,54],MID=[107,107,107];
+
+  function secHead(t){
+    if(y>268){doc.addPage();y=14;}
+    doc.setFillColor(...PURPLE);doc.roundedRect(ML,y,CW,7,1,1,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(255,255,255);
+    doc.text(t.toUpperCase(),ML+3,y+5);y+=9;
+  }
+
+  function row2(f1,v1,f2,v2){
+    const h=CW/2,fw=h*0.4,vw=h-fw,rh=7;
+    if(y+rh>277){doc.addPage();y=14;}
+    [[ML,f1,v1],[ML+h,f2,v2]].forEach(([x,f,v])=>{
+      doc.setFillColor(...PLUM);doc.rect(x,y,fw,rh,'F');
+      doc.setDrawColor(...BORDER);doc.setLineWidth(0.2);doc.rect(x,y,fw,rh);
+      doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(...PURPLE);
+      doc.text(f,x+2.5,y+4.6);
+      doc.setFillColor(...WHITE);doc.rect(x+fw,y,vw,rh,'F');doc.rect(x+fw,y,vw,rh);
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...TEXT);
+      doc.text(doc.splitTextToSize(v||'—',vw-4),x+fw+2.5,y+4.6);
+    });
+    y+=rh;
+  }
+
+  function row1(field,value){
+    const fw=CW*0.34,vw=CW-fw;
+    const lines=doc.splitTextToSize(value||'—',vw-5);
+    const rh=Math.max(7,lines.length*4.2+4);
+    if(y+rh>277){doc.addPage();y=14;}
+    doc.setFillColor(...PLUM);doc.rect(ML,y,fw,rh,'F');
+    doc.setDrawColor(...BORDER);doc.setLineWidth(0.2);doc.rect(ML,y,fw,rh);
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...PURPLE);
+    doc.text(field,ML+3,y+5);
+    doc.setFillColor(...WHITE);doc.rect(ML+fw,y,vw,rh,'F');doc.rect(ML+fw,y,vw,rh);
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...TEXT);
+    doc.text(lines,ML+fw+3,y+4.5,{lineHeightFactor:1.45});
+    y+=rh;
+  }
+
+  // Section 1: Header
+  secHead('Header Information');
+  row2('School Name',gc(0)||d.school,'Educator',gc(1)||d.educator);
+  row2('Subject',d.subject,'Grade',d.grade);
+  row2('Term',d.term,'Week',d.week);
+  row2('Date',gc(2)||d.date,'Duration',d.duration);
+  y+=4;
+
+  // Section 2: CAPS Content
+  secHead('Content & CAPS Alignment');
+  row1('Topic',gc(3)||d.topic);
+  row1('Sub-topic',gc(4)||d.subTopic);
+  row1('CAPS Reference',gc(5)||d.capsRef);
+  row1('Learning Objectives',gc(6)||d.objectives);
+  row1('Prior Knowledge Required',gc(7)||d.priorKnowledge);
+  row1('Resources & Materials',gc(8)||d.resources);
+  y+=4;
+
+  // Section 3: Activities
+  secHead('Teaching & Learning Activities');
+  row1('Teacher Activities',gc(9)||d.teacherActivities);
+  row1('Learner Activities',gc(10)||d.learnerActivities);
+  y+=4;
+
+  // Section 4: Assessment
+  secHead('Support & Assessment');
+  row1('Differentiation / Support',gc(11)||d.differentiation);
+  row1('Assessment',gc(12)||d.assessment);
+  y+=4;
+
+  // Section 5: Reflection
+  secHead('Post-Lesson Reflection');
+  const ref=gc(13)||'';
+  row1('Reflection / Notes',ref==='Complete after the lesson...'?'':ref);
+
+  // Footer on each page
+  const tp=doc.internal.getNumberOfPages();
+  for(let i=1;i<=tp;i++){
+    doc.setPage(i);
+    doc.setDrawColor(...BORDER);doc.setLineWidth(0.3);doc.line(ML,291,ML+CW,291);
+    doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(...MID);
+    doc.text('Generated by Leuro Assistant — AI for South African Educators',ML,294);
+    doc.setTextColor(...PURPLE);
+    doc.text('leuroai.co.za',PW-MR,294,{align:'right'});
+    doc.setTextColor(...MID);
+    doc.text('Page '+i+' of '+tp,PW/2,294,{align:'center'});
+  }
+
+  const fn='Leuro_LP_'+d.grade.replace(' ','')+'_'+d.subject.replace(/[^a-zA-Z0-9]/g,'_').replace(/_+/g,'_')+'_T'+d.term+'W'+d.week+'.pdf';
+  doc.save(fn);
+}
+
+
+// ════════════════════════════════════════════
+// WORKSHEET GENERATOR + DUAL PDF EXPORT
+// ════════════════════════════════════════════
+
+let currentWsData = null;
+
+// ── Sample data builder ──
+function buildWorksheetData(grade, subject, topic, qcount, marks, qtype) {
+  const p = getTeacherProfile();
+  const today = new Date().toLocaleDateString('en-ZA',{day:'2-digit',month:'long',year:'numeric'});
+  const totalQ = parseInt(qcount)||8;
+  const totalM = parseInt(marks)||30;
+
+  // Build questions array
+  const questions = [];
+
+  // Section A: True/False (2 questions)
+  questions.push({
+    section:'A', sectionTitle:'Section A — True or False',
+    type:'tf', num:1,
+    text:'Filtration is used to separate a dissolved solid from water.',
+    marks:1, answer:'False — Filtration separates an insoluble solid from a liquid. Evaporation is used for dissolved solids.'
+  });
+  questions.push({
+    section:'A', sectionTitle:null,
+    type:'tf', num:2,
+    text:'A mixture is made up of two or more substances that are not chemically combined.',
+    marks:1, answer:'True — A mixture consists of substances that retain their own properties and can be separated by physical means.'
+  });
+
+  // Section B: MCQ (3 questions)
+  questions.push({
+    section:'B', sectionTitle:'Section B — Multiple Choice',
+    type:'mcq', num:3,
+    text:'Which method would you use to separate sand from water?',
+    options:['A. Evaporation','B. Filtration','C. Distillation','D. Condensation'],
+    marks:1, answer:'B. Filtration', answerNote:'Sand is insoluble in water and can be caught by filter paper.'
+  });
+  questions.push({
+    section:'B', sectionTitle:null,
+    type:'mcq', num:4,
+    text:'What is left behind in the filter paper after filtration?',
+    options:['A. The filtrate','B. The solvent','C. The residue','D. The solution'],
+    marks:1, answer:'C. The residue', answerNote:'The insoluble solid that cannot pass through the filter paper is called the residue.'
+  });
+  questions.push({
+    section:'B', sectionTitle:null,
+    type:'mcq', num:5,
+    text:'Which of the following is an example of a homogeneous mixture?',
+    options:['A. Sand and gravel','B. Salt water','C. Oil and water','D. Soil'],
+    marks:1, answer:'B. Salt water', answerNote:'Salt water is homogeneous — the salt is evenly distributed throughout.'
+  });
+
+  // Section C: Short Answer (3 questions)
+  questions.push({
+    section:'C', sectionTitle:'Section C — Short Answer',
+    type:'short', num:6,
+    text:'Define the term "filtrate" in your own words.',
+    lines:3, marks:2,
+    answer:'The filtrate is the liquid that passes through the filter paper during filtration. It contains any dissolved substances but no insoluble particles.'
+  });
+  questions.push({
+    section:'C', sectionTitle:null,
+    type:'short', num:7,
+    text:'Explain the process of evaporation and give ONE example of when it is used to separate a mixture.',
+    lines:4, marks:3,
+    answer:'Evaporation is the process where a liquid is heated until it turns into a gas (vapour), leaving behind the dissolved solid. Example: Heating salt water to obtain salt / recovering salt from seawater.'
+  });
+  questions.push({
+    section:'C', sectionTitle:null,
+    type:'short', num:8,
+    text:'Name TWO apparatus (equipment) used during the filtration process and describe the function of each.',
+    lines:5, marks:4,
+    answer:'1. Funnel — holds the filter paper in place and directs the liquid through the filter paper into the beaker.\n2. Filter paper — acts as a barrier that allows the liquid to pass through but traps insoluble solid particles (residue).\nAlso accept: beaker (collects filtrate), retort stand (supports funnel).'
+  });
+
+  const totalGiven = questions.reduce((s,q)=>s+q.marks,0);
+
+  return {
+    school: p.school,
+    educator: p.name,
+    subject: subject||'Natural Sciences & Technology',
+    grade: grade||'Grade 6',
+    topic: topic||'Separation of Mixtures — Filtration and Evaporation',
+    date: today,
+    term: '2',
+    totalMarks: totalGiven,
+    questions: questions
+  };
+}
+
+// ── Tab switching ──
+function showWsTab(tab) {
+  const isWs = tab === 'ws';
+  document.getElementById('wsContent').style.display  = isWs ? '' : 'none';
+  document.getElementById('memoContent').style.display = isWs ? 'none' : '';
+  document.getElementById('wsTab').classList.toggle('active', isWs);
+  document.getElementById('memoTab').classList.toggle('active', !isWs);
+}
+
+function closeWsPreview() {
+  document.getElementById('wsPreview').style.display = 'none';
+  document.getElementById('wsFormSection').style.display = '';
+}
+
+// ── Generate ──
+function generateWorksheet() {
+  const grade   = document.getElementById('ws_grade')?.value;
+  const subject = document.getElementById('ws_subject')?.value;
+  const topic   = document.getElementById('ws_topic')?.value;
+  const qcount  = document.getElementById('ws_qcount')?.value;
+  const marks   = document.getElementById('ws_marks')?.value;
+  const qtype   = document.getElementById('ws_qtype')?.value;
+  if(!grade||!subject){alert('Please select a Grade and Subject first.');return;}
+  document.getElementById('wsFormSection').style.display = 'none';
+  const preview = document.getElementById('wsPreview');
+  preview.style.display = 'block';
+  document.getElementById('wsContent').innerHTML = '<div class="lp-generating"><div class="lp-spinner"></div>Generating worksheet and memo...</div>';
+  document.getElementById('memoContent').innerHTML = '';
+  showWsTab('ws');
+  setTimeout(()=>{
+    currentWsData = buildWorksheetData(grade,subject,topic,qcount,marks,qtype);
+    renderWorksheet(currentWsData);
+    renderMemo(currentWsData);
+  },800);
+}
+
+function loadSampleWorksheet() {
+  currentWsData = buildWorksheetData('Grade 6','Natural Sciences & Technology','Separation of Mixtures — Filtration and Evaporation',8,30,'Mixed');
+  document.getElementById('wsFormSection').style.display = 'none';
+  document.getElementById('wsPreview').style.display = 'block';
+  showWsTab('ws');
+  renderWorksheet(currentWsData);
+  renderMemo(currentWsData);
+}
+
+// ── Render worksheet ──
+function renderWorksheet(d) {
+  let html = `<div class="ws-doc">
+    <div class="ws-header-block">
+      <div class="ws-header-top">
+        <div class="ws-school" contenteditable="true">${d.school}</div>
+        <div class="ws-branding">LEURO ASSISTANT<br>AI for Educators</div>
+      </div>
+      <div class="ws-header-meta">
+        <div class="ws-meta-cell"><span class="ws-meta-label">Subject</span><span class="ws-meta-val" contenteditable="true">${d.subject}</span></div>
+        <div class="ws-meta-cell"><span class="ws-meta-label">Grade</span><span class="ws-meta-val" contenteditable="true">${d.grade}</span></div>
+        <div class="ws-meta-cell"><span class="ws-meta-label">Topic</span><span class="ws-meta-val" contenteditable="true">${d.topic}</span></div>
+        <div class="ws-meta-cell"><span class="ws-meta-label">Date</span><span class="ws-meta-val" contenteditable="true">${d.date}</span></div>
+        <div class="ws-meta-cell"><span class="ws-meta-label">Total Marks</span><span class="ws-meta-val ws-total-marks-val" contenteditable="true">${d.totalMarks}</span></div>
+        <div class="ws-meta-cell"><span class="ws-meta-label">Educator</span><span class="ws-meta-val" contenteditable="true">${d.educator}</span></div>
+      </div>
+      <div class="ws-learner-row">
+        <div class="ws-learner-field"><span class="ws-learner-label">Learner Name:</span><div class="ws-learner-line"></div></div>
+        <div class="ws-learner-field"><span class="ws-learner-label">Class:</span><div class="ws-learner-line"></div></div>
+      </div>
+    </div>
+    <div class="ws-instructions" contenteditable="true">Instructions: Answer ALL questions. Write neatly. Show all working where applicable. No calculators unless stated.</div>`;
+
+  let currentSection = '';
+  d.questions.forEach((q, i) => {
+    if(q.sectionTitle){
+      html += `<div class="ws-section-title" contenteditable="true">${q.sectionTitle}</div>`;
+    }
+    html += `<div class="ws-question">`;
+    html += `<div class="ws-q-row">
+      <span class="ws-q-num">${q.num}.</span>
+      <span class="ws-q-text" contenteditable="true">${q.text}</span>
+      <span class="ws-q-marks" contenteditable="true">(${q.marks} mark${q.marks>1?'s':''})</span>
+    </div>`;
+
+    if(q.type === 'tf'){
+      html += `<div class="ws-answer-space" style="display:flex;gap:16px;align-items:center;padding-left:30px;margin-top:4px">
+        <label style="font-size:0.77rem;display:flex;align-items:center;gap:5px"><input type="radio" name="q${q.num}"> True</label>
+        <label style="font-size:0.77rem;display:flex;align-items:center;gap:5px"><input type="radio" name="q${q.num}"> False</label>
+      </div>`;
+    } else if(q.type === 'mcq'){
+      html += `<div class="ws-mcq-options">`;
+      q.options.forEach(opt => {
+        html += `<label class="ws-mcq-opt" contenteditable="false"><input type="radio" name="q${q.num}"> <span contenteditable="true">${opt}</span></label>`;
+      });
+      html += `</div>`;
+    } else {
+      // short answer lines
+      const lines = q.lines || 3;
+      html += `<div class="ws-answer-space">`;
+      for(let l=0;l<lines;l++) html += `<div class="ws-answer-line"></div>`;
+      html += `</div>`;
+    }
+    html += `</div>`;
+  });
+
+  html += `<div class="ws-total-row">
+    <span class="ws-total-label">TOTAL:</span>
+    <span class="ws-total-marks">${d.totalMarks} marks</span>
+  </div>
+  <div class="edit-hint">&#9998; Tap any text to edit before exporting</div>
+  </div>`;
+
+  document.getElementById('wsContent').innerHTML = html;
+}
+
+// ── Render memo ──
+function renderMemo(d) {
+  let html = `<div class="ws-doc">
+    <div class="ws-header-block">
+      <div class="ws-header-top" style="background:var(--color-green)">
+        <div class="ws-school" contenteditable="true">${d.school}</div>
+        <div class="ws-branding" style="text-align:right">MEMORANDUM<br><span style="color:rgba(255,255,255,0.8);font-size:0.6rem">NOT FOR DISTRIBUTION TO LEARNERS</span></div>
+      </div>
+      <div class="ws-header-meta">
+        <div class="ws-meta-cell"><span class="ws-meta-label">Subject</span><span class="ws-meta-val">${d.subject}</span></div>
+        <div class="ws-meta-cell"><span class="ws-meta-label">Grade</span><span class="ws-meta-val">${d.grade}</span></div>
+        <div class="ws-meta-cell"><span class="ws-meta-label">Topic</span><span class="ws-meta-val">${d.topic}</span></div>
+        <div class="ws-meta-cell"><span class="ws-meta-label">Total Marks</span><span class="ws-meta-val">${d.totalMarks}</span></div>
+      </div>
+    </div>`;
+
+  let currentSection = '';
+  d.questions.forEach(q => {
+    if(q.sectionTitle){
+      html += `<div class="ws-section-title" style="color:var(--color-green);border-color:var(--color-green)" contenteditable="true">${q.sectionTitle} — Answers</div>`;
+    }
+    html += `<div class="memo-q">
+      <div class="memo-q-row">
+        <span class="memo-q-num">${q.num}.</span>
+        <span class="memo-q-text">${q.text}</span>
+        <span class="memo-marks-badge">${q.marks} mark${q.marks>1?'s':''}</span>
+      </div>
+      <div class="memo-answer" contenteditable="true" style="white-space:pre-line">${q.answer}${q.answerNote?'\n\nNote: '+q.answerNote:''}</div>
+    </div>`;
+  });
+
+  html += `<div class="ws-total-row" style="border-color:var(--color-green)">
+    <span class="ws-total-label">TOTAL:</span>
+    <span class="ws-total-marks" style="color:var(--color-green)">${d.totalMarks} marks</span>
+  </div>
+  <div class="edit-hint">&#9998; Tap any answer to edit before exporting</div>
+  </div>`;
+
+  document.getElementById('memoContent').innerHTML = html;
+}
+
+// ── PDF helpers ──
+function getWsHeaderVals() {
+  return {
+    school:  document.querySelector('#wsContent .ws-school')?.innerText.trim() || currentWsData?.school,
+    subject: document.querySelectorAll('#wsContent .ws-meta-val')[0]?.innerText.trim() || currentWsData?.subject,
+    grade:   document.querySelectorAll('#wsContent .ws-meta-val')[1]?.innerText.trim() || currentWsData?.grade,
+    topic:   document.querySelectorAll('#wsContent .ws-meta-val')[2]?.innerText.trim() || currentWsData?.topic,
+    date:    document.querySelectorAll('#wsContent .ws-meta-val')[3]?.innerText.trim() || currentWsData?.date,
+    marks:   document.querySelectorAll('#wsContent .ws-meta-val')[4]?.innerText.trim() || String(currentWsData?.totalMarks),
+    educator:document.querySelectorAll('#wsContent .ws-meta-val')[5]?.innerText.trim() || currentWsData?.educator,
+  };
+}
+
+function buildWsPDF(isMemo) {
+  if(!currentWsData){alert('Generate a worksheet first.');return null;}
+  const d = currentWsData;
+  const h = getWsHeaderVals();
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const PW=210, ML=14, MR=14, CW=PW-ML-MR;
+  let y=0;
+
+  const PURPLE=[90,62,118], PLUM=[237,231,244], GREEN_D=[34,139,57], GREEN_L=[212,240,220];
+  const WHITE=[255,255,255], BORDER=[228,226,232], TEXT=[54,54,54], MID=[107,107,107];
+  const GOLD=[230,179,71], hdrColor = isMemo ? GREEN_D : PURPLE;
+
+  // ── Header bar ──
+  doc.setFillColor(...hdrColor);
+  doc.rect(0,0,PW,30,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(255,255,255);
+  doc.text(h.school, ML, 10);
+  doc.setFontSize(8);doc.setFont('helvetica','normal');
+  if(isMemo){
+    doc.setTextColor(180,240,180);
+    doc.text('MEMORANDUM — NOT FOR DISTRIBUTION TO LEARNERS', ML, 17);
+  } else {
+    doc.setTextColor(...GOLD);
+    doc.text('WORKSHEET', ML, 17);
+  }
+  doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(255,255,255);
+  doc.text('LEURO ASSISTANT', PW-MR, 10, {align:'right'});
+  doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(210,210,240);
+  doc.text('AI for South African Educators', PW-MR, 16, {align:'right'});
+  doc.setDrawColor(...GOLD);doc.setLineWidth(0.7);doc.line(0,30,PW,30);
+  y=36;
+
+  // ── Meta grid (2x3) ──
+  const metaFields = [
+    ['Subject', h.subject], ['Grade', h.grade],
+    ['Topic', h.topic],     ['Date', h.date],
+    ['Total Marks', h.marks],['Educator', h.educator]
+  ];
+  const mCols=2, mW=CW/mCols, mH=8, mFw=mW*0.38;
+  for(let i=0;i<metaFields.length;i+=mCols){
+    if(y+mH>277){doc.addPage();y=14;}
+    for(let c=0;c<mCols;c++){
+      const [lbl,val]=metaFields[i+c]||['',''];
+      const x=ML+c*mW;
+      doc.setFillColor(...PLUM);doc.rect(x,y,mFw,mH,'F');
+      doc.setDrawColor(...BORDER);doc.setLineWidth(0.2);doc.rect(x,y,mFw,mH);
+      doc.setFont('helvetica','bold');doc.setFontSize(6.5);doc.setTextColor(...PURPLE);
+      doc.text(lbl,x+2.5,y+5.2);
+      doc.setFillColor(...WHITE);doc.rect(x+mFw,y,mW-mFw,mH,'F');doc.rect(x+mFw,y,mW-mFw,mH);
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...TEXT);
+      doc.text(doc.splitTextToSize(val||'',mW-mFw-4),x+mFw+2.5,y+5.5);
+    }
+    y+=mH;
+  }
+
+  // ── Learner row (worksheet only) ──
+  if(!isMemo){
+    y+=3;
+    doc.setFillColor(248,248,246);doc.rect(ML,y,CW,10,'F');
+    doc.setDrawColor(...BORDER);doc.setLineWidth(0.2);doc.rect(ML,y,CW,10);
+    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...TEXT);
+    doc.text('Learner Name:', ML+3, y+6.5);
+    doc.setDrawColor(100,100,100);doc.setLineWidth(0.5);doc.line(ML+34,y+7,ML+CW/2-4,y+7);
+    doc.text('Class:', ML+CW/2+2,y+6.5);
+    doc.line(ML+CW/2+16,y+7,ML+CW-3,y+7);
+    y+=14;
+
+    // Instructions box
+    const instrText = document.querySelector('#wsContent .ws-instructions')?.innerText.trim()
+      || 'Instructions: Answer ALL questions. Write neatly. Show all working where applicable.';
+    doc.setFillColor(253,243,220);doc.rect(ML,y,CW,10,'F');
+    doc.setDrawColor(230,179,71);doc.setLineWidth(0.4);doc.rect(ML,y,CW,10);
+    doc.setFont('helvetica','italic');doc.setFontSize(8);doc.setTextColor(100,70,0);
+    const instrLines=doc.splitTextToSize(instrText,CW-6);
+    doc.text(instrLines,ML+3,y+5);
+    y+=12;
+  } else {
+    y+=5;
+  }
+
+  // ── Questions ──
+  const qEls = isMemo
+    ? document.querySelectorAll('#memoContent .memo-q')
+    : document.querySelectorAll('#wsContent .ws-question');
+
+  qEls.forEach((qEl,qi) => {
+    // Section header before first question of each section
+    const secTitle = isMemo
+      ? null // section titles in memo are separate elements
+      : qEl.previousElementSibling?.classList.contains('ws-section-title')
+        ? qEl.previousElementSibling.innerText : null;
+
+    if(!isMemo){
+      // Check for section title sibling
+      let prev = qEl.previousElementSibling;
+      if(prev && prev.classList.contains('ws-section-title') && prev.dataset.printed !== '1'){
+        prev.dataset.printed = '1';
+        if(y+8>272){doc.addPage();y=14;}
+        doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...PURPLE);
+        doc.setDrawColor(...PURPLE);doc.setLineWidth(0.4);
+        doc.text(prev.innerText.trim(),ML,y+5);
+        doc.line(ML,y+6,ML+CW,y+6);
+        y+=10;
+      }
+      // Question num + text
+      const qNum = qEl.querySelector('.ws-q-num')?.innerText.trim()||'';
+      const qText = qEl.querySelector('.ws-q-text')?.innerText.trim()||'';
+      const qMarks = qEl.querySelector('.ws-q-marks')?.innerText.trim()||'';
+      const qLines = doc.splitTextToSize(qNum+' '+qText, CW-20);
+      const qH = Math.max(7, qLines.length*4.2+2);
+      if(y+qH>272){doc.addPage();y=14;}
+      doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(...TEXT);
+      doc.text(qLines,ML,y+5,{lineHeightFactor:1.4});
+      doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...MID);
+      doc.text(qMarks,ML+CW,y+5,{align:'right'});
+      y+=qH+1;
+
+      // MCQ options
+      const opts = qEl.querySelectorAll('.ws-mcq-opt span');
+      if(opts.length){
+        opts.forEach(opt=>{
+          if(y+6>272){doc.addPage();y=14;}
+          doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...TEXT);
+          doc.circle(ML+8,y+3,1.5);
+          doc.text(opt.innerText.trim(),ML+13,y+4.5);
+          y+=6;
+        });
+      }
+      // T/F options
+      const tfOpts = qEl.querySelectorAll('input[type=radio]');
+      if(tfOpts.length && !opts.length){
+        if(y+7>272){doc.addPage();y=14;}
+        doc.circle(ML+8,y+3.5,1.5);doc.text('True',ML+13,y+5);
+        doc.circle(ML+40,y+3.5,1.5);doc.text('False',ML+45,y+5);
+        y+=8;
+      }
+      // Answer lines for short answer
+      const ansLines = qEl.querySelectorAll('.ws-answer-line');
+      ansLines.forEach(()=>{
+        if(y+6>272){doc.addPage();y=14;}
+        doc.setDrawColor(...BORDER);doc.setLineWidth(0.4);
+        doc.line(ML+4,y+5,ML+CW,y+5);
+        y+=7;
+      });
+      y+=3;
+
+    } else {
+      // MEMO rendering
+      const qNum = qEl.querySelector('.memo-q-num')?.innerText.trim()||'';
+      const qText = qEl.querySelector('.memo-q-text')?.innerText.trim()||'';
+      const marks = qEl.querySelector('.memo-marks-badge')?.innerText.trim()||'';
+      const answer = qEl.querySelector('.memo-answer')?.innerText.trim()||'';
+
+      const qLines = doc.splitTextToSize(qNum+' '+qText, CW-20);
+      const aLines = doc.splitTextToSize(answer, CW-8);
+      const totalH = (qLines.length+aLines.length)*4.2+12;
+      if(y+totalH>272){doc.addPage();y=14;}
+
+      // Q box
+      doc.setFillColor(248,248,246);doc.roundedRect(ML,y,CW,qLines.length*4.2+5,1,1,'F');
+      doc.setDrawColor(...GREEN_D);doc.setLineWidth(0.8);doc.line(ML,y,ML,y+qLines.length*4.2+5);
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...TEXT);
+      doc.text(qLines,ML+4,y+4.5,{lineHeightFactor:1.4});
+      doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(...GREEN_D);
+      doc.text(marks,ML+CW,y+4.5,{align:'right'});
+      y+=qLines.length*4.2+7;
+
+      // Answer
+      doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(...GREEN_D);
+      doc.text(aLines,ML+4,y+4,{lineHeightFactor:1.5});
+      y+=aLines.length*5+6;
+    }
+  });
+
+  // ── Total row ──
+  if(y+10>277){doc.addPage();y=14;}
+  doc.setDrawColor(...hdrColor);doc.setLineWidth(0.6);doc.line(ML,y,ML+CW,y);y+=2;
+  doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...hdrColor);
+  doc.text('TOTAL: '+h.marks+' marks',ML+CW,y+6,{align:'right'});
+  y+=12;
+
+  // ── Footer on each page ──
+  const tp=doc.internal.getNumberOfPages();
+  for(let i=1;i<=tp;i++){
+    doc.setPage(i);
+    doc.setDrawColor(...BORDER);doc.setLineWidth(0.3);doc.line(ML,291,ML+CW,291);
+    doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(...MID);
+    doc.text('Generated by Leuro Assistant — AI for South African Educators',ML,294.5);
+    doc.setTextColor(...PURPLE);doc.text('leuroai.co.za',PW-MR,294.5,{align:'right'});
+    doc.setTextColor(...MID);doc.text('Page '+i+' of '+tp,PW/2,294.5,{align:'center'});
+  }
+
+  return doc;
+}
+
+function exportWsPDF() {
+  const doc = buildWsPDF(false);
+  if(!doc) return;
+  const d = currentWsData;
+  doc.save('Leuro_Worksheet_'+d.grade.replace(' ','')+'_'+d.subject.replace(/[^a-zA-Z0-9]/g,'_').replace(/_+/g,'_')+'.pdf');
+}
+
+function exportMemoPDF() {
+  showWsTab('memo'); // make sure memo is rendered
+  setTimeout(()=>{
+    const doc = buildWsPDF(true);
+    if(!doc) return;
+    const d = currentWsData;
+    doc.save('Leuro_Memo_'+d.grade.replace(' ','')+'_'+d.subject.replace(/[^a-zA-Z0-9]/g,'_').replace(/_+/g,'_')+'.pdf');
+  }, 100);
+}
+
+// ════════════════════════════════════════════
+// SUPABASE AUTH
+// ════════════════════════════════════════════
+const _sb = supabase.createClient(
+  'https://xekmcqzsqifcqpmjycct.supabase.co',
+  'sb_publishable_frJP7cXVCnOZJz9dV4u4aA_58HJTQhA'
+);
+
+function _getInitials(name){
+  const parts = (name||'').trim().split(/\s+/).filter(Boolean);
+  if(parts.length >= 2) return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+  return (name||'--').slice(0,2).toUpperCase();
+}
+
+function _populateProfile(user){
+  const meta   = user.user_metadata || {};
+  const name   = meta.full_name || user.email || 'Teacher';
+  const school = meta.school || '';
+
+  document.getElementById('userAvatar').textContent = _getInitials(name);
+  document.getElementById('userName').textContent   = name;
+  document.getElementById('userRole').textContent   = school || 'Leuro Teacher';
+
+  const pn = document.getElementById('profileName');
+  const ps = document.getElementById('profileSchool');
+  if(pn) pn.value = name;
+  if(ps) ps.value = school;
+
+  const greet = document.getElementById('dashGreeting');
+  if(greet){
+    const skipTitles = ['ms.','mr.','mrs.','dr.','prof.'];
+    const firstName  = name.split(/\s+/).find(w => !skipTitles.includes(w.toLowerCase())) || name;
+    const hr  = new Date().getHours();
+    const tod = hr < 12 ? 'morning' : hr < 17 ? 'afternoon' : 'evening';
+    greet.textContent = 'Good ' + tod + ', ' + firstName + '! You have 8 periods today.';
+  }
+}
+
+function _showApp(user){
+  const screen = document.getElementById('authScreen');
+  screen.classList.add('fading');
+  setTimeout(() => { screen.style.display = 'none'; screen.classList.remove('fading'); }, 300);
+  _populateProfile(user);
+}
+
+function _showAuth(){
+  const screen = document.getElementById('authScreen');
+  screen.style.display = 'flex';
+  screen.style.opacity = '1';
+}
+
+async function initAuth(){
+  const { data: { session } } = await _sb.auth.getSession();
+  if(session){ _showApp(session.user); }
+
+  _sb.auth.onAuthStateChange((event, session) => {
+    if(event === 'SIGNED_IN'  && session){ _showApp(session.user); }
+    if(event === 'SIGNED_OUT')           { _showAuth(); }
+  });
+}
+
+function switchAuthTab(tab){
+  const isLogin = tab === 'login';
+  document.getElementById('loginTab').classList.toggle('active', isLogin);
+  document.getElementById('registerTab').classList.toggle('active', !isLogin);
+  document.getElementById('authLoginPanel').style.display    = isLogin ? ''     : 'none';
+  document.getElementById('authRegisterPanel').style.display = isLogin ? 'none' : '';
+}
+
+async function handleLogin(e){
+  e.preventDefault();
+  const email    = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const btn      = document.getElementById('loginBtn');
+  const err      = document.getElementById('loginError');
+
+  btn.disabled = true;
+  btn.textContent = 'Signing in…';
+  err.className   = 'auth-msg';
+  err.textContent = '';
+
+  const { error } = await _sb.auth.signInWithPassword({ email, password });
+
+  if(error){
+    err.textContent = error.message;
+    err.className   = 'auth-msg error visible';
+    btn.disabled    = false;
+    btn.textContent = 'Sign In to Leuro →';
+  }
+}
+
+async function handleRegister(e){
+  e.preventDefault();
+  const name     = document.getElementById('regName').value.trim();
+  const school   = document.getElementById('regSchool').value.trim();
+  const email    = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const confirm  = document.getElementById('regConfirm').value;
+  const btn      = document.getElementById('registerBtn');
+  const msg      = document.getElementById('registerMsg');
+
+  msg.className   = 'auth-msg';
+  msg.textContent = '';
+
+  if(password !== confirm){
+    msg.textContent = 'Passwords do not match.';
+    msg.className   = 'auth-msg error visible';
+    return;
+  }
+
+  btn.disabled    = true;
+  btn.textContent = 'Creating account…';
+
+  const { data, error } = await _sb.auth.signUp({
+    email, password,
+    options: { data: { full_name: name, school: school } }
+  });
+
+  if(error){
+    msg.textContent = error.message;
+    msg.className   = 'auth-msg error visible';
+    btn.disabled    = false;
+    btn.textContent = 'Create Account →';
+  } else if(data.session){
+    // email confirmation disabled — signed in immediately via onAuthStateChange
+  } else {
+    msg.textContent = '✔ Account created! Check your email to verify your account, then sign in.';
+    msg.className   = 'auth-msg success visible';
+    btn.disabled    = false;
+    btn.textContent = 'Create Account →';
+    setTimeout(() => switchAuthTab('login'), 3500);
+  }
+}
+
+async function saveProfile(e){
+  const name   = document.getElementById('profileName').value.trim();
+  const school = document.getElementById('profileSchool').value.trim();
+  if(!name){ alert('Please enter your full name.'); return; }
+
+  const btn      = e.currentTarget;
+  const origText = btn.textContent;
+  btn.disabled   = true;
+  btn.textContent = 'Saving…';
+
+  const { error } = await _sb.auth.updateUser({
+    data: { full_name: name, school: school }
+  });
+
+  if(error){
+    alert('Error saving profile: ' + error.message);
+    btn.disabled    = false;
+    btn.textContent = origText;
+  } else {
+    document.getElementById('userAvatar').textContent = _getInitials(name);
+    document.getElementById('userName').textContent   = name;
+    document.getElementById('userRole').textContent   = school || 'Leuro Teacher';
+    btn.textContent = 'Saved ✓';
+    setTimeout(() => { btn.disabled = false; btn.textContent = origText; }, 2200);
+  }
+}
+
+async function signOut(){
+  await _sb.auth.signOut();
+}
+
+</script>
+
+<!-- PERIOD EDIT MODAL -->
+<div class="modal-overlay" id="periodEditModal">
+  <div class="modal modal-lg">
+    <h3>&#9998; Edit Period</h3>
+    <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
+      <div class="select-row-2">
+        <div><label class="input-label">Start Time</label><input type="time" class="text-input" id="editStart" step="300"></div>
+        <div><label class="input-label">End Time</label><input type="time" class="text-input" id="editEnd" step="300"></div>
+      </div>
+      <div><label class="input-label">Period Type</label>
+        <select class="select-input" id="editType" onchange="renderEditFields({type:this.value,subject:'',grade:'',cls:'',notes:''})">
+          <option value="teaching">Teaching Period</option>
+          <option value="free">Free Period</option>
+          <option value="admin">Admin Period</option>
+        </select>
+      </div>
+      <div id="editFieldsWrap"></div>
+    </div>
+    <div class="modal-actions" style="margin-top:20px">
+      <button class="btn-secondary" onclick="cancelEdit()">Cancel</button>
+      <button class="btn-primary" onclick="saveEdit()">&#10003; Save Period</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
