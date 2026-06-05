@@ -603,71 +603,51 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
     <div class="screen visible" id="screen-dashboard">
       <div class="ai-strip">
         <div class="ai-avatar">🤖</div>
-        <div class="ai-text"><div class="ai-greeting" id="dashGreeting">Good morning, Ms. Molefe! You have 8 periods today.</div><div class="ai-sub">3 tasks pending · 1 carry-over from Friday · Moderation due this week</div></div>
+        <div class="ai-text"><div class="ai-greeting" id="dashGreeting">Welcome to Leuro Assistant!</div><div class="ai-sub" data-i18n="dash_greeting_sub">Set up your timetable in Settings to get started.</div></div>
         <div class="ai-input-wrap"><input class="ai-input" placeholder="Ask Leuro Assistant anything…"><button class="ai-send">Ask →</button></div>
       </div>
       <div class="stats-row">
-        <div class="stat-card"><div class="stat-label">Periods Today</div><div class="stat-value c-purple">8</div><div class="stat-sub">3 completed · 5 remaining</div></div>
-        <div class="stat-card"><div class="stat-label">Tasks Pending</div><div class="stat-value c-gold">3</div><div class="stat-sub">1 carry-over from Fri</div></div>
-        <div class="stat-card"><div class="stat-label">Docs Generated</div><div class="stat-value c-text">14</div><div class="stat-sub">This month</div></div>
-        <div class="stat-card"><div class="stat-label">Moderation</div><div class="stat-value c-green">67%</div><div class="stat-sub">3 items outstanding</div></div>
+        <div class="stat-card"><div class="stat-label" data-i18n="stat_periods">Periods Today</div><div class="stat-value c-purple" id="statPeriods">0</div><div class="stat-sub" id="statPeriodsSub">Set up your timetable</div></div>
+        <div class="stat-card"><div class="stat-label" data-i18n="stat_tasks">Tasks Pending</div><div class="stat-value c-gold" id="statTasks">0</div><div class="stat-sub" id="statTasksSub">No reminders set</div></div>
+        <div class="stat-card"><div class="stat-label" data-i18n="stat_docs">Docs Generated</div><div class="stat-value c-text" id="statDocs">0</div><div class="stat-sub">This session</div></div>
+        <div class="stat-card"><div class="stat-label" data-i18n="stat_moderation">Moderation</div><div class="stat-value c-green" id="statMod">0%</div><div class="stat-sub" id="statModSub">No entries yet</div></div>
       </div>
       <div class="two-col">
         <div class="card">
-          <div class="card-header"><span class="card-icon">📅</span><div class="card-title">Today's Periods</div><button class="card-action" onclick="switchScreen('timetable',null)">View All →</button></div>
-          <div class="timetable-body">
-            <div class="period-row done"><div class="period-num">P1</div><div class="period-time">07:30–08:10</div><div class="period-subject"><div class="subject-name">Afrikaans HT · Gr 6</div><div class="period-task">Dialogue writing — revision</div></div><div class="period-check checked"></div></div>
-            <div class="period-row done"><div class="period-num">P2</div><div class="period-time">08:10–08:50</div><div class="period-subject"><div class="subject-name">English HL · Gr 5</div><div class="period-task">Reading comprehension</div></div><div class="period-check checked"></div></div>
-            <div class="period-row done"><div class="period-num">P3</div><div class="period-time">08:50–09:30</div><div class="period-subject"><div class="subject-name">Maths · Gr 7</div><div class="period-task">Fractions worksheet correction</div></div><div class="period-check checked"></div></div>
-            <div class="period-row active-period"><div class="period-num">P4</div><div class="period-time">09:30–10:10</div><div class="period-subject"><div class="subject-name">NS&T · Gr 6</div><div class="period-task">Mixtures — introduce separation methods</div></div><div class="period-check"></div></div>
-            <div class="period-row carryover"><div class="period-num">P5</div><div class="period-time">10:30–11:10</div><div class="period-subject"><div class="subject-name">Afrikaans HT · Gr 7</div><div class="period-task">Opstel — peer review (carried over)</div></div><div class="carryover-badge">⟳ Carry-over</div></div>
-            <div class="period-row"><div class="period-num">P6</div><div class="period-time">11:10–11:50</div><div class="period-subject"><div class="subject-name">English HL · Gr 7</div><div class="period-task">Introduce poetry unit</div></div><div class="period-check"></div></div>
-          </div>
+          <div class="card-header"><span class="card-icon">📅</span><div class="card-title" data-i18n="card_today_periods">Today's Periods</div><button class="card-action" data-i18n="btn_view_all" onclick="switchScreen('timetable',null)">View All →</button></div>
+          <div class="empty-state"><div class="empty-state-icon">📅</div>No periods for today.<br><span style="font-size:0.73rem">Set up your timetable in <a href="#" onclick="switchScreen('settings',document.querySelector('[data-label=Settings]'));return false;" style="color:var(--color-primary)">Settings</a> to get started.</span></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:18px">
           <div class="card">
-            <div class="card-header"><span class="card-icon">⚡</span><div class="card-title">Quick Actions</div></div>
+            <div class="card-header"><span class="card-icon">⚡</span><div class="card-title" data-i18n="card_quick_actions">Quick Actions</div></div>
             <div class="quick-actions">
-              <button class="action-btn" onclick="switchScreen('lesson',null)"><div class="action-btn-icon icon-purple">📝</div><div><div class="action-btn-title">Generate Lesson</div><div class="action-btn-sub">CAPS-aligned plan</div></div></button>
-              <button class="action-btn" onclick="switchScreen('worksheets',null)"><div class="action-btn-icon icon-gold">📄</div><div><div class="action-btn-title">New Worksheet</div><div class="action-btn-sub">With memo included</div></div></button>
-              <button class="action-btn" onclick="switchScreen('reminders',null)"><div class="action-btn-icon icon-green">🔔</div><div><div class="action-btn-title">Set Reminder</div><div class="action-btn-sub">Deadlines & tasks</div></div></button>
-              <button class="action-btn" onclick="switchScreen('moderation',null)"><div class="action-btn-icon icon-red">🔍</div><div><div class="action-btn-title">Moderation</div><div class="action-btn-sub">3 items pending</div></div></button>
+              <button class="action-btn" onclick="switchScreen('lesson',null)"><div class="action-btn-icon icon-purple">📝</div><div><div class="action-btn-title" data-i18n="btn_gen_lesson">Generate Lesson</div><div class="action-btn-sub">CAPS-aligned plan</div></div></button>
+              <button class="action-btn" onclick="switchScreen('worksheets',null)"><div class="action-btn-icon icon-gold">📄</div><div><div class="action-btn-title" data-i18n="btn_new_worksheet">New Worksheet</div><div class="action-btn-sub">With memo included</div></div></button>
+              <button class="action-btn" onclick="switchScreen('reminders',null)"><div class="action-btn-icon icon-green">🔔</div><div><div class="action-btn-title" data-i18n="btn_set_reminder">Set Reminder</div><div class="action-btn-sub">Deadlines &amp; tasks</div></div></button>
+              <button class="action-btn" onclick="switchScreen('moderation',null)"><div class="action-btn-icon icon-red">🔍</div><div><div class="action-btn-title" data-i18n="nav_moderation">Moderation</div><div class="action-btn-sub">Track SBA progress</div></div></button>
             </div>
           </div>
           <div class="card">
-            <div class="card-header"><span class="card-icon">🔔</span><div class="card-title">Upcoming Reminders</div><button class="card-action" onclick="switchScreen('reminders',null)">All →</button></div>
-            <div class="reminders-body">
-              <div class="reminder-item urgent"><div class="reminder-dot dot-red"></div><div class="reminder-text"><div class="reminder-title">Term 2 Moderation Pack due</div><div class="reminder-meta">HOD submission · Gr 6 & 7</div></div><div class="reminder-time">Tomorrow</div></div>
-              <div class="reminder-item soon"><div class="reminder-dot dot-amber"></div><div class="reminder-text"><div class="reminder-title">Gr 5 Test — mark & capture</div><div class="reminder-meta">English HL · 28 scripts</div></div><div class="reminder-time">Wed</div></div>
-              <div class="reminder-item info"><div class="reminder-dot dot-purple"></div><div class="reminder-text"><div class="reminder-title">SBA marks to HOD</div><div class="reminder-meta">All subjects · Term 2</div></div><div class="reminder-time">Fri</div></div>
-            </div>
+            <div class="card-header"><span class="card-icon">🔔</span><div class="card-title" data-i18n="card_upcoming_reminders">Upcoming Reminders</div><button class="card-action" data-i18n="btn_all" onclick="switchScreen('reminders',null)">All →</button></div>
+            <div id="dashRemBody"></div>
           </div>
         </div>
       </div>
       <div class="two-col">
         <div class="card">
-          <div class="card-header"><span class="card-icon">📁</span><div class="card-title">Recent Documents</div><button class="card-action">View All →</button></div>
-          <div class="docs-body">
-            <div class="doc-item"><div class="doc-icon" style="background:var(--color-primary-xl)">📄</div><div class="doc-text"><div class="doc-name">Gr6 NS&T — Separation Methods Worksheet</div><div class="doc-meta">Generated today · EN & AF · With memo</div></div><span class="doc-chip chip-ws">Worksheet</span></div>
-            <div class="doc-item"><div class="doc-icon" style="background:var(--color-green-lt)">🗂️</div><div class="doc-text"><div class="doc-name">Gr7 Afrikaans — Week 18 Lesson Plan</div><div class="doc-meta">Generated Fri · CAPS aligned</div></div><span class="doc-chip chip-lp">Lesson Plan</span></div>
-            <div class="doc-item"><div class="doc-icon" style="background:var(--color-primary-xl)">📝</div><div class="doc-text"><div class="doc-name">Gr5 English — Poetry Summary Notes</div><div class="doc-meta">Generated Thu · Includes memo</div></div><span class="doc-chip chip-ws">Worksheet</span></div>
-            <div class="doc-item"><div class="doc-icon" style="background:var(--color-green-lt)">🗂️</div><div class="doc-text"><div class="doc-name">Gr6 Maths — Fractions Lesson Plan</div><div class="doc-meta">Generated Mon · 2 periods</div></div><span class="doc-chip chip-lp">Lesson Plan</span></div>
-          </div>
+          <div class="card-header"><span class="card-icon">📁</span><div class="card-title" data-i18n="card_recent_docs">Recent Documents</div></div>
+          <div class="empty-state"><div class="empty-state-icon">📄</div>No documents generated yet.<br><span style="font-size:0.73rem">Generate a lesson plan or worksheet to see it here.</span></div>
         </div>
         <div class="card">
-          <div class="card-header"><span class="card-icon">🔍</span><div class="card-title">Moderation Tracker</div><button class="card-action" onclick="switchScreen('moderation',null)">Manage →</button></div>
-          <div class="mod-body">
-            <div class="mod-item"><div class="mod-progress-wrap"><div class="mod-title">Gr 6 · Afrikaans HT — Term 2 SBA</div><div class="mod-bar"><div class="mod-bar-fill bar-green" style="width:80%"></div></div><div class="mod-stat">4 of 5 tasks moderated</div></div><div class="mod-pct c-green">80%</div></div>
-            <div class="mod-item"><div class="mod-progress-wrap"><div class="mod-title">Gr 7 · English HL — Term 2 SBA</div><div class="mod-bar"><div class="mod-bar-fill bar-gold" style="width:40%"></div></div><div class="mod-stat">2 of 5 tasks moderated</div></div><div class="mod-pct c-gold">40%</div></div>
-            <div class="mod-item"><div class="mod-progress-wrap"><div class="mod-title">Gr 5 · NS&T — Term 2 SBA</div><div class="mod-bar"><div class="mod-bar-fill bar-purple" style="width:60%"></div></div><div class="mod-stat">3 of 5 tasks moderated</div></div><div class="mod-pct c-purple">60%</div></div>
-          </div>
+          <div class="card-header"><span class="card-icon">🔍</span><div class="card-title" data-i18n="card_moderation">Moderation Tracker</div><button class="card-action" data-i18n="btn_manage" onclick="switchScreen('moderation',null)">Manage →</button></div>
+          <div id="dashModBody"></div>
         </div>
       </div>
     </div>
 
     <!-- TIMETABLE -->
     <div class="screen" id="screen-timetable">
-      <div class="ai-strip"><div class="ai-avatar">&#128197;</div><div class="ai-text"><div class="ai-greeting">My Timetable</div><div class="ai-sub">Tick off completed periods. Unlock to edit, add or remove periods. Each day saves independently.</div></div></div>
+      <div class="ai-strip"><div class="ai-avatar">&#128197;</div><div class="ai-text"><div class="ai-greeting" data-i18n="tt_greeting">My Timetable</div><div class="ai-sub">Configure your timetable in Settings, then return here to manage your day.</div></div></div>
       <div class="card">
         <div class="tt-lock-bar">
           <button class="lock-btn" id="lockBtn" onclick="toggleLock()"><span id="lockIcon">&#128274;</span><span id="lockLabel">Timetable Locked</span></button>
@@ -745,11 +725,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 
         <div class="card">
           <div class="card-header"><span class="card-icon">&#128193;</span><div class="card-title">Recent Lesson Plans</div></div>
-          <div class="docs-body">
-            <div class="doc-item" onclick="loadSamplePlan()"><div class="doc-icon" style="background:var(--color-green-lt)">&#128196;</div><div class="doc-text"><div class="doc-name">Gr6 NS&amp;T — Separation of Mixtures</div><div class="doc-meta">Today &middot; CAPS aligned &middot; 40 min</div></div><span class="doc-chip chip-lp">View PDF</span></div>
-            <div class="doc-item"><div class="doc-icon" style="background:var(--color-green-lt)">&#128196;</div><div class="doc-text"><div class="doc-name">Gr7 Afrikaans — Week 18 Plan</div><div class="doc-meta">Fri &middot; 2 periods</div></div><span class="doc-chip chip-lp">PDF</span></div>
-            <div class="doc-item"><div class="doc-icon" style="background:var(--color-green-lt)">&#128196;</div><div class="doc-text"><div class="doc-name">Gr6 Maths — Fractions</div><div class="doc-meta">Mon &middot; 40 min</div></div><span class="doc-chip chip-lp">PDF</span></div>
-          </div>
+          <div class="empty-state"><div class="empty-state-icon">📂</div>No lesson plans yet.<br><span style="font-size:0.73rem">Generated plans will appear here.</span></div>
         </div>
       </div>
 
@@ -807,7 +783,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
             <div><label class="input-label">Topic / CAPS Section</label>
               <textarea class="textarea-input" id="ws_topic" placeholder="e.g. Separation of mixtures — filtration and evaporation"></textarea>
             </div>
-            <div class="select-row">
+            <div class="select-row-2">
               <div><label class="input-label">Question Types</label>
                 <select class="select-input" id="ws_qtype">
                   <option>Mixed</option><option>MCQ Only</option>
@@ -819,22 +795,13 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
                   <option>5</option><option selected>8</option><option>10</option><option>12</option>
                 </select>
               </div>
-              <div><label class="input-label">Total Marks</label>
-                <select class="select-input" id="ws_marks">
-                  <option>20</option><option selected>30</option><option>40</option><option>50</option>
-                </select>
-              </div>
             </div>
             <button class="btn-primary" onclick="generateWorksheet()">&#129302; Generate Worksheet &amp; Memo</button>
           </div>
         </div>
         <div class="card">
           <div class="card-header"><span class="card-icon">&#128193;</span><div class="card-title">Recent Worksheets</div></div>
-          <div class="docs-body">
-            <div class="doc-item" onclick="loadSampleWorksheet()"><div class="doc-icon" style="background:var(--color-primary-xl)">&#128196;</div><div class="doc-text"><div class="doc-name">Gr6 NS&amp;T — Separation of Mixtures</div><div class="doc-meta">Today &middot; 8 questions &middot; 30 marks</div></div><span class="doc-chip chip-ws">Open</span></div>
-            <div class="doc-item"><div class="doc-icon" style="background:var(--color-primary-xl)">&#128196;</div><div class="doc-text"><div class="doc-name">Gr5 English — Poetry Comprehension</div><div class="doc-meta">Thu &middot; 10 questions &middot; 40 marks</div></div><span class="doc-chip chip-ws">Open</span></div>
-            <div class="doc-item"><div class="doc-icon" style="background:var(--color-primary-xl)">&#128196;</div><div class="doc-text"><div class="doc-name">Gr7 Maths — Fractions Test</div><div class="doc-meta">Mon &middot; 12 questions &middot; 50 marks</div></div><span class="doc-chip chip-ws">Open</span></div>
-          </div>
+          <div class="empty-state"><div class="empty-state-icon">📋</div>No worksheets yet.<br><span style="font-size:0.73rem">Generated worksheets will appear here.</span></div>
         </div>
       </div>
 
@@ -858,29 +825,19 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 
     <!-- MODERATION -->
     <div class="screen" id="screen-moderation">
-      <div class="ai-strip"><div class="ai-avatar">🔍</div><div class="ai-text"><div class="ai-greeting">Moderation Tracker</div><div class="ai-sub">Track SBA moderation per subject and grade. Auto-reminders when packs are due.</div></div></div>
+      <div class="ai-strip"><div class="ai-avatar">🔍</div><div class="ai-text"><div class="ai-greeting" data-i18n="mod_greeting">Moderation Tracker</div><div class="ai-sub" data-i18n="mod_sub">Track SBA moderation per subject and grade. Auto-reminders when packs are due.</div></div></div>
       <div class="card">
-        <div class="card-header"><span class="card-icon">🔍</span><div class="card-title">Term 2 Moderation Overview</div><button class="card-action">+ Add Subject</button></div>
-        <div class="mod-body">
-          <div class="mod-item"><div class="mod-progress-wrap"><div class="mod-title">Gr 6 · Afrikaans HT — Term 2 SBA</div><div class="mod-bar"><div class="mod-bar-fill bar-green" style="width:80%"></div></div><div class="mod-stat">4 of 5 tasks moderated · Due: Wed 8 May</div></div><div class="mod-pct c-green">80%</div></div>
-          <div class="mod-item"><div class="mod-progress-wrap"><div class="mod-title">Gr 7 · English HL — Term 2 SBA</div><div class="mod-bar"><div class="mod-bar-fill bar-gold" style="width:40%"></div></div><div class="mod-stat">2 of 5 tasks moderated · Due: Tue 7 May</div></div><div class="mod-pct c-gold">40%</div></div>
-          <div class="mod-item"><div class="mod-progress-wrap"><div class="mod-title">Gr 5 · NS&T — Term 2 SBA</div><div class="mod-bar"><div class="mod-bar-fill bar-purple" style="width:60%"></div></div><div class="mod-stat">3 of 5 tasks moderated · Due: Fri 10 May</div></div><div class="mod-pct c-purple">60%</div></div>
-          <div class="mod-item"><div class="mod-progress-wrap"><div class="mod-title">Gr 6 · Maths — Term 2 SBA</div><div class="mod-bar"><div class="mod-bar-fill bar-green" style="width:100%"></div></div><div class="mod-stat">5 of 5 tasks moderated · Submitted ✓</div></div><div class="mod-pct c-green">100%</div></div>
-        </div>
+        <div class="card-header"><span class="card-icon">🔍</span><div class="card-title" data-i18n="mod_card_title">Moderation Overview</div><button class="card-action" data-i18n="btn_add_subject" onclick="openAddMod()">+ Add Entry</button></div>
+        <div class="mod-body" id="modBody"></div>
       </div>
     </div>
 
     <!-- REMINDERS -->
     <div class="screen" id="screen-reminders">
-      <div class="ai-strip"><div class="ai-avatar">🔔</div><div class="ai-text"><div class="ai-greeting">Reminders</div><div class="ai-sub">Set deadlines, SBA alerts, and moderation reminders. Leuro Assistant notifies you automatically.</div></div></div>
+      <div class="ai-strip"><div class="ai-avatar">🔔</div><div class="ai-text"><div class="ai-greeting" data-i18n="rem_greeting">Reminders</div><div class="ai-sub" data-i18n="rem_sub">Set deadlines, SBA alerts, and moderation reminders.</div></div></div>
       <div class="card">
-        <div class="card-header"><span class="card-icon">🔔</span><div class="card-title">All Reminders</div><button class="card-action">+ Add Reminder</button></div>
-        <div class="reminders-body" style="padding:14px 18px">
-          <div class="reminder-item urgent"><div class="reminder-dot dot-red"></div><div class="reminder-text"><div class="reminder-title">Term 2 Moderation Pack due — Gr 6 & 7</div><div class="reminder-meta">HOD submission · All subjects</div></div><div class="reminder-time">Tomorrow, 8am</div></div>
-          <div class="reminder-item soon"><div class="reminder-dot dot-amber"></div><div class="reminder-text"><div class="reminder-title">Gr 5 English Test — mark & capture</div><div class="reminder-meta">28 scripts · SBA recording sheet</div></div><div class="reminder-time">Wed, 9am</div></div>
-          <div class="reminder-item info"><div class="reminder-dot dot-purple"></div><div class="reminder-text"><div class="reminder-title">SBA marks to HOD — all subjects</div><div class="reminder-meta">Term 2 deadline</div></div><div class="reminder-time">Fri, 12pm</div></div>
-          <div class="reminder-item info"><div class="reminder-dot dot-purple"></div><div class="reminder-text"><div class="reminder-title">Staff meeting — curriculum review</div><div class="reminder-meta">Boardroom · 30 min</div></div><div class="reminder-time">Thu, 2pm</div></div>
-        </div>
+        <div class="card-header"><span class="card-icon">🔔</span><div class="card-title" data-i18n="rem_card_title">All Reminders</div><button class="card-action" data-i18n="btn_add_reminder" onclick="openAddReminder()">+ Add Reminder</button></div>
+        <div id="remindersBody" style="padding:0 0 4px"></div>
       </div>
     </div>
 
@@ -960,10 +917,10 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
         <div class="card">
           <div class="card-header"><span class="card-icon">👤</span><div class="card-title">Profile</div></div>
           <div class="form-body">
-            <div><label class="input-label">Full Name</label><input type="text" class="text-input" id="profileName" placeholder="e.g. Ms. N. Molefe"></div>
-            <div><label class="input-label">Post Level</label><select class="select-input"><option>Post Level 1</option><option>Post Level 2 (HOD)</option><option>Deputy Principal</option></select></div>
-            <div><label class="input-label">School</label><input type="text" class="text-input" id="profileSchool" placeholder="e.g. Kempton Park Primary School"></div>
-            <button class="btn-primary" id="saveProfileBtn" onclick="saveProfile(event)">Save Profile</button>
+            <div><label class="input-label" data-i18n="lbl_full_name">Full Name</label><input type="text" class="text-input" id="profileName" placeholder="e.g. Ms. N. Molefe"></div>
+            <div><label class="input-label" data-i18n="lbl_post_level">Post Level</label><select class="select-input"><option>Post Level 1</option><option>Post Level 2 (HOD)</option><option>Deputy Principal</option></select></div>
+            <div><label class="input-label" data-i18n="lbl_school">School</label><input type="text" class="text-input" id="profileSchool" placeholder="e.g. Kempton Park Primary School"></div>
+            <button class="btn-primary" id="saveProfileBtn" data-i18n="btn_save_profile" onclick="saveProfile(event)">Save Profile</button>
           </div>
         </div>
         <div class="card">
@@ -1004,7 +961,24 @@ function switchScreen(name,navEl){
   document.getElementById('mainContent').scrollTop=0;
   closeMobileSidebar();
   if(name==='timetable'){initTimetableTabs();renderTimetable();}
+  if(name==='reminders'){renderRemindersScreen();}
+  if(name==='moderation'){renderModerationScreen();}
 }
+
+// ─── NOTIFICATION TOGGLE ───
+function toggleNotif(e){
+  e && e.stopPropagation();
+  const d = document.getElementById('notifDropdown');
+  if(d) d.style.display = d.style.display === 'none' ? 'block' : 'none';
+}
+document.addEventListener('click', function(e){
+  const wrap = document.getElementById('notifWrap');
+  const drop = document.getElementById('notifDropdown');
+  if(drop && wrap && !wrap.contains(e.target)) drop.style.display = 'none';
+});
+
+// ─── HELP MODAL ───
+function openHelp(){ document.getElementById('helpModal').classList.add('open'); }
 
 // ─── SIDEBAR COLLAPSE (PATCH 1) ───
 let collapsed=false;
@@ -1015,8 +989,46 @@ document.getElementById('sidebarToggle').addEventListener('click',()=>{
 function openMobileSidebar(){document.getElementById('sidebar').classList.add('mobile-open');}
 function closeMobileSidebar(){document.getElementById('sidebar').classList.remove('mobile-open');}
 
-// ─── LANG ───
-function setLang(lang,btn){document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+// ─── LANG / I18N ───
+const UI_STRINGS = {
+  en:{nav_s_main:'Main',nav_s_planning:'Planning',nav_s_account:'Account',nav_dashboard:'Dashboard',nav_timetable:'My Timetable',nav_lesson:'Lesson Prep',nav_worksheets:'Worksheets & Memos',nav_planning_item:'Lesson Planning',nav_moderation:'Moderation',nav_reminders:'Reminders',nav_reports:'Reports',nav_settings:'Settings',dash_greeting_sub:'Set up your timetable in Settings to get started.',stat_periods:'Periods Today',stat_tasks:'Tasks Pending',stat_docs:'Docs Generated',stat_moderation:'Moderation',card_today_periods:"Today's Periods",card_quick_actions:'Quick Actions',card_upcoming_reminders:'Upcoming Reminders',card_recent_docs:'Recent Documents',card_moderation:'Moderation Tracker',btn_view_all:'View All →',btn_all:'All →',btn_manage:'Manage →',btn_gen_lesson:'Generate Lesson',btn_new_worksheet:'New Worksheet',btn_set_reminder:'Set Reminder',rem_greeting:'Reminders',rem_sub:'Set deadlines, SBA alerts, and moderation reminders.',rem_card_title:'All Reminders',btn_add_reminder:'+ Add Reminder',mod_greeting:'Moderation Tracker',mod_sub:'Track SBA moderation per subject and grade. Auto-reminders when packs are due.',mod_card_title:'Moderation Overview',btn_add_subject:'+ Add Entry',tt_greeting:'My Timetable',lbl_full_name:'Full Name',lbl_post_level:'Post Level',lbl_school:'School',btn_save_profile:'Save Profile',notif_title:'Notifications',notif_empty:'No notifications yet.'},
+  af:{nav_s_main:'Hoof',nav_s_planning:'Beplanning',nav_s_account:'Rekening',nav_dashboard:'Kontrolepaneel',nav_timetable:'My Rooster',nav_lesson:'Les-Voorbereiding',nav_worksheets:'Werksvelle & Memos',nav_planning_item:'Lesbeplanning',nav_moderation:'Moderering',nav_reminders:'Herinneringe',nav_reports:'Verslae',nav_settings:'Instellings',dash_greeting_sub:'Stel u rooster op in Instellings om te begin.',stat_periods:'Periodes Vandag',stat_tasks:'Take Uitstaande',stat_docs:'Dok. Gegenereer',stat_moderation:'Moderering',card_today_periods:'Vandag se Periodes',card_quick_actions:'Vinnige Aksies',card_upcoming_reminders:'Komende Herinneringe',card_recent_docs:'Onlangse Dokumente',card_moderation:'Modereringsnasporing',btn_view_all:'Bekyk Alles →',btn_all:'Alles →',btn_manage:'Bestuur →',btn_gen_lesson:'Genereer Les',btn_new_worksheet:'Nuwe Werksvel',btn_set_reminder:'Stel Herinnering',rem_greeting:'Herinneringe',rem_sub:'Stel sperdatums, SBA-kennisgewings en herinneringe in.',rem_card_title:'Alle Herinneringe',btn_add_reminder:'+ Voeg Herinnering By',mod_greeting:'Modereringsnasporing',mod_sub:'Volg SBA-moderering per vak en graad. Outomatiese herinneringe wanneer pakkette verskuldig is.',mod_card_title:'Modereringsoorsig',btn_add_subject:'+ Voeg Inskrywing By',tt_greeting:'My Rooster',lbl_full_name:'Volle Naam',lbl_post_level:'Posvlak',lbl_school:'Skool',btn_save_profile:'Stoor Profiel',notif_title:'Kennisgewings',notif_empty:'Nog geen kennisgewings nie.'}
+};
+const pageTitlesI18n = {
+  en:{dashboard:'Dashboard',timetable:'My Timetable',lesson:'Lesson Prep',worksheets:'Worksheets & Memos',planning:'Lesson Planning',moderation:'Moderation',reminders:'Reminders',reports:'Reports',settings:'Settings'},
+  af:{dashboard:'Kontrolepaneel',timetable:'My Rooster',lesson:'Les-Voorbereiding',worksheets:'Werksvelle & Memos',planning:'Lesbeplanning',moderation:'Moderering',reminders:'Herinneringe',reports:'Verslae',settings:'Instellings'}
+};
+let currentLang = 'en';
+
+function setLang(lang, btn){
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const t = UI_STRINGS[lang];
+  if(!t) return;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if(t[key] !== undefined) el.textContent = t[key];
+  });
+  // Update page title for current screen
+  const visible = document.querySelector('.screen.visible');
+  if(visible){
+    const screenId = visible.id.replace('screen-','');
+    const pt = pageTitlesI18n[lang];
+    if(pt && pt[screenId]) document.getElementById('pageTitle').textContent = pt[screenId];
+  }
+  // Update titles lookup for future navigation
+  if(pageTitlesI18n[lang]) Object.assign(titles, pageTitlesI18n[lang]);
+}
+
+// ─── DYNAMIC DATE ───
+function updateDateChip(){
+  const el = document.getElementById('dateChip');
+  if(!el) return;
+  const now = new Date();
+  const opts = {weekday:'long',day:'numeric',month:'long',year:'numeric'};
+  el.textContent = '📅 ' + now.toLocaleDateString('en-ZA', opts);
+}
 
 // ─── TIMETABLE DATA MODEL ───
 const TT_DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
@@ -1025,20 +1037,7 @@ let ttLocked = true;
 let editingPeriod = null; // {day, idx}
 
 const timetableData = {
-  Monday: [
-    {start:'07:30',end:'08:10',type:'teaching',subject:'Afrikaans HT',grade:'Grade 6',cls:'A',notes:'',done:true,carryover:false},
-    {start:'08:10',end:'08:50',type:'teaching',subject:'English HL',grade:'Grade 5',cls:'B',notes:'',done:true,carryover:false},
-    {start:'08:50',end:'09:30',type:'teaching',subject:'Mathematics',grade:'Grade 7',cls:'A',notes:'',done:true,carryover:false},
-    {start:'09:30',end:'10:10',type:'teaching',subject:'Natural Sciences & Technology',grade:'Grade 6',cls:'A',notes:'',done:false,carryover:false},
-    {start:'10:30',end:'11:10',type:'teaching',subject:'Afrikaans HT',grade:'Grade 7',cls:'B',notes:'Opstel peer review',done:false,carryover:true},
-    {start:'11:10',end:'11:50',type:'teaching',subject:'English HL',grade:'Grade 7',cls:'A',notes:'',done:false,carryover:false},
-    {start:'11:50',end:'12:30',type:'teaching',subject:'Afrikaans HT',grade:'Grade 5',cls:'A',notes:'',done:false,carryover:false},
-    {start:'13:30',end:'14:10',type:'teaching',subject:'Natural Sciences & Technology',grade:'Grade 5',cls:'A',notes:'',done:false,carryover:false},
-  ],
-  Tuesday:   [{start:'07:30',end:'08:10',type:'teaching',subject:'Mathematics',grade:'Grade 6',cls:'A',notes:'',done:false,carryover:false},{start:'08:10',end:'08:50',type:'free',subject:'',grade:'',cls:'',notes:'Prep time',done:false,carryover:false},{start:'08:50',end:'09:30',type:'teaching',subject:'English HL',grade:'Grade 6',cls:'B',notes:'',done:false,carryover:false},{start:'09:30',end:'10:10',type:'teaching',subject:'Life Skills',grade:'Grade 5',cls:'A',notes:'',done:false,carryover:false},{start:'10:30',end:'11:10',type:'admin',subject:'',grade:'',cls:'',notes:'HOD meeting',done:false,carryover:false},{start:'11:10',end:'12:30',type:'teaching',subject:'Afrikaans HT',grade:'Grade 6',cls:'A',notes:'',done:false,carryover:false}],
-  Wednesday: [{start:'07:30',end:'08:10',type:'teaching',subject:'English HL',grade:'Grade 5',cls:'A',notes:'',done:false,carryover:false},{start:'08:10',end:'09:30',type:'teaching',subject:'Mathematics',grade:'Grade 7',cls:'B',notes:'',done:false,carryover:false},{start:'09:30',end:'10:10',type:'teaching',subject:'Natural Sciences & Technology',grade:'Grade 6',cls:'A',notes:'',done:false,carryover:false},{start:'10:30',end:'11:50',type:'free',subject:'',grade:'',cls:'',notes:'',done:false,carryover:false},{start:'11:50',end:'12:30',type:'teaching',subject:'Afrikaans HT',grade:'Grade 7',cls:'A',notes:'',done:false,carryover:false}],
-  Thursday:  [{start:'07:30',end:'08:10',type:'teaching',subject:'Life Skills',grade:'Grade 6',cls:'A',notes:'',done:false,carryover:false},{start:'08:10',end:'09:30',type:'teaching',subject:'Afrikaans HT',grade:'Grade 5',cls:'B',notes:'',done:false,carryover:false},{start:'09:30',end:'10:10',type:'admin',subject:'',grade:'',cls:'',notes:'SBA capturing',done:false,carryover:false},{start:'10:30',end:'11:10',type:'teaching',subject:'English HL',grade:'Grade 7',cls:'A',notes:'',done:false,carryover:false},{start:'11:10',end:'12:30',type:'teaching',subject:'Mathematics',grade:'Grade 6',cls:'A',notes:'',done:false,carryover:false}],
-  Friday:    [{start:'07:30',end:'08:10',type:'teaching',subject:'Afrikaans HT',grade:'Grade 7',cls:'B',notes:'',done:false,carryover:false},{start:'08:10',end:'08:50',type:'teaching',subject:'English HL',grade:'Grade 6',cls:'A',notes:'',done:false,carryover:false},{start:'08:50',end:'09:30',type:'free',subject:'',grade:'',cls:'',notes:'',done:false,carryover:false},{start:'09:30',end:'10:10',type:'teaching',subject:'Natural Sciences & Technology',grade:'Grade 7',cls:'A',notes:'',done:false,carryover:false},{start:'10:30',end:'11:10',type:'teaching',subject:'Mathematics',grade:'Grade 5',cls:'A',notes:'',done:false,carryover:false}],
+  Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: []
 };
 
 // ─── RENDER TIMETABLE ───
@@ -1061,6 +1060,14 @@ function renderTimetable(){
   const body = document.getElementById('ttBody');
   if(!body) return;
   const periods = timetableData[currentDay];
+
+  // Check if ALL days are empty — show setup message
+  const totalPeriods = Object.values(timetableData).reduce((s,d)=>s+d.length,0);
+  if(totalPeriods === 0){
+    body.innerHTML = '<div class="empty-state" style="padding:32px 18px"><div class="empty-state-icon">📅</div><b style="color:var(--color-primary)">No timetable set up yet.</b><br><span style="font-size:0.75rem">Set up your timetable in <a href="#" onclick="switchScreen(\'settings\',document.querySelector(\'[data-label=Settings]\'));return false;" style="color:var(--color-primary)">Settings</a> to get started.</span></div>';
+    return;
+  }
+
   let html = '';
 
   // Unlock hint banner
@@ -1294,8 +1301,18 @@ function toggleLock(){
   renderTimetable();
 }
 
-// Init timetable + auth on load
-document.addEventListener('DOMContentLoaded', ()=>{ initTimetableTabs(); renderTimetable(); initAuth(); });
+// Init on load
+document.addEventListener('DOMContentLoaded', ()=>{
+  initTimetableTabs();
+  renderTimetable();
+  renderRemindersScreen();
+  renderDashboardReminders();
+  renderModerationScreen();
+  renderDashboardModeration();
+  updateDashboardStats();
+  updateDateChip();
+  initAuth();
+});
 
 // ─── SETUP WIZARD (PATCH 3) ───
 function goStep(n){
@@ -1837,7 +1854,6 @@ function generateWorksheet() {
   const subject = document.getElementById('ws_subject')?.value;
   const topic   = document.getElementById('ws_topic')?.value;
   const qcount  = document.getElementById('ws_qcount')?.value;
-  const marks   = document.getElementById('ws_marks')?.value;
   const qtype   = document.getElementById('ws_qtype')?.value;
   if(!grade||!subject){alert('Please select a Grade and Subject first.');return;}
   document.getElementById('wsFormSection').style.display = 'none';
@@ -1847,7 +1863,7 @@ function generateWorksheet() {
   document.getElementById('memoContent').innerHTML = '';
   showWsTab('ws');
   setTimeout(()=>{
-    currentWsData = buildWorksheetData(grade,subject,topic,qcount,marks,qtype);
+    currentWsData = buildWorksheetData(grade,subject,topic,qcount,30,qtype);
     renderWorksheet(currentWsData);
     renderMemo(currentWsData);
   },800);
@@ -2360,7 +2376,232 @@ async function signOut(){
   await _sb.auth.signOut();
 }
 
+// ─── UTILITY ───
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ─── REMINDERS ───
+let reminders = [];
+
+function renderRemindersScreen(){
+  const body = document.getElementById('remindersBody');
+  if(!body) return;
+  if(!reminders.length){
+    body.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔔</div>No reminders yet.<br><span style="font-size:0.73rem">Click "+ Add Reminder" to get started.</span></div>';
+    return;
+  }
+  body.innerHTML = '<div class="reminders-body" style="padding:10px 14px 14px">' + reminders.map((r,i)=>{
+    const dot = r.urgency==='urgent'?'dot-red':r.urgency==='soon'?'dot-amber':'dot-purple';
+    return `<div class="reminder-item ${r.urgency}" style="display:flex;align-items:center">
+      <div class="reminder-dot ${dot}"></div>
+      <div class="reminder-text">
+        <div class="reminder-title">${escHtml(r.title)}</div>
+        ${r.notes?`<div class="reminder-meta">${escHtml(r.notes)}</div>`:''}
+      </div>
+      <div class="reminder-time">${escHtml(r.time)}</div>
+      <button class="rem-delete-btn" onclick="deleteReminder(${i})" title="Remove">✕</button>
+    </div>`;
+  }).join('') + '</div>';
+}
+
+function renderDashboardReminders(){
+  const body = document.getElementById('dashRemBody');
+  if(!body) return;
+  if(!reminders.length){
+    body.innerHTML = '<div class="empty-state" style="padding:14px 18px;text-align:left"><span style="color:var(--color-text-muted);font-size:0.78rem">No upcoming reminders.</span></div>';
+    return;
+  }
+  body.innerHTML = '<div class="reminders-body" style="padding:8px 14px 10px">' + reminders.slice(0,3).map(r=>{
+    const dot = r.urgency==='urgent'?'dot-red':r.urgency==='soon'?'dot-amber':'dot-purple';
+    return `<div class="reminder-item ${r.urgency}">
+      <div class="reminder-dot ${dot}"></div>
+      <div class="reminder-text"><div class="reminder-title">${escHtml(r.title)}</div>${r.notes?`<div class="reminder-meta">${escHtml(r.notes)}</div>`:''}</div>
+      <div class="reminder-time">${escHtml(r.time)}</div>
+    </div>`;
+  }).join('') + '</div>';
+}
+
+function openAddReminder(){ closeModal('reminderModal'); document.getElementById('remTitle').value=''; document.getElementById('remNotes').value=''; document.getElementById('remTime').value=''; document.getElementById('remUrgency').value='info'; document.getElementById('reminderModal').classList.add('open'); }
+
+function saveReminder(){
+  const title   = document.getElementById('remTitle').value.trim();
+  const notes   = document.getElementById('remNotes').value.trim();
+  const time    = document.getElementById('remTime').value.trim();
+  const urgency = document.getElementById('remUrgency').value;
+  if(!title){ alert('Please enter a reminder title.'); return; }
+  reminders.push({title,notes,time,urgency});
+  closeModal('reminderModal');
+  renderRemindersScreen();
+  renderDashboardReminders();
+  updateDashboardStats();
+}
+
+function deleteReminder(i){
+  reminders.splice(i,1);
+  renderRemindersScreen();
+  renderDashboardReminders();
+  updateDashboardStats();
+}
+
+// ─── MODERATION ───
+let moderationItems = [];
+
+function renderModerationScreen(){
+  const body = document.getElementById('modBody');
+  if(!body) return;
+  if(!moderationItems.length){
+    body.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔍</div>No moderation entries yet.<br><span style="font-size:0.73rem">Click "+ Add Entry" to track your SBA moderation.</span></div>';
+    return;
+  }
+  body.innerHTML = moderationItems.map((item,i)=>{
+    const pct = item.total>0?Math.round((item.done/item.total)*100):0;
+    const barCls = pct===100?'bar-green':pct>=60?'bar-purple':'bar-gold';
+    const pctCls = pct===100?'c-green':pct>=60?'c-purple':'c-gold';
+    return `<div class="mod-item">
+      <div class="mod-progress-wrap">
+        <div class="mod-title">${escHtml(item.title)}</div>
+        <div class="mod-bar"><div class="mod-bar-fill ${barCls}" style="width:${pct}%"></div></div>
+        <div class="mod-stat">${item.done} of ${item.total} tasks moderated${item.due?' &middot; Due: '+escHtml(item.due):''}</div>
+      </div>
+      <div class="mod-pct ${pctCls}">${pct}%</div>
+      <div class="mod-item-actions">
+        <button class="period-edit-btn" onclick="openEditMod(${i})" title="Edit">&#9998;</button>
+        <button class="period-delete-btn" onclick="deleteMod(${i})" title="Remove">&#10005;</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderDashboardModeration(){
+  const body = document.getElementById('dashModBody');
+  if(!body) return;
+  if(!moderationItems.length){
+    body.innerHTML = '<div class="empty-state" style="padding:14px 18px;text-align:left"><span style="color:var(--color-text-muted);font-size:0.78rem">No moderation entries yet.</span></div>';
+    return;
+  }
+  body.innerHTML = '<div class="mod-body">' + moderationItems.slice(0,3).map(item=>{
+    const pct = item.total>0?Math.round((item.done/item.total)*100):0;
+    const barCls = pct===100?'bar-green':pct>=60?'bar-purple':'bar-gold';
+    const pctCls = pct===100?'c-green':pct>=60?'c-purple':'c-gold';
+    return `<div class="mod-item"><div class="mod-progress-wrap"><div class="mod-title">${escHtml(item.title)}</div><div class="mod-bar"><div class="mod-bar-fill ${barCls}" style="width:${pct}%"></div></div><div class="mod-stat">${item.done} of ${item.total} tasks moderated</div></div><div class="mod-pct ${pctCls}">${pct}%</div></div>`;
+  }).join('') + '</div>';
+}
+
+function openAddMod(){ document.getElementById('modModalTitle').textContent='🔍 Add Moderation Entry'; document.getElementById('modEntryTitle').value=''; document.getElementById('modEntryTotal').value='5'; document.getElementById('modEntryDone').value='0'; document.getElementById('modEntryDue').value=''; document.getElementById('modEntryId').value=''; document.getElementById('modModal').classList.add('open'); }
+
+function openEditMod(i){
+  const item = moderationItems[i];
+  document.getElementById('modModalTitle').textContent='✏️ Edit Moderation Entry';
+  document.getElementById('modEntryTitle').value = item.title;
+  document.getElementById('modEntryTotal').value = item.total;
+  document.getElementById('modEntryDone').value  = item.done;
+  document.getElementById('modEntryDue').value   = item.due||'';
+  document.getElementById('modEntryId').value    = i;
+  document.getElementById('modModal').classList.add('open');
+}
+
+function saveMod(){
+  const title = document.getElementById('modEntryTitle').value.trim();
+  const total = parseInt(document.getElementById('modEntryTotal').value)||0;
+  const done  = Math.min(parseInt(document.getElementById('modEntryDone').value)||0, total);
+  const due   = document.getElementById('modEntryDue').value.trim();
+  const idVal = document.getElementById('modEntryId').value;
+  if(!title){ alert('Please enter a title for this entry.'); return; }
+  const item = {title,total,done,due};
+  if(idVal!=='') moderationItems[parseInt(idVal)] = item;
+  else moderationItems.push(item);
+  closeModal('modModal');
+  renderModerationScreen();
+  renderDashboardModeration();
+  updateDashboardStats();
+}
+
+function deleteMod(i){
+  if(!confirm('Remove this moderation entry?')) return;
+  moderationItems.splice(i,1);
+  renderModerationScreen();
+  renderDashboardModeration();
+  updateDashboardStats();
+}
+
+// ─── DASHBOARD STATS ───
+function updateDashboardStats(){
+  const st = document.getElementById('statTasks');
+  const ss = document.getElementById('statTasksSub');
+  if(st){ st.textContent = reminders.length; }
+  if(ss){ ss.textContent = reminders.length ? reminders.length+' reminder'+(reminders.length>1?'s':'')+' set' : 'No reminders set'; }
+
+  const modAll = moderationItems.filter(m=>m.total>0);
+  const modPct = modAll.length ? Math.round(modAll.reduce((s,m)=>s+(m.done/m.total)*100,0)/modAll.length) : 0;
+  const outstanding = moderationItems.filter(m=>m.done<m.total).length;
+  const sm = document.getElementById('statMod');
+  const smS = document.getElementById('statModSub');
+  if(sm)  sm.textContent  = modPct+'%';
+  if(smS) smS.textContent = outstanding ? outstanding+' item'+(outstanding>1?'s':'')+' outstanding' : (moderationItems.length?'All up to date':'No entries yet');
+}
+
 </script>
+
+<!-- HELP MODAL -->
+<div class="modal-overlay" id="helpModal">
+  <div class="modal" style="max-width:480px;width:92%">
+    <h3>❓ Leuro Assistant — Help</h3>
+    <div style="font-size:0.8rem;color:var(--color-text-mid);line-height:1.8;margin-bottom:0">
+      <b>🏠 Dashboard</b> — Overview of your day, reminders, and documents.<br>
+      <b>📅 My Timetable</b> — View your teaching schedule. Configure it in Settings first.<br>
+      <b>📝 Lesson Prep</b> — Generate CAPS-aligned lesson plans as printable PDFs.<br>
+      <b>📄 Worksheets &amp; Memos</b> — Create worksheets with answer memos and export as PDFs.<br>
+      <b>🔍 Moderation</b> — Track SBA moderation progress per subject and grade.<br>
+      <b>🔔 Reminders</b> — Add and manage deadlines and teaching reminders.<br>
+      <b>⚙️ Settings</b> — Update your profile, school name, and set up your timetable.
+    </div>
+    <div class="modal-actions" style="margin-top:24px">
+      <button class="btn-primary" onclick="closeModal('helpModal')">Got it ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD REMINDER MODAL -->
+<div class="modal-overlay" id="reminderModal">
+  <div class="modal" style="max-width:420px;width:92%">
+    <h3>🔔 Add Reminder</h3>
+    <div style="display:flex;flex-direction:column;gap:14px;margin-top:8px">
+      <div><label class="input-label">Title *</label><input type="text" class="text-input" id="remTitle" placeholder="e.g. Term 2 Moderation Pack due"></div>
+      <div><label class="input-label">Notes (optional)</label><input type="text" class="text-input" id="remNotes" placeholder="e.g. HOD submission · Gr 6 & 7"></div>
+      <div><label class="input-label">When</label><input type="text" class="text-input" id="remTime" placeholder="e.g. Tomorrow, 8am · Wednesday · Fri 3pm"></div>
+      <div><label class="input-label">Priority</label>
+        <select class="select-input" id="remUrgency">
+          <option value="info">Normal</option>
+          <option value="soon">Soon</option>
+          <option value="urgent">Urgent</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions" style="margin-top:20px">
+      <button class="btn-secondary" onclick="closeModal('reminderModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveReminder()">Add Reminder</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD / EDIT MODERATION MODAL -->
+<div class="modal-overlay" id="modModal">
+  <div class="modal" style="max-width:440px;width:92%">
+    <h3 id="modModalTitle">🔍 Add Moderation Entry</h3>
+    <input type="hidden" id="modEntryId">
+    <div style="display:flex;flex-direction:column;gap:14px;margin-top:8px">
+      <div><label class="input-label">Title *</label><input type="text" class="text-input" id="modEntryTitle" placeholder="e.g. Gr 6 · Afrikaans HT — Term 2 SBA"></div>
+      <div class="select-row-2">
+        <div><label class="input-label">Total Tasks</label><input type="number" class="number-input" id="modEntryTotal" min="1" max="20" value="5"></div>
+        <div><label class="input-label">Completed</label><input type="number" class="number-input" id="modEntryDone" min="0" max="20" value="0"></div>
+      </div>
+      <div><label class="input-label">Due Date (optional)</label><input type="text" class="text-input" id="modEntryDue" placeholder="e.g. Wed 8 May"></div>
+    </div>
+    <div class="modal-actions" style="margin-top:20px">
+      <button class="btn-secondary" onclick="closeModal('modModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveMod()">Save Entry</button>
+    </div>
+  </div>
+</div>
 
 <!-- PERIOD EDIT MODAL -->
 <div class="modal-overlay" id="periodEditModal">
