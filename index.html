@@ -434,6 +434,45 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
   .select-row{grid-template-columns:1fr}
 }
 
+/* ─── TIMETABLE SETUP v2 ─── */
+.tt-step-form{padding:18px 18px 6px;display:flex;flex-direction:column;gap:16px}
+.tt-step-nav{padding:12px 18px 18px;display:flex;gap:10px;justify-content:space-between}
+.tt-break-row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;padding:10px 12px;background:var(--color-primary-xl);border-radius:var(--radius-sm);border:1px solid rgba(90,62,118,0.12)}
+.tt-break-row .text-input,.tt-break-row .number-input{flex:1;min-width:80px}
+.tt-break-label-input{flex:2;min-width:120px}
+.tt-break-del{background:none;border:none;color:var(--color-text-muted);cursor:pointer;font-size:1rem;padding:4px 8px;border-radius:4px;font-family:var(--font-family);line-height:1;flex-shrink:0;transition:all 0.15s}
+.tt-break-del:hover{color:var(--color-red);background:var(--color-red-lt)}
+.tt-break-sep{display:flex;align-items:center;gap:10px;padding:6px 18px;background:linear-gradient(90deg,rgba(230,179,71,0.06) 0%,transparent 100%)}
+.tt-break-sep-line{flex:1;height:1px;background:var(--color-accent);opacity:0.4}
+.tt-break-sep-label{font-size:0.68rem;font-weight:700;color:var(--color-accent-dk);white-space:nowrap}
+.schedule-type-opts{display:flex;gap:10px;padding:14px 18px}
+.schedule-type-btn{flex:1;padding:16px 12px;border:2px solid var(--color-border);border-radius:var(--radius-md);cursor:pointer;background:var(--color-surface);font-family:var(--font-family);font-size:0.82rem;font-weight:600;color:var(--color-text-mid);text-align:center;transition:all 0.18s;display:flex;flex-direction:column;align-items:center;gap:6px}
+.schedule-type-btn:hover{border-color:var(--color-primary-lt);background:var(--color-primary-xl)}
+.schedule-type-btn.selected{border-color:var(--color-primary);background:var(--color-primary-xl);color:var(--color-primary)}
+.schedule-type-btn .stype-icon{font-size:1.6rem}
+.tt-period-setup-tabs{display:flex;gap:4px;padding:12px 18px 0;flex-wrap:wrap}
+.tt-period-day-tab{padding:6px 14px;border:1px solid var(--color-border);border-radius:20px;cursor:pointer;font-size:0.73rem;font-weight:600;color:var(--color-text-muted);background:none;font-family:var(--font-family);transition:all 0.18s}
+.tt-period-day-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.tt-periods-grid{display:flex;flex-direction:column;gap:8px;padding:12px 18px}
+.tt-period-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tt-period-num{font-size:0.7rem;font-weight:700;color:var(--color-primary);min-width:24px;flex-shrink:0}
+.tt-period-time{font-size:0.68rem;color:var(--color-text-muted);min-width:90px;flex-shrink:0;font-weight:500}
+.tt-period-subj{flex:2;min-width:130px}
+.tt-period-grade{flex:1;min-width:90px}
+.tt-period-room{flex:1;min-width:90px}
+.tt-saved-badge{display:flex;align-items:center;gap:10px;padding:14px 18px;background:linear-gradient(90deg,var(--color-primary-xl) 0%,transparent 100%);border-bottom:1px solid var(--color-border-lt)}
+.tt-saved-icon{font-size:1.3rem;flex-shrink:0}
+.tt-saved-text{flex:1}
+.tt-saved-title{font-size:0.85rem;font-weight:700;color:var(--color-primary)}
+.tt-saved-sub{font-size:0.72rem;color:var(--color-text-mid);margin-top:2px}
+.period-card{padding:10px 14px;border-bottom:1px solid var(--color-border-lt);display:flex;align-items:center;gap:12px}
+.period-card:last-child{border-bottom:none}
+.period-card-num{font-size:0.72rem;font-weight:700;color:var(--color-primary);min-width:26px;flex-shrink:0}
+.period-card-info{flex:1}
+.period-card-subj{font-size:0.82rem;font-weight:700;color:var(--color-text)}
+.period-card-meta{font-size:0.65rem;color:var(--color-text-muted);margin-top:2px;font-weight:500}
+.period-card-empty .period-card-subj{color:var(--color-text-muted);font-weight:400;font-style:italic}
+
 /* ─── AUTH SCREEN ─── */
 #authScreen{position:fixed;inset:0;background:linear-gradient(135deg,var(--color-primary-dk) 0%,var(--color-primary) 55%,var(--color-primary-lt) 100%);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;transition:opacity 0.3s}
 #authScreen.fading{opacity:0;pointer-events:none}
@@ -615,7 +654,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
       <div class="two-col">
         <div class="card">
           <div class="card-header"><span class="card-icon">📅</span><div class="card-title" data-i18n="card_today_periods">Today's Periods</div><button class="card-action" data-i18n="btn_view_all" onclick="switchScreen('timetable',null)">View All →</button></div>
-          <div class="empty-state"><div class="empty-state-icon">📅</div><span data-i18n="dash_periods_no">No periods for today.</span><br><span style="font-size:0.73rem"><span data-i18n="tt_setup_hint_pre">Set up your timetable in</span> <a href="#" onclick="switchScreen('settings',null);return false;" style="color:var(--color-primary)" data-i18n="nav_settings">Settings</a> <span data-i18n="tt_setup_hint_post">to get started.</span></span></div>
+          <div id="dashPeriodsBody"></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:18px">
           <div class="card">
@@ -860,55 +899,117 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
       <div class="ai-strip"><div class="ai-avatar">⚙️</div><div class="ai-text"><div class="ai-greeting" data-i18n="settings_greeting">Settings</div><div class="ai-sub" data-i18n="settings_sub">Manage your profile, school details, timetable, and notification preferences.</div></div></div>
 
       <!-- TIMETABLE SETUP CARD -->
-      <div class="card">
+      <div class="card" id="ttSetupCard">
         <div class="card-header">
           <span class="card-icon">📅</span>
           <div class="card-title" data-i18n="settings_tt_card">Timetable Setup</div>
-          <button class="card-action" id="changeTTBtn" onclick="showChangeTTModal()" style="display:none">Change Timetable</button>
+          <button class="card-action" id="ttEditBtn" onclick="ttStartEdit()" style="display:none" data-i18n="tt_edit_btn">✏️ Edit Timetable</button>
         </div>
 
-        <div class="setup-steps">
-          <div class="step-indicator"><div class="step-dot active" id="dot1">1</div><span class="step-label" id="lbl1">Cycle Configuration</span></div>
-          <div class="step-line" id="line1"></div>
-          <div class="step-indicator"><div class="step-dot" id="dot2">2</div><span class="step-label" id="lbl2">Populate Periods</span></div>
-          <div class="step-line" id="line2"></div>
-          <div class="step-indicator"><div class="step-dot" id="dot3">3</div><span class="step-label" id="lbl3">Save & Activate</span></div>
-        </div>
-
-        <!-- STEP 1 -->
-        <div class="step-panel active" id="step1">
-          <div class="form-body">
-            <p style="font-size:0.78rem;color:var(--color-text-mid);line-height:1.6">Configure your teaching cycle. Days will be labelled automatically and you can rename each one. The number of periods applies equally to all days. Breaks and lunch are not included.</p>
-            <div class="select-row-2">
-              <div><label class="input-label">Days in Cycle</label><input type="number" class="number-input" id="cycledays" min="5" max="10" value="5" oninput="updateDayNames()"><div style="font-size:0.63rem;color:var(--color-text-muted);margin-top:4px">Range: 5–10 days</div></div>
-              <div><label class="input-label">Periods Per Day</label><input type="number" class="number-input" id="cycleperiods" min="5" max="14" value="8"><div style="font-size:0.63rem;color:var(--color-text-muted);margin-top:4px">Range: 5–14 periods</div></div>
+        <!-- SAVED SUMMARY (shown when timetable already saved) -->
+        <div id="ttSavedView" style="display:none">
+          <div class="tt-saved-badge">
+            <div class="tt-saved-icon">✅</div>
+            <div class="tt-saved-text">
+              <div class="tt-saved-title" id="ttSavedTitle" data-i18n="tt_active">Timetable Active</div>
+              <div class="tt-saved-sub" id="ttSavedSub">Loading...</div>
             </div>
-            <div><label class="input-label">Rename Days (optional)</label><div id="dayNamesWrap" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px"></div></div>
-            <div style="display:flex;justify-content:flex-end"><button class="btn-primary" onclick="goStep(2)">Next: Populate Periods →</button></div>
+          </div>
+          <div style="padding:12px 18px;display:flex;justify-content:flex-end">
+            <button class="btn-secondary" onclick="ttStartEdit()" data-i18n="tt_edit_btn" style="font-size:0.78rem;padding:7px 14px">✏️ Edit Timetable</button>
           </div>
         </div>
 
-        <!-- STEP 2 -->
-        <div class="step-panel" id="step2">
-          <div style="padding:14px 18px 10px;font-size:0.78rem;color:var(--color-text-mid);line-height:1.6">Fill each cell. Choose <strong>Teaching</strong> (Subject / Grade / Class), <strong>Free Period</strong>, or <strong>Admin Period</strong>. Teaching cells feed into your task and carry-over system.</div>
-          <div class="tt-grid-wrap"><table class="tt-grid" id="ttGrid"></table></div>
-          <div style="padding:14px 18px;display:flex;gap:10px;justify-content:space-between">
-            <button class="btn-secondary" onclick="goStep(1)">← Back</button>
-            <button class="btn-primary" onclick="goStep(3)">Next: Review & Save →</button>
+        <!-- WIZARD (shown when setting up or editing) -->
+        <div id="ttWizard">
+          <div class="setup-steps" id="ttStepNav">
+            <div class="step-indicator"><div class="step-dot active" id="ttDot1">1</div><span class="step-label" id="ttLbl1" data-i18n="tt_step1_label">Daily Structure</span></div>
+            <div class="step-line" id="ttLine1"></div>
+            <div class="step-indicator"><div class="step-dot" id="ttDot2">2</div><span class="step-label" id="ttLbl2" data-i18n="tt_step2_label">Schedule Type</span></div>
+            <div class="step-line" id="ttLine2"></div>
+            <div class="step-indicator"><div class="step-dot" id="ttDot3">3</div><span class="step-label" id="ttLbl3" data-i18n="tt_step3_label">Period Setup</span></div>
+            <div class="step-line" id="ttLine3"></div>
+            <div class="step-indicator"><div class="step-dot" id="ttDot4">4</div><span class="step-label" id="ttLbl4" data-i18n="tt_step4_label">Save</span></div>
           </div>
-        </div>
 
-        <!-- STEP 3 -->
-        <div class="step-panel" id="step3">
-          <div class="form-body">
-            <div style="background:var(--color-primary-xl);border:1px solid rgba(90,62,118,0.18);border-radius:var(--radius-md);padding:16px">
-              <div style="font-size:0.85rem;font-weight:700;color:var(--color-primary);margin-bottom:6px">✅ Timetable Ready to Save</div>
-              <div style="font-size:0.75rem;color:var(--color-text-mid);line-height:1.6">Your timetable has been configured. Once saved, the structure will be locked by default — you can still edit subject, grade, and class per period at any time. To make structural changes, unlock via the timetable screen.</div>
+          <!-- STEP 1: Daily Structure -->
+          <div class="step-panel active" id="ttStep1">
+            <div class="tt-step-form">
+              <p style="font-size:0.78rem;color:var(--color-text-mid);line-height:1.6;margin:0" data-i18n="tt_step1_desc">Configure your daily schedule structure — periods, durations, and breaks.</p>
+              <div class="select-row-2">
+                <div>
+                  <label class="input-label" data-i18n="tt_lbl_start">School Start Time</label>
+                  <input type="time" class="text-input" id="ttStartTime" value="07:30">
+                </div>
+                <div>
+                  <label class="input-label" data-i18n="tt_lbl_periods">Periods Per Day</label>
+                  <input type="number" class="number-input" id="ttPeriodsPerDay" min="1" max="12" value="8">
+                </div>
+              </div>
+              <div class="select-row-2">
+                <div>
+                  <label class="input-label" data-i18n="tt_lbl_duration">Period Duration (min)</label>
+                  <input type="number" class="number-input" id="ttPeriodDuration" min="10" max="90" value="40">
+                </div>
+                <div>
+                  <label class="input-label" data-i18n="tt_lbl_num_breaks">Number of Breaks</label>
+                  <input type="number" class="number-input" id="ttNumBreaks" min="0" max="4" value="1" oninput="ttRenderBreaks()">
+                </div>
+              </div>
+              <div>
+                <label class="input-label" data-i18n="tt_lbl_breaks">Breaks</label>
+                <div id="ttBreaksWrap" style="display:flex;flex-direction:column;gap:8px"></div>
+                <button class="card-action" onclick="ttAddBreak()" style="margin-top:8px;font-size:0.73rem" data-i18n="tt_add_break">+ Add Break</button>
+              </div>
             </div>
-            <div style="background:var(--color-accent-lt);border:1px solid rgba(230,179,71,0.3);border-radius:var(--radius-md);padding:14px;font-size:0.75rem;color:var(--color-accent-dk);line-height:1.6"><strong>📌 Note:</strong> Only one active timetable per account. Your previous timetable data is archived, not deleted. Carry-over history is preserved.</div>
-            <div style="display:flex;gap:10px;justify-content:space-between">
-              <button class="btn-secondary" onclick="goStep(2)">← Back</button>
-              <button class="btn-gold" onclick="saveTimetable()">🔒 Save & Activate Timetable</button>
+            <div class="tt-step-nav">
+              <div></div>
+              <button class="btn-primary" onclick="ttGoStep(2)" data-i18n="tt_next_1">Next: Schedule Type →</button>
+            </div>
+          </div>
+
+          <!-- STEP 2: Schedule Type -->
+          <div class="step-panel" id="ttStep2">
+            <p style="font-size:0.78rem;color:var(--color-text-mid);line-height:1.6;padding:14px 18px 0;margin:0" data-i18n="tt_step2_desc">Choose whether all days share the same periods, or each day has its own unique timetable.</p>
+            <div class="schedule-type-opts">
+              <button class="schedule-type-btn selected" id="stSame" onclick="ttSelectScheduleType('same')">
+                <span class="stype-icon">📋</span>
+                <span data-i18n="tt_same_daily">Same every day</span>
+              </button>
+              <button class="schedule-type-btn" id="stDiff" onclick="ttSelectScheduleType('different')">
+                <span class="stype-icon">🗓️</span>
+                <span data-i18n="tt_diff_daily">Different per day</span>
+              </button>
+            </div>
+            <div class="tt-step-nav">
+              <button class="btn-secondary" onclick="ttGoStep(1)" data-i18n="tt_back">← Back</button>
+              <button class="btn-primary" onclick="ttGoStep(3)" data-i18n="tt_next_2">Next: Period Setup →</button>
+            </div>
+          </div>
+
+          <!-- STEP 3: Period Setup -->
+          <div class="step-panel" id="ttStep3">
+            <div id="ttPeriodDayTabs" class="tt-period-setup-tabs"></div>
+            <div class="tt-periods-grid" id="ttPeriodsGrid"></div>
+            <div class="tt-step-nav">
+              <button class="btn-secondary" onclick="ttGoStep(2)" data-i18n="tt_back">← Back</button>
+              <button class="btn-primary" onclick="ttGoStep(4)" data-i18n="tt_next_3">Next: Review & Save →</button>
+            </div>
+          </div>
+
+          <!-- STEP 4: Review & Save -->
+          <div class="step-panel" id="ttStep4">
+            <div class="tt-step-form">
+              <div style="background:var(--color-primary-xl);border:1px solid rgba(90,62,118,0.18);border-radius:var(--radius-md);padding:16px">
+                <div style="font-size:0.85rem;font-weight:700;color:var(--color-primary);margin-bottom:8px" data-i18n="tt_ready">✅ Timetable Ready to Save</div>
+                <div id="ttReviewSummary" style="font-size:0.75rem;color:var(--color-text-mid);line-height:1.8"></div>
+              </div>
+              <div style="background:var(--color-accent-lt);border:1px solid rgba(230,179,71,0.3);border-radius:var(--radius-md);padding:14px;font-size:0.75rem;color:var(--color-accent-dk);line-height:1.6" data-i18n="tt_save_note">📌 Your timetable saves to your account and is immediately available in My Timetable.</div>
+              <div id="ttSaveStatus" style="font-size:0.78rem;font-weight:600;display:none;padding:10px 12px;border-radius:var(--radius-sm)"></div>
+            </div>
+            <div class="tt-step-nav">
+              <button class="btn-secondary" onclick="ttGoStep(3)" data-i18n="tt_back">← Back</button>
+              <button class="btn-gold" id="ttSaveBtn" onclick="ttSaveAndActivate()" data-i18n="tt_save_btn">🔒 Save Timetable</button>
             </div>
           </div>
         </div>
@@ -945,17 +1046,6 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
   </div>
 </div>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="changeTTModal">
-  <div class="modal">
-    <h3>⚠️ Change Timetable?</h3>
-    <p>This will replace your current active timetable. Your carry-over history and previous timetable data will be preserved and archived — nothing will be deleted.</p>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('changeTTModal')">Cancel</button>
-      <button class="btn-primary" onclick="confirmChangeTT()">Yes, Change Timetable</button>
-    </div>
-  </div>
-</div>
 
 <script>
 // ─── NAVIGATION ───
@@ -2858,30 +2948,6 @@ function updateDashboardStats(){
   </div>
 </div>
 
-<!-- PERIOD EDIT MODAL -->
-<div class="modal-overlay" id="periodEditModal">
-  <div class="modal modal-lg">
-    <h3>&#9998; Edit Period</h3>
-    <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
-      <div class="select-row-2">
-        <div><label class="input-label">Start Time</label><input type="time" class="text-input" id="editStart" step="300"></div>
-        <div><label class="input-label">End Time</label><input type="time" class="text-input" id="editEnd" step="300"></div>
-      </div>
-      <div><label class="input-label">Period Type</label>
-        <select class="select-input" id="editType" onchange="renderEditFields({type:this.value,subject:'',grade:'',cls:'',notes:''})">
-          <option value="teaching">Teaching Period</option>
-          <option value="free">Free Period</option>
-          <option value="admin">Admin Period</option>
-        </select>
-      </div>
-      <div id="editFieldsWrap"></div>
-    </div>
-    <div class="modal-actions" style="margin-top:20px">
-      <button class="btn-secondary" onclick="cancelEdit()">Cancel</button>
-      <button class="btn-primary" onclick="saveEdit()">&#10003; Save Period</button>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
