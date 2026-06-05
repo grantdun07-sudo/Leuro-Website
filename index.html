@@ -607,24 +607,24 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
         <div class="ai-input-wrap"><input class="ai-input" placeholder="Ask Leuro Assistant anything…"><button class="ai-send">Ask →</button></div>
       </div>
       <div class="stats-row">
-        <div class="stat-card"><div class="stat-label" data-i18n="stat_periods">Periods Today</div><div class="stat-value c-purple" id="statPeriods">0</div><div class="stat-sub" id="statPeriodsSub">Set up your timetable</div></div>
-        <div class="stat-card"><div class="stat-label" data-i18n="stat_tasks">Tasks Pending</div><div class="stat-value c-gold" id="statTasks">0</div><div class="stat-sub" id="statTasksSub">No reminders set</div></div>
-        <div class="stat-card"><div class="stat-label" data-i18n="stat_docs">Docs Generated</div><div class="stat-value c-text" id="statDocs">0</div><div class="stat-sub">This session</div></div>
-        <div class="stat-card"><div class="stat-label" data-i18n="stat_moderation">Moderation</div><div class="stat-value c-green" id="statMod">0%</div><div class="stat-sub" id="statModSub">No entries yet</div></div>
+        <div class="stat-card"><div class="stat-label" data-i18n="stat_periods">Periods Today</div><div class="stat-value c-purple" id="statPeriods">0</div><div class="stat-sub" id="statPeriodsSub" data-i18n="stat_periods_sub">Set up your timetable</div></div>
+        <div class="stat-card"><div class="stat-label" data-i18n="stat_tasks">Tasks Pending</div><div class="stat-value c-gold" id="statTasks">0</div><div class="stat-sub" id="statTasksSub" data-i18n="stat_tasks_no">No reminders set</div></div>
+        <div class="stat-card"><div class="stat-label" data-i18n="stat_docs">Docs Generated</div><div class="stat-value c-text" id="statDocs">0</div><div class="stat-sub" data-i18n="stat_docs_sub">This session</div></div>
+        <div class="stat-card"><div class="stat-label" data-i18n="stat_moderation">Moderation</div><div class="stat-value c-green" id="statMod">0%</div><div class="stat-sub" id="statModSub" data-i18n="stat_mod_no">No entries yet</div></div>
       </div>
       <div class="two-col">
         <div class="card">
           <div class="card-header"><span class="card-icon">📅</span><div class="card-title" data-i18n="card_today_periods">Today's Periods</div><button class="card-action" data-i18n="btn_view_all" onclick="switchScreen('timetable',null)">View All →</button></div>
-          <div class="empty-state"><div class="empty-state-icon">📅</div>No periods for today.<br><span style="font-size:0.73rem">Set up your timetable in <a href="#" onclick="switchScreen('settings',document.querySelector('[data-label=Settings]'));return false;" style="color:var(--color-primary)">Settings</a> to get started.</span></div>
+          <div class="empty-state"><div class="empty-state-icon">📅</div><span data-i18n="dash_periods_no">No periods for today.</span><br><span style="font-size:0.73rem"><span data-i18n="tt_setup_hint_pre">Set up your timetable in</span> <a href="#" onclick="switchScreen('settings',null);return false;" style="color:var(--color-primary)" data-i18n="nav_settings">Settings</a> <span data-i18n="tt_setup_hint_post">to get started.</span></span></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:18px">
           <div class="card">
             <div class="card-header"><span class="card-icon">⚡</span><div class="card-title" data-i18n="card_quick_actions">Quick Actions</div></div>
             <div class="quick-actions">
-              <button class="action-btn" onclick="switchScreen('lesson',null)"><div class="action-btn-icon icon-purple">📝</div><div><div class="action-btn-title" data-i18n="btn_gen_lesson">Generate Lesson</div><div class="action-btn-sub">CAPS-aligned plan</div></div></button>
-              <button class="action-btn" onclick="switchScreen('worksheets',null)"><div class="action-btn-icon icon-gold">📄</div><div><div class="action-btn-title" data-i18n="btn_new_worksheet">New Worksheet</div><div class="action-btn-sub">With memo included</div></div></button>
-              <button class="action-btn" onclick="switchScreen('reminders',null)"><div class="action-btn-icon icon-green">🔔</div><div><div class="action-btn-title" data-i18n="btn_set_reminder">Set Reminder</div><div class="action-btn-sub">Deadlines &amp; tasks</div></div></button>
-              <button class="action-btn" onclick="switchScreen('moderation',null)"><div class="action-btn-icon icon-red">🔍</div><div><div class="action-btn-title" data-i18n="nav_moderation">Moderation</div><div class="action-btn-sub">Track SBA progress</div></div></button>
+              <button class="action-btn" onclick="switchScreen('lesson',null)"><div class="action-btn-icon icon-purple">📝</div><div><div class="action-btn-title" data-i18n="btn_gen_lesson">Generate Lesson</div><div class="action-btn-sub" data-i18n="dash_caps_sub">CAPS-aligned plan</div></div></button>
+              <button class="action-btn" onclick="switchScreen('worksheets',null)"><div class="action-btn-icon icon-gold">📄</div><div><div class="action-btn-title" data-i18n="btn_new_worksheet">New Worksheet</div><div class="action-btn-sub" data-i18n="dash_memo_sub">With memo included</div></div></button>
+              <button class="action-btn" onclick="switchScreen('reminders',null)"><div class="action-btn-icon icon-green">🔔</div><div><div class="action-btn-title" data-i18n="btn_set_reminder">Set Reminder</div><div class="action-btn-sub" data-i18n="dash_deadlines_sub">Deadlines &amp; tasks</div></div></button>
+              <button class="action-btn" onclick="switchScreen('moderation',null)"><div class="action-btn-icon icon-red">🔍</div><div><div class="action-btn-title" data-i18n="nav_moderation">Moderation</div><div class="action-btn-sub" data-i18n="dash_sba_sub">Track SBA progress</div></div></button>
             </div>
           </div>
           <div class="card">
@@ -636,7 +636,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
       <div class="two-col">
         <div class="card">
           <div class="card-header"><span class="card-icon">📁</span><div class="card-title" data-i18n="card_recent_docs">Recent Documents</div></div>
-          <div class="empty-state"><div class="empty-state-icon">📄</div>No documents generated yet.<br><span style="font-size:0.73rem">Generate a lesson plan or worksheet to see it here.</span></div>
+          <div class="empty-state"><div class="empty-state-icon">📄</div><span data-i18n="dash_no_docs">No documents generated yet.</span><br><span style="font-size:0.73rem" data-i18n="dash_docs_hint">Generate a lesson plan or worksheet to see it here.</span></div>
         </div>
         <div class="card">
           <div class="card-header"><span class="card-icon">🔍</span><div class="card-title" data-i18n="card_moderation">Moderation Tracker</div><button class="card-action" data-i18n="btn_manage" onclick="switchScreen('moderation',null)">Manage →</button></div>
@@ -647,12 +647,12 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 
     <!-- TIMETABLE -->
     <div class="screen" id="screen-timetable">
-      <div class="ai-strip"><div class="ai-avatar">&#128197;</div><div class="ai-text"><div class="ai-greeting" data-i18n="tt_greeting">My Timetable</div><div class="ai-sub">Configure your timetable in Settings, then return here to manage your day.</div></div></div>
+      <div class="ai-strip"><div class="ai-avatar">&#128197;</div><div class="ai-text"><div class="ai-greeting" data-i18n="tt_greeting">My Timetable</div><div class="ai-sub" data-i18n="tt_sub">Configure your timetable in Settings, then return here to manage your day.</div></div></div>
       <div class="card">
         <div class="tt-lock-bar">
-          <button class="lock-btn" id="lockBtn" onclick="toggleLock()"><span id="lockIcon">&#128274;</span><span id="lockLabel">Timetable Locked</span></button>
-          <div class="lock-warning" id="lockWarning">&#9888;&#65039; Timetable is unlocked. Tap any period to edit.</div>
-          <span class="lock-status" id="lockStatus">Display only &middot; Unlock to edit</span>
+          <button class="lock-btn" id="lockBtn" onclick="toggleLock()"><span id="lockIcon">&#128274;</span><span id="lockLabel" data-i18n="tt_lock_label">Timetable Locked</span></button>
+          <div class="lock-warning" id="lockWarning" data-i18n="tt_lock_warning">⚠️ Timetable is unlocked. Tap any period to edit.</div>
+          <span class="lock-status" id="lockStatus" data-i18n="tt_lock_status">Display only · Unlock to edit</span>
         </div>
         <div class="tab-row" id="ttTabRow"></div>
         <div id="ttBody"></div>
@@ -661,15 +661,15 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 
     <!-- LESSON PREP -->
     <div class="screen" id="screen-lesson">
-      <div class="ai-strip"><div class="ai-avatar">&#128221;</div><div class="ai-text"><div class="ai-greeting">Lesson Prep Generator</div><div class="ai-sub">Generate a CAPS-aligned lesson plan and download it as a print-ready A4 PDF.</div></div></div>
+      <div class="ai-strip"><div class="ai-avatar">&#128221;</div><div class="ai-text"><div class="ai-greeting" data-i18n="lesson_greeting">Lesson Prep Generator</div><div class="ai-sub" data-i18n="lesson_sub">Generate a CAPS-aligned lesson plan and download it as a print-ready A4 PDF.</div></div></div>
 
       <!-- GENERATOR FORM -->
       <div class="two-col" id="lessonFormSection">
         <div class="card">
-          <div class="card-header"><span class="card-icon">&#128221;</span><div class="card-title">New Lesson Plan</div></div>
+          <div class="card-header"><span class="card-icon">&#128221;</span><div class="card-title" data-i18n="lesson_card_new">New Lesson Plan</div></div>
           <div class="form-body">
             <div class="select-row-2">
-              <div><label class="input-label">Grade</label>
+              <div><label class="input-label" data-i18n="lbl_grade">Grade</label>
                 <select class="select-input" id="lp_grade">
                   <option value="">Select...</option>
                   <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option>
@@ -678,13 +678,13 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
                   <option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
                 </select>
               </div>
-              <div><label class="input-label">Language</label>
+              <div><label class="input-label" data-i18n="lbl_language">Language</label>
                 <select class="select-input" id="lp_lang">
                   <option>English</option><option>Afrikaans</option>
                 </select>
               </div>
             </div>
-            <div><label class="input-label">Subject</label>
+            <div><label class="input-label" data-i18n="lbl_subject">Subject</label>
               <select class="select-input" id="lp_subject">
                 <option value="">Select subject...</option>
                 <option>Natural Sciences &amp; Technology</option>
@@ -697,35 +697,35 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
               </select>
             </div>
             <div class="select-row">
-              <div><label class="input-label">Term</label>
+              <div><label class="input-label" data-i18n="lbl_term">Term</label>
                 <select class="select-input" id="lp_term"><option>1</option><option selected>2</option><option>3</option><option>4</option></select>
               </div>
-              <div><label class="input-label">Week</label>
+              <div><label class="input-label" data-i18n="lbl_week">Week</label>
                 <select class="select-input" id="lp_week">
                   <option>1</option><option>2</option><option>3</option><option>4</option>
                   <option>5</option><option>6</option><option>7</option><option>8</option>
                   <option>9</option><option>10</option><option selected>18</option>
                 </select>
               </div>
-              <div><label class="input-label">Duration (min)</label>
+              <div><label class="input-label" data-i18n="lbl_duration">Duration (min)</label>
                 <select class="select-input" id="lp_duration">
                   <option>30</option><option selected>40</option><option>45</option><option>60</option>
                 </select>
               </div>
             </div>
-            <div><label class="input-label">Topic / CAPS Section</label>
+            <div><label class="input-label" data-i18n="lbl_topic">Topic / CAPS Section</label>
               <textarea class="textarea-input" id="lp_topic" placeholder="e.g. Separation of mixtures — filtration and evaporation"></textarea>
             </div>
-            <div><label class="input-label">Additional Notes for AI (optional)</label>
+            <div><label class="input-label" data-i18n="lbl_ai_notes">Additional Notes for AI (optional)</label>
               <textarea class="textarea-input" id="lp_notes" placeholder="e.g. Class has 28 learners, some need additional support with vocabulary..."></textarea>
             </div>
-            <button class="btn-primary" onclick="generateLessonPlan()">&#129302; Generate CAPS Lesson Plan</button>
+            <button class="btn-primary" onclick="generateLessonPlan()" data-i18n="btn_generate_lp">🤖 Generate CAPS Lesson Plan</button>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-header"><span class="card-icon">&#128193;</span><div class="card-title">Recent Lesson Plans</div></div>
-          <div class="empty-state"><div class="empty-state-icon">📂</div>No lesson plans yet.<br><span style="font-size:0.73rem">Generated plans will appear here.</span></div>
+          <div class="card-header"><span class="card-icon">&#128193;</span><div class="card-title" data-i18n="lesson_card_recent">Recent Lesson Plans</div></div>
+          <div class="empty-state"><div class="empty-state-icon">📂</div><span data-i18n="lesson_empty">No lesson plans yet.</span><br><span style="font-size:0.73rem" data-i18n="lesson_empty_sub">Generated plans will appear here.</span></div>
         </div>
       </div>
 
@@ -747,15 +747,15 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 
     <!-- WORKSHEETS -->
     <div class="screen" id="screen-worksheets">
-      <div class="ai-strip"><div class="ai-avatar">&#128196;</div><div class="ai-text"><div class="ai-greeting">Worksheets &amp; Memos</div><div class="ai-sub">Generate a CAPS-aligned worksheet and memo. Edit inline, then export as separate PDFs.</div></div></div>
+      <div class="ai-strip"><div class="ai-avatar">&#128196;</div><div class="ai-text"><div class="ai-greeting" data-i18n="ws_greeting">Worksheets &amp; Memos</div><div class="ai-sub" data-i18n="ws_sub">Generate a CAPS-aligned worksheet and memo. Edit inline, then export as separate PDFs.</div></div></div>
 
       <!-- GENERATOR FORM -->
       <div class="two-col" id="wsFormSection">
         <div class="card">
-          <div class="card-header"><span class="card-icon">&#128196;</span><div class="card-title">Generate Worksheet</div></div>
+          <div class="card-header"><span class="card-icon">&#128196;</span><div class="card-title" data-i18n="ws_card_generate">Generate Worksheet</div></div>
           <div class="form-body">
             <div class="select-row-2">
-              <div><label class="input-label">Grade</label>
+              <div><label class="input-label" data-i18n="lbl_grade">Grade</label>
                 <select class="select-input" id="ws_grade">
                   <option value="">Select...</option>
                   <option>Grade 4</option><option>Grade 5</option><option selected>Grade 6</option>
@@ -763,13 +763,13 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
                   <option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
                 </select>
               </div>
-              <div><label class="input-label">Language</label>
+              <div><label class="input-label" data-i18n="lbl_language">Language</label>
                 <select class="select-input" id="ws_lang">
                   <option>English</option><option>Afrikaans</option><option>Both</option>
                 </select>
               </div>
             </div>
-            <div><label class="input-label">Subject</label>
+            <div><label class="input-label" data-i18n="lbl_subject">Subject</label>
               <select class="select-input" id="ws_subject">
                 <option value="">Select subject...</option>
                 <option>Natural Sciences &amp; Technology</option>
@@ -780,28 +780,28 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
                 <option>Life Skills</option>
               </select>
             </div>
-            <div><label class="input-label">Topic / CAPS Section</label>
+            <div><label class="input-label" data-i18n="lbl_topic">Topic / CAPS Section</label>
               <textarea class="textarea-input" id="ws_topic" placeholder="e.g. Separation of mixtures — filtration and evaporation"></textarea>
             </div>
             <div class="select-row-2">
-              <div><label class="input-label">Question Types</label>
+              <div><label class="input-label" data-i18n="lbl_q_types">Question Types</label>
                 <select class="select-input" id="ws_qtype">
                   <option>Mixed</option><option>MCQ Only</option>
                   <option>Short Answer</option><option>True/False + Short Answer</option>
                 </select>
               </div>
-              <div><label class="input-label">Number of Questions</label>
+              <div><label class="input-label" data-i18n="lbl_q_count">Number of Questions</label>
                 <select class="select-input" id="ws_qcount">
                   <option>5</option><option selected>8</option><option>10</option><option>12</option>
                 </select>
               </div>
             </div>
-            <button class="btn-primary" onclick="generateWorksheet()">&#129302; Generate Worksheet &amp; Memo</button>
+            <button class="btn-primary" onclick="generateWorksheet()" data-i18n="btn_generate_ws">🤖 Generate Worksheet &amp; Memo</button>
           </div>
         </div>
         <div class="card">
-          <div class="card-header"><span class="card-icon">&#128193;</span><div class="card-title">Recent Worksheets</div></div>
-          <div class="empty-state"><div class="empty-state-icon">📋</div>No worksheets yet.<br><span style="font-size:0.73rem">Generated worksheets will appear here.</span></div>
+          <div class="card-header"><span class="card-icon">&#128193;</span><div class="card-title" data-i18n="ws_card_recent">Recent Worksheets</div></div>
+          <div class="empty-state"><div class="empty-state-icon">📋</div><span data-i18n="ws_empty">No worksheets yet.</span><br><span style="font-size:0.73rem" data-i18n="ws_empty_sub">Generated worksheets will appear here.</span></div>
         </div>
       </div>
 
@@ -849,19 +849,19 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 
     <!-- REPORTS -->
     <div class="screen" id="screen-reports">
-      <div class="ai-strip"><div class="ai-avatar">📊</div><div class="ai-text"><div class="ai-greeting">Reports</div><div class="ai-sub">Track productivity, document output, and moderation completion across terms.</div></div></div>
-      <div class="card"><div class="card-header"><span class="card-icon">📊</span><div class="card-title">Term 2 Activity Summary</div></div><div style="padding:20px;color:var(--color-text-muted);font-size:0.82rem">Reports view — coming in next patch build.</div></div>
+      <div class="ai-strip"><div class="ai-avatar">📊</div><div class="ai-text"><div class="ai-greeting" data-i18n="reports_greeting">Reports</div><div class="ai-sub" data-i18n="reports_sub">Track productivity, document output, and moderation completion across terms.</div></div></div>
+      <div class="card"><div class="card-header"><span class="card-icon">📊</span><div class="card-title" data-i18n="reports_card_title">Term 2 Activity Summary</div></div><div style="padding:20px;color:var(--color-text-muted);font-size:0.82rem" data-i18n="reports_coming">Reports view — coming in next patch build.</div></div>
     </div>
 
     <!-- SETTINGS -->
     <div class="screen" id="screen-settings">
-      <div class="ai-strip"><div class="ai-avatar">⚙️</div><div class="ai-text"><div class="ai-greeting">Settings</div><div class="ai-sub">Manage your profile, school details, timetable, and notification preferences.</div></div></div>
+      <div class="ai-strip"><div class="ai-avatar">⚙️</div><div class="ai-text"><div class="ai-greeting" data-i18n="settings_greeting">Settings</div><div class="ai-sub" data-i18n="settings_sub">Manage your profile, school details, timetable, and notification preferences.</div></div></div>
 
       <!-- TIMETABLE SETUP CARD -->
       <div class="card">
         <div class="card-header">
           <span class="card-icon">📅</span>
-          <div class="card-title">Timetable Setup</div>
+          <div class="card-title" data-i18n="settings_tt_card">Timetable Setup</div>
           <button class="card-action" id="changeTTBtn" onclick="showChangeTTModal()" style="display:none">Change Timetable</button>
         </div>
 
@@ -915,7 +915,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
       <!-- Profile + Notifications -->
       <div class="two-col">
         <div class="card">
-          <div class="card-header"><span class="card-icon">👤</span><div class="card-title">Profile</div></div>
+          <div class="card-header"><span class="card-icon">👤</span><div class="card-title" data-i18n="card_profile">Profile</div></div>
           <div class="form-body">
             <div><label class="input-label" data-i18n="lbl_full_name">Full Name</label><input type="text" class="text-input" id="profileName" placeholder="e.g. Ms. N. Molefe"></div>
             <div><label class="input-label" data-i18n="lbl_post_level">Post Level</label><select class="select-input"><option>Post Level 1</option><option>Post Level 2 (HOD)</option><option>Deputy Principal</option></select></div>
@@ -924,12 +924,12 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
           </div>
         </div>
         <div class="card">
-          <div class="card-header"><span class="card-icon">🔔</span><div class="card-title">Notifications</div></div>
+          <div class="card-header"><span class="card-icon">🔔</span><div class="card-title" data-i18n="card_notifications">Notifications</div></div>
           <div class="form-body" style="gap:0">
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--color-border-lt);font-size:0.8rem;color:var(--color-text-mid)">Email reminders<strong style="color:var(--color-primary)">ON</strong></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--color-border-lt);font-size:0.8rem;color:var(--color-text-mid)">Moderation due alerts<strong style="color:var(--color-primary)">ON</strong></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--color-border-lt);font-size:0.8rem;color:var(--color-text-mid)">Carry-over notifications<strong style="color:var(--color-primary)">ON</strong></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:0.8rem;color:var(--color-text-mid)">CAPS calendar auto-reminders<strong style="color:var(--color-text-muted)">OFF</strong></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--color-border-lt);font-size:0.8rem;color:var(--color-text-mid)"><span data-i18n="notif_email">Email reminders</span><strong style="color:var(--color-primary)">ON</strong></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--color-border-lt);font-size:0.8rem;color:var(--color-text-mid)"><span data-i18n="notif_mod">Moderation due alerts</span><strong style="color:var(--color-primary)">ON</strong></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--color-border-lt);font-size:0.8rem;color:var(--color-text-mid)"><span data-i18n="notif_carryover">Carry-over notifications</span><strong style="color:var(--color-primary)">ON</strong></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:0.8rem;color:var(--color-text-mid)"><span data-i18n="notif_caps">CAPS calendar auto-reminders</span><strong style="color:var(--color-text-muted)">OFF</strong></div>
           </div>
         </div>
       </div>
@@ -991,14 +991,169 @@ function closeMobileSidebar(){document.getElementById('sidebar').classList.remov
 
 // ─── LANG / I18N ───
 const UI_STRINGS = {
-  en:{nav_s_main:'Main',nav_s_planning:'Planning',nav_s_account:'Account',nav_dashboard:'Dashboard',nav_timetable:'My Timetable',nav_lesson:'Lesson Prep',nav_worksheets:'Worksheets & Memos',nav_planning_item:'Lesson Planning',nav_moderation:'Moderation',nav_reminders:'Reminders',nav_reports:'Reports',nav_settings:'Settings',dash_greeting_sub:'Set up your timetable in Settings to get started.',stat_periods:'Periods Today',stat_tasks:'Tasks Pending',stat_docs:'Docs Generated',stat_moderation:'Moderation',card_today_periods:"Today's Periods",card_quick_actions:'Quick Actions',card_upcoming_reminders:'Upcoming Reminders',card_recent_docs:'Recent Documents',card_moderation:'Moderation Tracker',btn_view_all:'View All →',btn_all:'All →',btn_manage:'Manage →',btn_gen_lesson:'Generate Lesson',btn_new_worksheet:'New Worksheet',btn_set_reminder:'Set Reminder',rem_greeting:'Reminders',rem_sub:'Set deadlines, SBA alerts, and moderation reminders.',rem_card_title:'All Reminders',btn_add_reminder:'+ Add Reminder',mod_greeting:'Moderation Tracker',mod_sub:'Track SBA moderation per subject and grade. Auto-reminders when packs are due.',mod_card_title:'Moderation Overview',btn_add_subject:'+ Add Entry',tt_greeting:'My Timetable',lbl_full_name:'Full Name',lbl_post_level:'Post Level',lbl_school:'School',btn_save_profile:'Save Profile',notif_title:'Notifications',notif_empty:'No notifications yet.'},
-  af:{nav_s_main:'Hoof',nav_s_planning:'Beplanning',nav_s_account:'Rekening',nav_dashboard:'Kontrolepaneel',nav_timetable:'My Rooster',nav_lesson:'Les-Voorbereiding',nav_worksheets:'Werksvelle & Memos',nav_planning_item:'Lesbeplanning',nav_moderation:'Moderering',nav_reminders:'Herinneringe',nav_reports:'Verslae',nav_settings:'Instellings',dash_greeting_sub:'Stel u rooster op in Instellings om te begin.',stat_periods:'Periodes Vandag',stat_tasks:'Take Uitstaande',stat_docs:'Dok. Gegenereer',stat_moderation:'Moderering',card_today_periods:'Vandag se Periodes',card_quick_actions:'Vinnige Aksies',card_upcoming_reminders:'Komende Herinneringe',card_recent_docs:'Onlangse Dokumente',card_moderation:'Modereringsnasporing',btn_view_all:'Bekyk Alles →',btn_all:'Alles →',btn_manage:'Bestuur →',btn_gen_lesson:'Genereer Les',btn_new_worksheet:'Nuwe Werksvel',btn_set_reminder:'Stel Herinnering',rem_greeting:'Herinneringe',rem_sub:'Stel sperdatums, SBA-kennisgewings en herinneringe in.',rem_card_title:'Alle Herinneringe',btn_add_reminder:'+ Voeg Herinnering By',mod_greeting:'Modereringsnasporing',mod_sub:'Volg SBA-moderering per vak en graad. Outomatiese herinneringe wanneer pakkette verskuldig is.',mod_card_title:'Modereringsoorsig',btn_add_subject:'+ Voeg Inskrywing By',tt_greeting:'My Rooster',lbl_full_name:'Volle Naam',lbl_post_level:'Posvlak',lbl_school:'Skool',btn_save_profile:'Stoor Profiel',notif_title:'Kennisgewings',notif_empty:'Nog geen kennisgewings nie.'}
+  en:{
+    // Nav
+    nav_s_main:'Main',nav_s_planning:'Planning',nav_s_account:'Account',
+    nav_dashboard:'Dashboard',nav_timetable:'My Timetable',nav_lesson:'Lesson Prep',
+    nav_worksheets:'Worksheets & Memos',nav_planning_item:'Lesson Planning',
+    nav_moderation:'Moderation',nav_reminders:'Reminders',nav_reports:'Reports',nav_settings:'Settings',
+    // Dashboard
+    dash_greeting_sub:'Set up your timetable in Settings to get started.',
+    stat_periods:'Periods Today',stat_tasks:'Tasks Pending',stat_docs:'Docs Generated',stat_moderation:'Moderation',
+    stat_docs_sub:'This session',stat_periods_sub:'Set up your timetable',stat_tasks_no:'No reminders set',
+    card_today_periods:"Today's Periods",card_quick_actions:'Quick Actions',
+    card_upcoming_reminders:'Upcoming Reminders',card_recent_docs:'Recent Documents',card_moderation:'Moderation Tracker',
+    btn_view_all:'View All →',btn_all:'All →',btn_manage:'Manage →',
+    btn_gen_lesson:'Generate Lesson',btn_new_worksheet:'New Worksheet',btn_set_reminder:'Set Reminder',
+    dash_caps_sub:'CAPS-aligned plan',dash_memo_sub:'With memo included',
+    dash_deadlines_sub:'Deadlines & tasks',dash_sba_sub:'Track SBA progress',
+    dash_no_docs:'No documents generated yet.',dash_docs_hint:'Generate a lesson plan or worksheet to see it here.',
+    dash_no_rem:'No upcoming reminders.',
+    // Timetable
+    tt_greeting:'My Timetable',
+    tt_sub:'Configure your timetable in Settings, then return here to manage your day.',
+    tt_lock_label:'Timetable Locked',tt_lock_status:'Display only · Unlock to edit',
+    tt_lock_label_open:'Timetable Unlocked',tt_lock_status_open:'Tap any period to edit',
+    tt_lock_warning:'⚠️ Timetable is unlocked. Tap any period to edit.',
+    tt_lock_save:'Structure protected · Content editable',
+    tt_empty_title:'No timetable set up yet.',
+    // Lesson prep
+    lesson_greeting:'Lesson Prep Generator',
+    lesson_sub:"Generate a CAPS-aligned lesson plan and download it as a print-ready A4 PDF.",
+    lesson_card_new:'New Lesson Plan',lesson_card_recent:'Recent Lesson Plans',
+    lesson_empty:'No lesson plans yet.',lesson_empty_sub:'Generated plans will appear here.',
+    btn_generate_lp:'🤖 Generate CAPS Lesson Plan',
+    // Worksheets
+    ws_greeting:'Worksheets & Memos',
+    ws_sub:'Generate a CAPS-aligned worksheet and memo. Edit inline, then export as separate PDFs.',
+    ws_card_generate:'Generate Worksheet',ws_card_recent:'Recent Worksheets',
+    ws_empty:'No worksheets yet.',ws_empty_sub:'Generated worksheets will appear here.',
+    btn_generate_ws:'🤖 Generate Worksheet & Memo',
+    // Shared form labels
+    lbl_grade:'Grade',lbl_language:'Language',lbl_subject:'Subject',
+    lbl_term:'Term',lbl_week:'Week',lbl_duration:'Duration (min)',
+    lbl_topic:'Topic / CAPS Section',lbl_ai_notes:'Additional Notes for AI (optional)',
+    lbl_q_types:'Question Types',lbl_q_count:'Number of Questions',
+    // Reports
+    reports_greeting:'Reports',
+    reports_sub:'Track productivity, document output, and moderation completion across terms.',
+    reports_card_title:'Term 2 Activity Summary',
+    reports_coming:'Reports view — coming in next patch build.',
+    // Reminders
+    rem_greeting:'Reminders',rem_sub:'Set deadlines, SBA alerts, and moderation reminders.',
+    rem_card_title:'All Reminders',btn_add_reminder:'+ Add Reminder',
+    rem_empty:'No reminders yet.',rem_empty_sub:'Click “+ Add Reminder” to get started.',
+    // Moderation
+    mod_greeting:'Moderation Tracker',
+    mod_sub:'Track SBA moderation per subject and grade. Auto-reminders when packs are due.',
+    mod_card_title:'Moderation Overview',btn_add_subject:'+ Add Entry',
+    mod_empty:'No moderation entries yet.',
+    mod_empty_sub:'Click “+ Add Entry” to track your SBA moderation.',
+    // Settings
+    settings_greeting:'Settings',
+    settings_sub:'Manage your profile, school details, timetable, and notification preferences.',
+    settings_tt_card:'Timetable Setup',
+    card_profile:'Profile',card_notifications:'Notifications',
+    lbl_full_name:'Full Name',lbl_post_level:'Post Level',lbl_school:'School',btn_save_profile:'Save Profile',
+    notif_email:'Email reminders',notif_mod:'Moderation due alerts',
+    notif_carryover:'Carry-over notifications',notif_caps:'CAPS calendar auto-reminders',
+    // Notifications dropdown
+    notif_title:'Notifications',notif_empty:'No notifications yet.',
+    // Timetable dynamic labels
+    tt_free_period:'Free Period',tt_admin_period:'Admin Period',
+    tt_free:'Free',tt_admin:'Admin',tt_carryover:'Carry-over',
+    tt_unlock_sub:'tap any period row to edit it',
+    tt_add_period:'Add Period to',
+    tt_setup_hint_pre:'Set up your timetable in',tt_setup_hint_post:'to get started.',
+    // Dashboard dynamic
+    dash_periods_no:'No periods for today.',
+    stat_mod_no:'No entries yet',stat_periods_sub2:'Set up your timetable',stat_tasks_no2:'No reminders set'
+  },
+  af:{
+    // Nav
+    nav_s_main:'Hoof',nav_s_planning:'Beplanning',nav_s_account:'Rekening',
+    nav_dashboard:'Kontrolepaneel',nav_timetable:'My Rooster',nav_lesson:'Les-Voorbereiding',
+    nav_worksheets:'Werksvelle & Memos',nav_planning_item:'Lesbeplanning',
+    nav_moderation:'Moderering',nav_reminders:'Herinneringe',nav_reports:'Verslae',nav_settings:'Instellings',
+    // Dashboard
+    dash_greeting_sub:'Stel u rooster op in Instellings om te begin.',
+    stat_periods:'Periodes Vandag',stat_tasks:'Take Uitstaande',stat_docs:'Dok. Gegenereer',stat_moderation:'Moderering',
+    stat_docs_sub:'Hierdie sessie',stat_periods_sub:'Stel u rooster op',stat_tasks_no:'Geen herinneringe gestel',
+    card_today_periods:'Vandag se Periodes',card_quick_actions:'Vinnige Aksies',
+    card_upcoming_reminders:'Komende Herinneringe',card_recent_docs:'Onlangse Dokumente',card_moderation:'Modereringsnasporing',
+    btn_view_all:'Bekyk Alles →',btn_all:'Alles →',btn_manage:'Bestuur →',
+    btn_gen_lesson:'Genereer Les',btn_new_worksheet:'Nuwe Werksvel',btn_set_reminder:'Stel Herinnering',
+    dash_caps_sub:'CAPS-ooreenstemmende plan',dash_memo_sub:'Met memo ingesluit',
+    dash_deadlines_sub:'Sperdatums en take',dash_sba_sub:'Volg SBA-vordering',
+    dash_no_docs:'Nog geen dokumente gegenereer nie.',dash_docs_hint:"Genereer 'n lesplan of werksvel om dit hier te sien.",
+    dash_no_rem:'Geen komende herinneringe nie.',
+    // Timetable
+    tt_greeting:'My Rooster',
+    tt_sub:'Stel u rooster op in Instellings, keer dan terug om u dag te bestuur.',
+    tt_lock_label:'Rooster Gesluit',tt_lock_status:'Slegs vertoon · Ontsluit om te wysig',
+    tt_lock_label_open:'Rooster Ontsluit',tt_lock_status_open:'Tik enige periode om te wysig',
+    tt_lock_warning:'⚠️ Rooster is ontsluit. Tik enige periode om te wysig.',
+    tt_lock_save:'Struktuur beskerm · Inhoud wysigbaar',
+    tt_empty_title:'Nog geen rooster opgestel nie.',
+    // Lesson prep
+    lesson_greeting:'Lesvoorbereidingsgenerator',
+    lesson_sub:"Genereer 'n CAPS-ooreenstemmende lesplan en laai dit af as 'n drukklare A4 PDF.",
+    lesson_card_new:'Nuwe Lesplan',lesson_card_recent:'Onlangse Lesplanne',
+    lesson_empty:'Nog geen lesplanne nie.',lesson_empty_sub:'Gegenereerde planne sal hier verskyn.',
+    btn_generate_lp:'🤖 Genereer CAPS Lesplan',
+    // Worksheets
+    ws_greeting:'Werksvelle & Memos',
+    ws_sub:"Genereer 'n CAPS-ooreenstemmende werksvel en memo. Redigeer inlyn, dan uitvoer as PDF.",
+    ws_card_generate:'Genereer Werksvel',ws_card_recent:'Onlangse Werksvelle',
+    ws_empty:'Nog geen werksvelle nie.',ws_empty_sub:'Gegenereerde werksvelle sal hier verskyn.',
+    btn_generate_ws:'🤖 Genereer Werksvel & Memo',
+    // Shared form labels
+    lbl_grade:'Graad',lbl_language:'Taal',lbl_subject:'Vak',
+    lbl_term:'Kwartaal',lbl_week:'Week',lbl_duration:'Duur (min)',
+    lbl_topic:'Onderwerp / CAPS-afdeling',lbl_ai_notes:'Bykomende Notas vir KI (opsioneel)',
+    lbl_q_types:'Vraagtipes',lbl_q_count:'Aantal Vrae',
+    // Reports
+    reports_greeting:'Verslae',
+    reports_sub:'Volg produktiwiteit, dokumentuitset en moderering oor kwartale.',
+    reports_card_title:'Kwartaal 2 Aktiwiteitsopsomming',
+    reports_coming:'Verslae-aansig — kom in die volgende opdatering.',
+    // Reminders
+    rem_greeting:'Herinneringe',rem_sub:'Stel sperdatums, SBA-kennisgewings en herinneringe in.',
+    rem_card_title:'Alle Herinneringe',btn_add_reminder:'+ Voeg Herinnering By',
+    rem_empty:'Nog geen herinneringe nie.',rem_empty_sub:'Klik “+ Voeg Herinnering By” om te begin.',
+    // Moderation
+    mod_greeting:'Modereringsnasporing',
+    mod_sub:'Volg SBA-moderering per vak en graad. Outomatiese herinneringe wanneer pakkette verskuldig is.',
+    mod_card_title:'Modereringsoorsig',btn_add_subject:'+ Voeg Inskrywing By',
+    mod_empty:'Nog geen modereringsinskrywings nie.',
+    mod_empty_sub:'Klik “+ Voeg Inskrywing By” om te begin.',
+    // Settings
+    settings_greeting:'Instellings',
+    settings_sub:'Bestuur u profiel, skoolbesonderhede, rooster en kennisgewinginstellings.',
+    settings_tt_card:'Roosteropstelling',
+    card_profile:'Profiel',card_notifications:'Kennisgewings',
+    lbl_full_name:'Volle Naam',lbl_post_level:'Posvlak',lbl_school:'Skool',btn_save_profile:'Stoor Profiel',
+    notif_email:'E-posherinneringe',notif_mod:'Modereringsverfaldatumwaarskuwings',
+    notif_carryover:'Oordraggeringskennisgewings',notif_caps:'CAPS-kalender outoherinneringe',
+    // Notifications dropdown
+    notif_title:'Kennisgewings',notif_empty:'Nog geen kennisgewings nie.',
+    // Timetable dynamic labels
+    tt_free_period:'Vrye Periode',tt_admin_period:'Admin-Periode',
+    tt_free:'Vry',tt_admin:'Admin',tt_carryover:'Oordraggering',
+    tt_unlock_sub:'tik enige perioderij om dit te wysig',
+    tt_add_period:'Voeg Periode by',
+    tt_setup_hint_pre:'Stel u rooster op in',tt_setup_hint_post:'om te begin.',
+    // Dashboard dynamic
+    dash_periods_no:'Geen periodes vir vandag nie.',
+    stat_mod_no:'Geen inskrywings nie',stat_periods_sub2:'Stel u rooster op',stat_tasks_no2:'Geen herinneringe gestel'
+  }
 };
 const pageTitlesI18n = {
   en:{dashboard:'Dashboard',timetable:'My Timetable',lesson:'Lesson Prep',worksheets:'Worksheets & Memos',planning:'Lesson Planning',moderation:'Moderation',reminders:'Reminders',reports:'Reports',settings:'Settings'},
   af:{dashboard:'Kontrolepaneel',timetable:'My Rooster',lesson:'Les-Voorbereiding',worksheets:'Werksvelle & Memos',planning:'Lesbeplanning',moderation:'Moderering',reminders:'Herinneringe',reports:'Verslae',settings:'Instellings'}
 };
 let currentLang = 'en';
+function T(key){ return (UI_STRINGS[currentLang]||UI_STRINGS.en)[key]||key; }
 
 function setLang(lang, btn){
   currentLang = lang;
@@ -1010,10 +1165,20 @@ function setLang(lang, btn){
     const key = el.dataset.i18n;
     if(t[key] !== undefined) el.textContent = t[key];
   });
-  // Update page title for current screen
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.dataset.i18nHtml;
+    if(t[key] !== undefined) el.innerHTML = t[key];
+  });
+  // Re-render dynamic content so JS-generated strings update
+  renderDashboardReminders();
+  renderDashboardModeration();
   const visible = document.querySelector('.screen.visible');
   if(visible){
     const screenId = visible.id.replace('screen-','');
+    if(screenId==='timetable'){ renderTimetable(); }
+    if(screenId==='reminders'){ renderRemindersScreen(); }
+    if(screenId==='moderation'){ renderModerationScreen(); }
+    // Update page title for current screen
     const pt = pageTitlesI18n[lang];
     if(pt && pt[screenId]) document.getElementById('pageTitle').textContent = pt[screenId];
   }
@@ -1064,7 +1229,7 @@ function renderTimetable(){
   // Check if ALL days are empty — show setup message
   const totalPeriods = Object.values(timetableData).reduce((s,d)=>s+d.length,0);
   if(totalPeriods === 0){
-    body.innerHTML = '<div class="empty-state" style="padding:32px 18px"><div class="empty-state-icon">📅</div><b style="color:var(--color-primary)">No timetable set up yet.</b><br><span style="font-size:0.75rem">Set up your timetable in <a href="#" onclick="switchScreen(\'settings\',document.querySelector(\'[data-label=Settings]\'));return false;" style="color:var(--color-primary)">Settings</a> to get started.</span></div>';
+    body.innerHTML = `<div class="empty-state" style="padding:32px 18px"><div class="empty-state-icon">📅</div><b style="color:var(--color-primary)">${T('tt_empty_title')}</b><br><span style="font-size:0.75rem">${T('tt_setup_hint_pre')} <a href="#" onclick="switchScreen('settings',null);return false;" style="color:var(--color-primary)">${T('nav_settings')}</a> ${T('tt_setup_hint_post')}</span></div>`;
     return;
   }
 
@@ -1072,7 +1237,7 @@ function renderTimetable(){
 
   // Unlock hint banner
   if(!ttLocked){
-    html += `<div class="unlock-hint">&#128161; <span><b>Unlocked</b> &mdash; tap any period row to edit it</span></div>`;
+    html += `<div class="unlock-hint">&#128161; <span><b>${T('tt_lock_label_open')}</b> &mdash; ${T('tt_unlock_sub')}</span></div>`;
   }
 
   html += '<div class="timetable-body" id="ttPeriodList">';
@@ -1081,7 +1246,7 @@ function renderTimetable(){
     const isTeaching = p.type === 'teaching';
     const label = isTeaching
       ? `${p.subject} &middot; ${p.grade}${p.cls ? ' / '+p.cls : ''}`
-      : (p.type === 'free' ? 'Free Period' : 'Admin Period');
+      : (p.type === 'free' ? T('tt_free_period') : T('tt_admin_period'));
     const task = p.notes || '';
 
     const rowClasses = [
@@ -1093,7 +1258,7 @@ function renderTimetable(){
     ].filter(Boolean).join(' ');
 
     const typeTag = !isTeaching
-      ? `<span class="type-chip ${p.type==='free'?'chip-free':'chip-admin'}">${p.type==='free'?'Free':'Admin'}</span>`
+      ? `<span class="type-chip ${p.type==='free'?'chip-free':'chip-admin'}">${p.type==='free'?T('tt_free'):T('tt_admin')}</span>`
       : '';
 
     // RIGHT SIDE: locked = checkbox for teaching; unlocked = delete btn only (whole row taps to edit)
@@ -1102,7 +1267,7 @@ function renderTimetable(){
       if(isTeaching){
         rightEl = `<div class="period-check${p.done?' checked':''}" onclick="event.stopPropagation();toggleDone('${currentDay}',${idx})"></div>`;
       } else if(p.carryover){
-        rightEl = `<span class="carryover-badge">&#10227; Carry-over</span>`;
+        rightEl = `<span class="carryover-badge">&#10227; ${T('tt_carryover')}</span>`;
       }
     } else {
       rightEl = `<button class="period-delete-btn" onclick="event.stopPropagation();deletePeriod('${currentDay}',${idx})" title="Remove">&#10005;</button>`;
@@ -1125,7 +1290,7 @@ function renderTimetable(){
 
   if(!ttLocked){
     html += `<div class="add-period-bar">
-      <button class="add-period-btn" onclick="addPeriod('${currentDay}')">&#43;&nbsp; Add Period to ${currentDay}</button>
+      <button class="add-period-btn" onclick="addPeriod('${currentDay}')">&#43;&nbsp; ${T('tt_add_period')} ${currentDay}</button>
     </div>`;
   }
 
@@ -1286,15 +1451,15 @@ function toggleLock(){
   if(ttLocked){
     btn.classList.remove('unlocked');
     document.getElementById('lockIcon').textContent  = '🔒';
-    document.getElementById('lockLabel').textContent = 'Timetable Locked';
-    document.getElementById('lockStatus').textContent= 'Display only · Unlock to edit';
+    document.getElementById('lockLabel').textContent = T('tt_lock_label');
+    document.getElementById('lockStatus').textContent= T('tt_lock_status');
     warn.classList.remove('visible');
     if(changeTTBtn) changeTTBtn.style.display='none';
   } else {
     btn.classList.add('unlocked');
     document.getElementById('lockIcon').textContent  = '🔓';
-    document.getElementById('lockLabel').textContent = 'Timetable Unlocked';
-    document.getElementById('lockStatus').textContent= 'Tap any period to edit';
+    document.getElementById('lockLabel').textContent = T('tt_lock_label_open');
+    document.getElementById('lockStatus').textContent= T('tt_lock_status_open');
     warn.classList.add('visible');
     if(changeTTBtn) changeTTBtn.style.display='inline';
   }
@@ -1503,8 +1668,8 @@ function saveTimetable(){
   ttLocked=true;
   document.getElementById('lockBtn').classList.remove('unlocked');
   document.getElementById('lockIcon').textContent='🔒';
-  document.getElementById('lockLabel').textContent='Timetable Locked';
-  document.getElementById('lockStatus').textContent='Structure protected · Content editable';
+  document.getElementById('lockLabel').textContent=T('tt_lock_label');
+  document.getElementById('lockStatus').textContent=T('tt_lock_save');
   document.getElementById('lockWarning').classList.remove('visible');
 }
 
@@ -2386,7 +2551,7 @@ function renderRemindersScreen(){
   const body = document.getElementById('remindersBody');
   if(!body) return;
   if(!reminders.length){
-    body.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔔</div>No reminders yet.<br><span style="font-size:0.73rem">Click "+ Add Reminder" to get started.</span></div>';
+    body.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔔</div>${T('rem_empty')}<br><span style="font-size:0.73rem">${T('rem_empty_sub')}</span></div>`;
     return;
   }
   body.innerHTML = '<div class="reminders-body" style="padding:10px 14px 14px">' + reminders.map((r,i)=>{
@@ -2407,7 +2572,7 @@ function renderDashboardReminders(){
   const body = document.getElementById('dashRemBody');
   if(!body) return;
   if(!reminders.length){
-    body.innerHTML = '<div class="empty-state" style="padding:14px 18px;text-align:left"><span style="color:var(--color-text-muted);font-size:0.78rem">No upcoming reminders.</span></div>';
+    body.innerHTML = `<div class="empty-state" style="padding:14px 18px;text-align:left"><span style="color:var(--color-text-muted);font-size:0.78rem">${T('dash_no_rem')}</span></div>`;
     return;
   }
   body.innerHTML = '<div class="reminders-body" style="padding:8px 14px 10px">' + reminders.slice(0,3).map(r=>{
@@ -2449,7 +2614,7 @@ function renderModerationScreen(){
   const body = document.getElementById('modBody');
   if(!body) return;
   if(!moderationItems.length){
-    body.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔍</div>No moderation entries yet.<br><span style="font-size:0.73rem">Click "+ Add Entry" to track your SBA moderation.</span></div>';
+    body.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔍</div>${T('mod_empty')}<br><span style="font-size:0.73rem">${T('mod_empty_sub')}</span></div>`;
     return;
   }
   body.innerHTML = moderationItems.map((item,i)=>{
@@ -2475,7 +2640,7 @@ function renderDashboardModeration(){
   const body = document.getElementById('dashModBody');
   if(!body) return;
   if(!moderationItems.length){
-    body.innerHTML = '<div class="empty-state" style="padding:14px 18px;text-align:left"><span style="color:var(--color-text-muted);font-size:0.78rem">No moderation entries yet.</span></div>';
+    body.innerHTML = `<div class="empty-state" style="padding:14px 18px;text-align:left"><span style="color:var(--color-text-muted);font-size:0.78rem">${T('mod_empty')}</span></div>`;
     return;
   }
   body.innerHTML = '<div class="mod-body">' + moderationItems.slice(0,3).map(item=>{
