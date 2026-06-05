@@ -556,7 +556,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
         <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
         <button class="lang-btn" onclick="setLang('af',this)">AF</button>
       </div>
-      <button class="btn-signout" onclick="signOut()" title="Sign out">Sign Out</button>
+      <button class="btn-signout" onclick="signOut()" title="Sign out" data-i18n="btn_signout">Sign Out</button>
     </div>
   </div>
 
@@ -604,7 +604,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
       <div class="ai-strip">
         <div class="ai-avatar">🤖</div>
         <div class="ai-text"><div class="ai-greeting" id="dashGreeting">Welcome to Leuro Assistant!</div><div class="ai-sub" data-i18n="dash_greeting_sub">Set up your timetable in Settings to get started.</div></div>
-        <div class="ai-input-wrap"><input class="ai-input" placeholder="Ask Leuro Assistant anything…"><button class="ai-send">Ask →</button></div>
+        <div class="ai-input-wrap"><input class="ai-input" placeholder="Ask Leuro Assistant anything…" data-i18n-placeholder="ai_placeholder"><button class="ai-send" data-i18n="btn_ask_ai">Ask →</button></div>
       </div>
       <div class="stats-row">
         <div class="stat-card"><div class="stat-label" data-i18n="stat_periods">Periods Today</div><div class="stat-value c-purple" id="statPeriods">0</div><div class="stat-sub" id="statPeriodsSub" data-i18n="stat_periods_sub">Set up your timetable</div></div>
@@ -671,11 +671,11 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
             <div class="select-row-2">
               <div><label class="input-label" data-i18n="lbl_grade">Grade</label>
                 <select class="select-input" id="lp_grade">
-                  <option value="">Select...</option>
-                  <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option>
-                  <option>Grade 4</option><option>Grade 5</option><option selected>Grade 6</option>
-                  <option>Grade 7</option><option>Grade 8</option><option>Grade 9</option>
-                  <option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
+                  <option value="" data-i18n="opt_select">Select...</option>
+                  <option value="Grade 1" data-grade-option="1">Grade 1</option><option value="Grade 2" data-grade-option="2">Grade 2</option><option value="Grade 3" data-grade-option="3">Grade 3</option>
+                  <option value="Grade 4" data-grade-option="4">Grade 4</option><option value="Grade 5" data-grade-option="5">Grade 5</option><option value="Grade 6" selected data-grade-option="6">Grade 6</option>
+                  <option value="Grade 7" data-grade-option="7">Grade 7</option><option value="Grade 8" data-grade-option="8">Grade 8</option><option value="Grade 9" data-grade-option="9">Grade 9</option>
+                  <option value="Grade 10" data-grade-option="10">Grade 10</option><option value="Grade 11" data-grade-option="11">Grade 11</option><option value="Grade 12" data-grade-option="12">Grade 12</option>
                 </select>
               </div>
               <div><label class="input-label" data-i18n="lbl_language">Language</label>
@@ -686,7 +686,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
             </div>
             <div><label class="input-label" data-i18n="lbl_subject">Subject</label>
               <select class="select-input" id="lp_subject">
-                <option value="">Select subject...</option>
+                <option value="" data-i18n="opt_select_subject">Select subject...</option>
                 <option>Natural Sciences &amp; Technology</option>
                 <option>Afrikaans Home Language</option>
                 <option>English Home Language</option>
@@ -757,10 +757,10 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
             <div class="select-row-2">
               <div><label class="input-label" data-i18n="lbl_grade">Grade</label>
                 <select class="select-input" id="ws_grade">
-                  <option value="">Select...</option>
-                  <option>Grade 4</option><option>Grade 5</option><option selected>Grade 6</option>
-                  <option>Grade 7</option><option>Grade 8</option><option>Grade 9</option>
-                  <option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
+                  <option value="" data-i18n="opt_select">Select...</option>
+                  <option value="Grade 4" data-grade-option="4">Grade 4</option><option value="Grade 5" data-grade-option="5">Grade 5</option><option value="Grade 6" selected data-grade-option="6">Grade 6</option>
+                  <option value="Grade 7" data-grade-option="7">Grade 7</option><option value="Grade 8" data-grade-option="8">Grade 8</option><option value="Grade 9" data-grade-option="9">Grade 9</option>
+                  <option value="Grade 10" data-grade-option="10">Grade 10</option><option value="Grade 11" data-grade-option="11">Grade 11</option><option value="Grade 12" data-grade-option="12">Grade 12</option>
                 </select>
               </div>
               <div><label class="input-label" data-i18n="lbl_language">Language</label>
@@ -771,7 +771,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
             </div>
             <div><label class="input-label" data-i18n="lbl_subject">Subject</label>
               <select class="select-input" id="ws_subject">
-                <option value="">Select subject...</option>
+                <option value="" data-i18n="opt_select_subject">Select subject...</option>
                 <option>Natural Sciences &amp; Technology</option>
                 <option>Afrikaans Home Language</option>
                 <option>English Home Language</option>
@@ -786,8 +786,10 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
             <div class="select-row-2">
               <div><label class="input-label" data-i18n="lbl_q_types">Question Types</label>
                 <select class="select-input" id="ws_qtype">
-                  <option>Mixed</option><option>MCQ Only</option>
-                  <option>Short Answer</option><option>True/False + Short Answer</option>
+                  <option value="Mixed" data-i18n="opt_ws_mixed">Mixed</option>
+                  <option value="MCQ Only" data-i18n="opt_ws_mcq">MCQ Only</option>
+                  <option value="Short Answer" data-i18n="opt_ws_short">Short Answer</option>
+                  <option value="True/False + Short Answer" data-i18n="opt_ws_tf">True/False + Short Answer</option>
                 </select>
               </div>
               <div><label class="input-label" data-i18n="lbl_q_count">Number of Questions</label>
@@ -843,8 +845,8 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 
     <!-- PLANNING -->
     <div class="screen" id="screen-planning">
-      <div class="ai-strip"><div class="ai-avatar">🗂️</div><div class="ai-text"><div class="ai-greeting">Lesson Planning</div><div class="ai-sub">Build weekly and term plans with AI. Fully CAPS-aligned per phase and subject.</div></div></div>
-      <div class="card"><div class="card-header"><span class="card-icon">🗂️</span><div class="card-title">Week 18 — Term 2 Plan</div><button class="card-action">+ New Plan</button></div><div style="padding:20px;color:var(--color-text-muted);font-size:0.82rem">Weekly planning view — coming in next patch build.</div></div>
+      <div class="ai-strip"><div class="ai-avatar">🗂️</div><div class="ai-text"><div class="ai-greeting" data-i18n="planning_greeting">Lesson Planning</div><div class="ai-sub" data-i18n="planning_sub">Build weekly and term plans with AI. Fully CAPS-aligned per phase and subject.</div></div></div>
+      <div class="card"><div class="card-header"><span class="card-icon">🗂️</span><div class="card-title" data-i18n="planning_card_title">Week 18 — Term 2 Plan</div><button class="card-action" data-i18n="planning_new_plan">+ New Plan</button></div><div style="padding:20px;color:var(--color-text-muted);font-size:0.82rem" data-i18n="planning_coming">Weekly planning view — coming in next patch build.</div></div>
     </div>
 
     <!-- REPORTS -->
@@ -918,7 +920,12 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
           <div class="card-header"><span class="card-icon">👤</span><div class="card-title" data-i18n="card_profile">Profile</div></div>
           <div class="form-body">
             <div><label class="input-label" data-i18n="lbl_full_name">Full Name</label><input type="text" class="text-input" id="profileName" placeholder="e.g. Ms. N. Molefe"></div>
-            <div><label class="input-label" data-i18n="lbl_post_level">Post Level</label><select class="select-input"><option>Post Level 1</option><option>Post Level 2 (HOD)</option><option>Deputy Principal</option></select></div>
+            <div><label class="input-label" data-i18n="lbl_post_level">Post Level</label><select class="select-input">
+              <option value="Post Level 1" data-i18n="opt_post_1">Post Level 1</option>
+              <option value="Post Level 2 (HOD)" data-i18n="opt_post_2">Post Level 2 (HOD)</option>
+              <option value="Deputy Principal" data-i18n="opt_deputy">Deputy Principal</option>
+              <option value="Principal" data-i18n="opt_principal">Principal</option>
+            </select></div>
             <div><label class="input-label" data-i18n="lbl_school">School</label><input type="text" class="text-input" id="profileSchool" placeholder="e.g. Kempton Park Primary School"></div>
             <button class="btn-primary" id="saveProfileBtn" data-i18n="btn_save_profile" onclick="saveProfile(event)">Save Profile</button>
           </div>
@@ -1067,7 +1074,38 @@ const UI_STRINGS = {
     tt_setup_hint_pre:'Set up your timetable in',tt_setup_hint_post:'to get started.',
     // Dashboard dynamic
     dash_periods_no:'No periods for today.',
-    stat_mod_no:'No entries yet',stat_periods_sub2:'Set up your timetable',stat_tasks_no2:'No reminders set'
+    stat_mod_no:'No entries yet',stat_periods_sub2:'Set up your timetable',stat_tasks_no2:'No reminders set',
+    // Greeting
+    greet_prefix:'Good',greet_morning:'morning',greet_afternoon:'afternoon',greet_evening:'evening',
+    greet_periods:'You have 8 periods today.',
+    // Sign out + AI input
+    btn_signout:'Sign Out',
+    ai_placeholder:'Ask Leuro Assistant anything…',btn_ask_ai:'Ask →',
+    // Lesson Planning screen
+    planning_greeting:'Lesson Planning',
+    planning_sub:'Build weekly and term plans with AI. Fully CAPS-aligned per phase and subject.',
+    planning_card_title:'Week 18 — Term 2 Plan',
+    planning_new_plan:'+ New Plan',
+    planning_coming:'Weekly planning view — coming in next patch build.',
+    // Timetable days
+    day_mon:'Monday',day_tue:'Tuesday',day_wed:'Wednesday',day_thu:'Thursday',day_fri:'Friday',
+    // Reminders modal
+    rem_modal_title:'🔔 Add Reminder',
+    lbl_title_req:'Title *',lbl_notes_opt:'Notes (optional)',lbl_when:'When',lbl_priority:'Priority',
+    opt_normal:'Normal',opt_soon:'Soon',opt_urgent:'Urgent',
+    btn_add_rem_action:'Add Reminder',btn_cancel:'Cancel',
+    // Moderation modal
+    mod_modal_add_title:'🔍 Add Moderation Entry',mod_modal_edit_title:'✏️ Edit Moderation Entry',
+    lbl_total_tasks:'Total Tasks',lbl_completed:'Completed',lbl_due_date:'Due Date (optional)',
+    btn_save_entry:'Save Entry',
+    // Settings post level
+    opt_post_1:'Post Level 1',opt_post_2:'Post Level 2 (HOD)',opt_deputy:'Deputy Principal',opt_principal:'Principal',
+    // Grade / subject / question types
+    grade_prefix:'Grade',opt_select:'Select...',opt_select_subject:'Select subject...',
+    opt_ws_mixed:'Mixed',opt_ws_mcq:'MCQ Only',opt_ws_short:'Short Answer',opt_ws_tf:'True/False + Short Answer',
+    // Stats dynamic
+    stat_rem_1:'reminder set',stat_rems_n:'reminders set',
+    stat_item_out:'item outstanding',stat_items_out:'items outstanding',stat_all_uptodate:'All up to date'
   },
   af:{
     // Nav
@@ -1145,7 +1183,38 @@ const UI_STRINGS = {
     tt_setup_hint_pre:'Stel u rooster op in',tt_setup_hint_post:'om te begin.',
     // Dashboard dynamic
     dash_periods_no:'Geen periodes vir vandag nie.',
-    stat_mod_no:'Geen inskrywings nie',stat_periods_sub2:'Stel u rooster op',stat_tasks_no2:'Geen herinneringe gestel'
+    stat_mod_no:'Geen inskrywings nie',stat_periods_sub2:'Stel u rooster op',stat_tasks_no2:'Geen herinneringe gestel',
+    // Greeting
+    greet_prefix:'Goeie',greet_morning:'môre',greet_afternoon:'middag',greet_evening:'aand',
+    greet_periods:'U het 8 periodes vandag.',
+    // Sign out + AI input
+    btn_signout:'Teken Uit',
+    ai_placeholder:'Vra Leuro Assistent enigiets…',btn_ask_ai:'Vra →',
+    // Lesson Planning screen
+    planning_greeting:'Lesbeplanning',
+    planning_sub:'Bou weeklikse en kwartaalplanne met KI. Volledig CAPS-ooreenstemmend per fase en vak.',
+    planning_card_title:'Week 18 — Kwartaal 2 Plan',
+    planning_new_plan:'+ Nuwe Plan',
+    planning_coming:'Weeklikse planningaansig — kom in die volgende opdatering.',
+    // Timetable days
+    day_mon:'Maandag',day_tue:'Dinsdag',day_wed:'Woensdag',day_thu:'Donderdag',day_fri:'Vrydag',
+    // Reminders modal
+    rem_modal_title:'🔔 Voeg Herinnering By',
+    lbl_title_req:'Titel *',lbl_notes_opt:'Notas (opsioneel)',lbl_when:'Wanneer',lbl_priority:'Prioriteit',
+    opt_normal:'Normaal',opt_soon:'Gou',opt_urgent:'Dringend',
+    btn_add_rem_action:'Voeg Herinnering By',btn_cancel:'Kanselleer',
+    // Moderation modal
+    mod_modal_add_title:'🔍 Voeg Modereringsinskrywing By',mod_modal_edit_title:'✏️ Wysig Modereringsinskrywing',
+    lbl_total_tasks:'Totale Take',lbl_completed:'Voltooi',lbl_due_date:'Sperdatum (opsioneel)',
+    btn_save_entry:'Stoor Inskrywing',
+    // Settings post level
+    opt_post_1:'Posvlak 1',opt_post_2:'Posvlak 2 (HOD)',opt_deputy:'Adjunkhoof',opt_principal:'Skoolhoof',
+    // Grade / subject / question types
+    grade_prefix:'Graad',opt_select:'Kies...',opt_select_subject:'Kies vak...',
+    opt_ws_mixed:'Gemengd',opt_ws_mcq:'Meervoudige Keuse Slegs',opt_ws_short:'Kort Antwoord',opt_ws_tf:'Waar/Onwaar + Kort Antwoord',
+    // Stats dynamic
+    stat_rem_1:'herinnering gestel',stat_rems_n:'herinneringe gestel',
+    stat_item_out:'item uitstaande',stat_items_out:'items uitstaande',stat_all_uptodate:'Alles op datum'
   }
 };
 const pageTitlesI18n = {
@@ -1169,13 +1238,24 @@ function setLang(lang, btn){
     const key = el.dataset.i18nHtml;
     if(t[key] !== undefined) el.innerHTML = t[key];
   });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder;
+    if(t[key] !== undefined) el.placeholder = t[key];
+  });
+  document.querySelectorAll('[data-grade-option]').forEach(opt => {
+    opt.textContent = T('grade_prefix') + ' ' + opt.dataset.gradeOption;
+  });
+  // Update greeting + date chip + stats
+  updateGreeting();
+  updateDateChip();
+  updateDashboardStats();
   // Re-render dynamic content so JS-generated strings update
   renderDashboardReminders();
   renderDashboardModeration();
   const visible = document.querySelector('.screen.visible');
   if(visible){
     const screenId = visible.id.replace('screen-','');
-    if(screenId==='timetable'){ renderTimetable(); }
+    if(screenId==='timetable'){ initTimetableTabs(); renderTimetable(); }
     if(screenId==='reminders'){ renderRemindersScreen(); }
     if(screenId==='moderation'){ renderModerationScreen(); }
     // Update page title for current screen
@@ -1192,7 +1272,24 @@ function updateDateChip(){
   if(!el) return;
   const now = new Date();
   const opts = {weekday:'long',day:'numeric',month:'long',year:'numeric'};
-  el.textContent = '📅 ' + now.toLocaleDateString('en-ZA', opts);
+  const locale = currentLang === 'af' ? 'af-ZA' : 'en-ZA';
+  el.textContent = '📅 ' + now.toLocaleDateString(locale, opts);
+}
+
+// ─── GREETING ───
+const DAY_KEY = {Monday:'day_mon',Tuesday:'day_tue',Wednesday:'day_wed',Thursday:'day_thu',Friday:'day_fri'};
+function dayLabel(day){ return T(DAY_KEY[day]) || day; }
+
+function updateGreeting(){
+  const greet = document.getElementById('dashGreeting');
+  if(!greet) return;
+  const userName = document.getElementById('userName')?.textContent || '';
+  const skipTitles = ['ms.','mr.','mrs.','dr.','prof.'];
+  const firstName = userName.split(/\s+/).find(w => !skipTitles.includes(w.toLowerCase())) || userName;
+  if(!firstName || firstName === 'Loading...') return;
+  const hr = new Date().getHours();
+  const todKey = hr < 12 ? 'greet_morning' : hr < 17 ? 'greet_afternoon' : 'greet_evening';
+  greet.textContent = T('greet_prefix') + ' ' + T(todKey) + ', ' + firstName + '! ' + T('greet_periods');
 }
 
 // ─── TIMETABLE DATA MODEL ───
@@ -1210,7 +1307,7 @@ function initTimetableTabs(){
   const tabRow = document.getElementById('ttTabRow');
   if(!tabRow) return;
   tabRow.innerHTML = TT_DAYS.map(day =>
-    `<div class="tab${day===currentDay?' active':''}" onclick="switchDay('${day}',this)">${day}</div>`
+    `<div class="tab${day===currentDay?' active':''}" onclick="switchDay('${day}',this)">${dayLabel(day)}</div>`
   ).join('');
 }
 
@@ -1290,7 +1387,7 @@ function renderTimetable(){
 
   if(!ttLocked){
     html += `<div class="add-period-bar">
-      <button class="add-period-btn" onclick="addPeriod('${currentDay}')">&#43;&nbsp; ${T('tt_add_period')} ${currentDay}</button>
+      <button class="add-period-btn" onclick="addPeriod('${currentDay}')">&#43;&nbsp; ${T('tt_add_period')} ${dayLabel(currentDay)}</button>
     </div>`;
   }
 
@@ -2404,14 +2501,7 @@ function _populateProfile(user){
   if(pn) pn.value = name;
   if(ps) ps.value = school;
 
-  const greet = document.getElementById('dashGreeting');
-  if(greet){
-    const skipTitles = ['ms.','mr.','mrs.','dr.','prof.'];
-    const firstName  = name.split(/\s+/).find(w => !skipTitles.includes(w.toLowerCase())) || name;
-    const hr  = new Date().getHours();
-    const tod = hr < 12 ? 'morning' : hr < 17 ? 'afternoon' : 'evening';
-    greet.textContent = 'Good ' + tod + ', ' + firstName + '! You have 8 periods today.';
-  }
+  updateGreeting();
 }
 
 function _showApp(user){
@@ -2651,11 +2741,11 @@ function renderDashboardModeration(){
   }).join('') + '</div>';
 }
 
-function openAddMod(){ document.getElementById('modModalTitle').textContent='🔍 Add Moderation Entry'; document.getElementById('modEntryTitle').value=''; document.getElementById('modEntryTotal').value='5'; document.getElementById('modEntryDone').value='0'; document.getElementById('modEntryDue').value=''; document.getElementById('modEntryId').value=''; document.getElementById('modModal').classList.add('open'); }
+function openAddMod(){ document.getElementById('modModalTitle').textContent=T('mod_modal_add_title'); document.getElementById('modEntryTitle').value=''; document.getElementById('modEntryTotal').value='5'; document.getElementById('modEntryDone').value='0'; document.getElementById('modEntryDue').value=''; document.getElementById('modEntryId').value=''; document.getElementById('modModal').classList.add('open'); }
 
 function openEditMod(i){
   const item = moderationItems[i];
-  document.getElementById('modModalTitle').textContent='✏️ Edit Moderation Entry';
+  document.getElementById('modModalTitle').textContent=T('mod_modal_edit_title');
   document.getElementById('modEntryTitle').value = item.title;
   document.getElementById('modEntryTotal').value = item.total;
   document.getElementById('modEntryDone').value  = item.done;
@@ -2693,7 +2783,7 @@ function updateDashboardStats(){
   const st = document.getElementById('statTasks');
   const ss = document.getElementById('statTasksSub');
   if(st){ st.textContent = reminders.length; }
-  if(ss){ ss.textContent = reminders.length ? reminders.length+' reminder'+(reminders.length>1?'s':'')+' set' : 'No reminders set'; }
+  if(ss){ ss.textContent = reminders.length ? reminders.length+' '+T(reminders.length>1?'stat_rems_n':'stat_rem_1') : T('stat_tasks_no'); }
 
   const modAll = moderationItems.filter(m=>m.total>0);
   const modPct = modAll.length ? Math.round(modAll.reduce((s,m)=>s+(m.done/m.total)*100,0)/modAll.length) : 0;
@@ -2701,7 +2791,7 @@ function updateDashboardStats(){
   const sm = document.getElementById('statMod');
   const smS = document.getElementById('statModSub');
   if(sm)  sm.textContent  = modPct+'%';
-  if(smS) smS.textContent = outstanding ? outstanding+' item'+(outstanding>1?'s':'')+' outstanding' : (moderationItems.length?'All up to date':'No entries yet');
+  if(smS) smS.textContent = outstanding ? outstanding+' '+T(outstanding>1?'stat_items_out':'stat_item_out') : (moderationItems.length?T('stat_all_uptodate'):T('stat_mod_no'));
 }
 
 </script>
@@ -2728,22 +2818,22 @@ function updateDashboardStats(){
 <!-- ADD REMINDER MODAL -->
 <div class="modal-overlay" id="reminderModal">
   <div class="modal" style="max-width:420px;width:92%">
-    <h3>🔔 Add Reminder</h3>
+    <h3 data-i18n="rem_modal_title">🔔 Add Reminder</h3>
     <div style="display:flex;flex-direction:column;gap:14px;margin-top:8px">
-      <div><label class="input-label">Title *</label><input type="text" class="text-input" id="remTitle" placeholder="e.g. Term 2 Moderation Pack due"></div>
-      <div><label class="input-label">Notes (optional)</label><input type="text" class="text-input" id="remNotes" placeholder="e.g. HOD submission · Gr 6 & 7"></div>
-      <div><label class="input-label">When</label><input type="text" class="text-input" id="remTime" placeholder="e.g. Tomorrow, 8am · Wednesday · Fri 3pm"></div>
-      <div><label class="input-label">Priority</label>
+      <div><label class="input-label" data-i18n="lbl_title_req">Title *</label><input type="text" class="text-input" id="remTitle" placeholder="e.g. Term 2 Moderation Pack due"></div>
+      <div><label class="input-label" data-i18n="lbl_notes_opt">Notes (optional)</label><input type="text" class="text-input" id="remNotes" placeholder="e.g. HOD submission · Gr 6 & 7"></div>
+      <div><label class="input-label" data-i18n="lbl_when">When</label><input type="text" class="text-input" id="remTime" placeholder="e.g. Tomorrow, 8am · Wednesday · Fri 3pm"></div>
+      <div><label class="input-label" data-i18n="lbl_priority">Priority</label>
         <select class="select-input" id="remUrgency">
-          <option value="info">Normal</option>
-          <option value="soon">Soon</option>
-          <option value="urgent">Urgent</option>
+          <option value="info" data-i18n="opt_normal">Normal</option>
+          <option value="soon" data-i18n="opt_soon">Soon</option>
+          <option value="urgent" data-i18n="opt_urgent">Urgent</option>
         </select>
       </div>
     </div>
     <div class="modal-actions" style="margin-top:20px">
-      <button class="btn-secondary" onclick="closeModal('reminderModal')">Cancel</button>
-      <button class="btn-primary" onclick="saveReminder()">Add Reminder</button>
+      <button class="btn-secondary" onclick="closeModal('reminderModal')" data-i18n="btn_cancel">Cancel</button>
+      <button class="btn-primary" onclick="saveReminder()" data-i18n="btn_add_rem_action">Add Reminder</button>
     </div>
   </div>
 </div>
@@ -2751,19 +2841,19 @@ function updateDashboardStats(){
 <!-- ADD / EDIT MODERATION MODAL -->
 <div class="modal-overlay" id="modModal">
   <div class="modal" style="max-width:440px;width:92%">
-    <h3 id="modModalTitle">🔍 Add Moderation Entry</h3>
+    <h3 id="modModalTitle" data-i18n="mod_modal_add_title">🔍 Add Moderation Entry</h3>
     <input type="hidden" id="modEntryId">
     <div style="display:flex;flex-direction:column;gap:14px;margin-top:8px">
-      <div><label class="input-label">Title *</label><input type="text" class="text-input" id="modEntryTitle" placeholder="e.g. Gr 6 · Afrikaans HT — Term 2 SBA"></div>
+      <div><label class="input-label" data-i18n="lbl_title_req">Title *</label><input type="text" class="text-input" id="modEntryTitle" placeholder="e.g. Gr 6 · Afrikaans HT — Term 2 SBA"></div>
       <div class="select-row-2">
-        <div><label class="input-label">Total Tasks</label><input type="number" class="number-input" id="modEntryTotal" min="1" max="20" value="5"></div>
-        <div><label class="input-label">Completed</label><input type="number" class="number-input" id="modEntryDone" min="0" max="20" value="0"></div>
+        <div><label class="input-label" data-i18n="lbl_total_tasks">Total Tasks</label><input type="number" class="number-input" id="modEntryTotal" min="1" max="20" value="5"></div>
+        <div><label class="input-label" data-i18n="lbl_completed">Completed</label><input type="number" class="number-input" id="modEntryDone" min="0" max="20" value="0"></div>
       </div>
-      <div><label class="input-label">Due Date (optional)</label><input type="text" class="text-input" id="modEntryDue" placeholder="e.g. Wed 8 May"></div>
+      <div><label class="input-label" data-i18n="lbl_due_date">Due Date (optional)</label><input type="text" class="text-input" id="modEntryDue" placeholder="e.g. Wed 8 May"></div>
     </div>
     <div class="modal-actions" style="margin-top:20px">
-      <button class="btn-secondary" onclick="closeModal('modModal')">Cancel</button>
-      <button class="btn-primary" onclick="saveMod()">Save Entry</button>
+      <button class="btn-secondary" onclick="closeModal('modModal')" data-i18n="btn_cancel">Cancel</button>
+      <button class="btn-primary" onclick="saveMod()" data-i18n="btn_save_entry">Save Entry</button>
     </div>
   </div>
 </div>
