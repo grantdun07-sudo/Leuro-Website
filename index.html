@@ -1195,7 +1195,25 @@ const UI_STRINGS = {
     opt_ws_mixed:'Mixed',opt_ws_mcq:'MCQ Only',opt_ws_short:'Short Answer',opt_ws_tf:'True/False + Short Answer',
     // Stats dynamic
     stat_rem_1:'reminder set',stat_rems_n:'reminders set',
-    stat_item_out:'item outstanding',stat_items_out:'items outstanding',stat_all_uptodate:'All up to date'
+    stat_item_out:'item outstanding',stat_items_out:'items outstanding',stat_all_uptodate:'All up to date',
+    // Timetable setup v2
+    tt_edit_btn:'✏️ Edit Timetable',tt_active:'Timetable Active',
+    tt_step1_label:'Daily Structure',tt_step2_label:'Schedule Type',tt_step3_label:'Period Setup',tt_step4_label:'Save',
+    tt_step1_desc:'Configure your daily schedule structure — periods, durations, and breaks.',
+    tt_step2_desc:'Choose whether all days share the same periods, or each day has its own unique timetable.',
+    tt_lbl_start:'School Start Time',tt_lbl_periods:'Periods Per Day',tt_lbl_duration:'Period Duration (min)',
+    tt_lbl_num_breaks:'Number of Breaks',tt_lbl_breaks:'Breaks',
+    tt_add_break:'+ Add Break',tt_no_breaks:'No breaks configured.',
+    tt_break_name_ph:'Break name...',tt_after_period:'After period #',
+    tt_same_daily:'Same every day',tt_diff_daily:'Different per day',
+    tt_next_1:'Next: Schedule Type →',tt_next_2:'Next: Period Setup →',tt_next_3:'Next: Review & Save →',
+    tt_back:'← Back',tt_ready:'✅ Timetable Ready to Save',
+    tt_save_note:'📌 Your timetable saves to your account and is immediately available in My Timetable.',
+    tt_save_btn:'🔒 Save Timetable',tt_saving:'Saving...',tt_saved_ok:'Timetable saved successfully!',
+    tt_room_ph:'Room/Venue (optional)',tt_no_subject:'No subject assigned',
+    tt_edit_in_settings:'Edit Timetable in Settings',
+    tt_periods_label:'periods',tt_starts_at:'Starts at',tt_breaks_label:'break(s)',
+    tt_periods_today:'periods today ·'
   },
   af:{
     // Nav
@@ -1304,7 +1322,25 @@ const UI_STRINGS = {
     opt_ws_mixed:'Gemengd',opt_ws_mcq:'Meervoudige Keuse Slegs',opt_ws_short:'Kort Antwoord',opt_ws_tf:'Waar/Onwaar + Kort Antwoord',
     // Stats dynamic
     stat_rem_1:'herinnering gestel',stat_rems_n:'herinneringe gestel',
-    stat_item_out:'item uitstaande',stat_items_out:'items uitstaande',stat_all_uptodate:'Alles op datum'
+    stat_item_out:'item uitstaande',stat_items_out:'items uitstaande',stat_all_uptodate:'Alles op datum',
+    // Timetable setup v2
+    tt_edit_btn:'✏️ Wysig Rooster',tt_active:'Rooster Aktief',
+    tt_step1_label:'Daaglikse Struktuur',tt_step2_label:'Roostertipe',tt_step3_label:'Periodeopstelling',tt_step4_label:'Stoor',
+    tt_step1_desc:"Stel u daaglikse roostersstruktuur op — periodes, duur en pouses.",
+    tt_step2_desc:'Kies of alle dae dieselfde periodes deel, of elke dag sy eie rooster het.',
+    tt_lbl_start:'Skool Begintyd',tt_lbl_periods:'Periodes Per Dag',tt_lbl_duration:'Periodduur (min)',
+    tt_lbl_num_breaks:'Aantal Pouses',tt_lbl_breaks:'Pouses',
+    tt_add_break:'+ Voeg Pouse By',tt_no_breaks:'Geen pouses opgestel nie.',
+    tt_break_name_ph:'Pousenaam...',tt_after_period:'Na periode #',
+    tt_same_daily:'Dieselfde elke dag',tt_diff_daily:'Verskillend per dag',
+    tt_next_1:'Volgende: Roostertipe →',tt_next_2:'Volgende: Periodeopstelling →',tt_next_3:'Volgende: Oorsig & Stoor →',
+    tt_back:'← Terug',tt_ready:'✅ Rooster Gereed om te Stoor',
+    tt_save_note:"📌 U rooster word gestoor na u rekening en is onmiddellik beskikbaar in My Rooster.",
+    tt_save_btn:'🔒 Stoor Rooster',tt_saving:'Stoor...',tt_saved_ok:'Rooster suksesvol gestoor!',
+    tt_room_ph:'Kamer/Lokaal (opsioneel)',tt_no_subject:'Geen vak toegewys',
+    tt_edit_in_settings:'Wysig Rooster in Instellings',
+    tt_periods_label:'periodes',tt_starts_at:'Begin om',tt_breaks_label:'pouse(s)',
+    tt_periods_today:'periodes vandag ·'
   }
 };
 const pageTitlesI18n = {
@@ -1382,21 +1418,379 @@ function updateGreeting(){
   greet.textContent = T('greet_prefix') + ' ' + T(todKey) + ', ' + firstName + '! ' + T('greet_periods');
 }
 
-// ─── TIMETABLE DATA MODEL ───
-const TT_DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+// ════════════════════════════════════════════
+// TIMETABLE SYSTEM v2
+// ════════════════════════════════════════════
+
+// ─── CAPS SUBJECTS ───
+const CAPS_SUBJECTS_LIST = [
+  'Afrikaans','English','Afrikaans Home Language','English Home Language',
+  'Afrikaans First Additional Language','English First Additional Language',
+  'Mathematics','Mathematical Literacy','Life Sciences','Physical Sciences',
+  'Geography','History','Economics','Business Studies','Accounting',
+  'Life Orientation','Technology','Natural Sciences','Social Sciences',
+  'Arts and Culture','Economic and Management Sciences',
+  'Computer Applications Technology','Information Technology',
+  'Dramatic Arts','Visual Arts','Music','Religion Studies',
+  'Consumer Studies','Hospitality Studies','Agricultural Sciences',
+  'Civil Technology','Electrical Technology','Mechanical Technology',
+  'Engineering Graphics and Design','Sport and Exercise Science',
+  'Home Language','First Additional Language',
+  'Life Skills','Arts & Culture','Creative Arts'
+];
+
+// ─── STATE ───
+let savedTimetable = null;
 let currentDay = 'Monday';
 let ttLocked = true;
-let editingPeriod = null; // {day, idx}
+const TT_DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
 
-const timetableData = {
-  Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: []
+let ttSetupData = {
+  step: 1,
+  startTime: '07:30',
+  periodsPerDay: 8,
+  periodDuration: 40,
+  breaks: [],
+  scheduleType: 'same',
+  currentSetupDay: 'same',
+  periods: {}
 };
 
-// ─── RENDER TIMETABLE ───
+// ─── TIME UTILITIES ───
+function minsToTime(m){ return String(Math.floor(m/60)%24).padStart(2,'0')+':'+String(m%60).padStart(2,'0'); }
+function timeToMins(t){ const [h,m]=(t||'07:30').split(':').map(Number); return h*60+m; }
+
+function calcPeriodTimes(startTime, duration, breaks, count){
+  let cur = timeToMins(startTime);
+  const times = [];
+  for(let i=1;i<=count;i++){
+    const start = minsToTime(cur);
+    cur += parseInt(duration)||40;
+    times.push({ start, end:minsToTime(cur) });
+    const brk = (breaks||[]).find(b=>parseInt(b.after_period)===i);
+    if(brk) cur += parseInt(brk.duration)||0;
+  }
+  return times;
+}
+
+// ─── SUPABASE TIMETABLE CRUD ───
+// Run in Supabase SQL Editor:
+// CREATE TABLE IF NOT EXISTS timetables (
+//   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+//   user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+//   schedule_type text NOT NULL DEFAULT 'same',
+//   school_start_time text NOT NULL DEFAULT '07:30',
+//   periods_per_day integer NOT NULL DEFAULT 8,
+//   period_duration integer NOT NULL DEFAULT 40,
+//   breaks jsonb NOT NULL DEFAULT '[]',
+//   periods jsonb NOT NULL DEFAULT '{}',
+//   created_at timestamptz DEFAULT now(),
+//   updated_at timestamptz DEFAULT now(),
+//   UNIQUE(user_id)
+// );
+// ALTER TABLE timetables ENABLE ROW LEVEL SECURITY;
+// CREATE POLICY "own_timetable" ON timetables USING (auth.uid()=user_id) WITH CHECK (auth.uid()=user_id);
+
+async function ttLoad(){
+  try {
+    const { data:{ session } } = await _sb.auth.getSession();
+    if(!session) return;
+    const { data, error } = await _sb.from('timetables').select('*').eq('user_id', session.user.id).maybeSingle();
+    if(!error && data){
+      savedTimetable = {
+        schedule_type: data.schedule_type,
+        school_start_time: data.school_start_time,
+        periods_per_day: data.periods_per_day,
+        period_duration: data.period_duration,
+        breaks: data.breaks||[],
+        periods: data.periods||{}
+      };
+      ttUpdateAllViews();
+    } else {
+      ttUpdateSettingsView();
+    }
+  } catch(e){ console.warn('Timetable load error:',e); }
+}
+
+async function ttSaveToSupabase(){
+  const { data:{ session } } = await _sb.auth.getSession();
+  if(!session) return { error:'Not logged in' };
+  const payload = {
+    user_id: session.user.id,
+    schedule_type: ttSetupData.scheduleType,
+    school_start_time: ttSetupData.startTime,
+    periods_per_day: parseInt(ttSetupData.periodsPerDay)||8,
+    period_duration: parseInt(ttSetupData.periodDuration)||40,
+    breaks: ttSetupData.breaks,
+    periods: ttSetupData.periods,
+    updated_at: new Date().toISOString()
+  };
+  const { data, error } = await _sb.from('timetables').upsert(payload,{onConflict:'user_id'}).select().single();
+  if(!error && data){
+    savedTimetable = {
+      schedule_type: data.schedule_type,
+      school_start_time: data.school_start_time,
+      periods_per_day: data.periods_per_day,
+      period_duration: data.period_duration,
+      breaks: data.breaks||[],
+      periods: data.periods||{}
+    };
+  }
+  return { data, error };
+}
+
+// ─── VIEW UPDATES ───
+function ttUpdateAllViews(){
+  ttUpdateSettingsView();
+  renderTimetable();
+  renderDashboardPeriods();
+  updateDashboardStats();
+}
+
+function ttUpdateSettingsView(){
+  const savedView = document.getElementById('ttSavedView');
+  const wizard = document.getElementById('ttWizard');
+  const editBtn = document.getElementById('ttEditBtn');
+  if(!savedView || !wizard) return;
+  if(savedTimetable){
+    savedView.style.display='';
+    wizard.style.display='none';
+    if(editBtn) editBtn.style.display='none';
+    const sub = document.getElementById('ttSavedSub');
+    if(sub){
+      const type = savedTimetable.schedule_type==='same' ? T('tt_same_daily') : T('tt_diff_daily');
+      const brks = (savedTimetable.breaks||[]).length;
+      sub.textContent = savedTimetable.periods_per_day+' '+T('tt_periods_label')+' · '+savedTimetable.period_duration+' min · '+T('tt_starts_at')+' '+savedTimetable.school_start_time+' · '+type+(brks?' · '+brks+' '+T('tt_breaks_label'):'');
+    }
+  } else {
+    savedView.style.display='none';
+    wizard.style.display='';
+    if(editBtn) editBtn.style.display='none';
+  }
+}
+
+// ─── WIZARD STEPS ───
+function ttGoStep(n){
+  if(n===3) ttRenderStep3();
+  if(n===4) ttRenderReview();
+  document.querySelectorAll('.step-panel[id^="ttStep"]').forEach(p=>p.classList.remove('active'));
+  const panel = document.getElementById('ttStep'+n);
+  if(panel) panel.classList.add('active');
+  for(let i=1;i<=4;i++){
+    const dot=document.getElementById('ttDot'+i);
+    const line=document.getElementById('ttLine'+i);
+    if(dot){
+      if(i<n){dot.className='step-dot done';dot.textContent='✓';}
+      else if(i===n){dot.className='step-dot active';dot.textContent=i;}
+      else{dot.className='step-dot';dot.textContent=i;}
+    }
+    if(line&&i<=3) line.classList.toggle('done',i<n);
+  }
+  ttSetupData.step = n;
+}
+
+function ttStartEdit(){
+  if(savedTimetable){
+    ttSetupData.startTime = savedTimetable.school_start_time;
+    ttSetupData.periodsPerDay = savedTimetable.periods_per_day;
+    ttSetupData.periodDuration = savedTimetable.period_duration;
+    ttSetupData.breaks = JSON.parse(JSON.stringify(savedTimetable.breaks||[]));
+    ttSetupData.scheduleType = savedTimetable.schedule_type;
+    ttSetupData.periods = JSON.parse(JSON.stringify(savedTimetable.periods||{}));
+  }
+  document.getElementById('ttSavedView').style.display='none';
+  document.getElementById('ttWizard').style.display='';
+  const st=document.getElementById('ttStartTime');
+  const ppd=document.getElementById('ttPeriodsPerDay');
+  const pd=document.getElementById('ttPeriodDuration');
+  const nb=document.getElementById('ttNumBreaks');
+  if(st) st.value=ttSetupData.startTime;
+  if(ppd) ppd.value=ttSetupData.periodsPerDay;
+  if(pd) pd.value=ttSetupData.periodDuration;
+  if(nb) nb.value=ttSetupData.breaks.length;
+  ttRenderBreaks();
+  ttSelectScheduleType(ttSetupData.scheduleType, false);
+  ttGoStep(1);
+  switchScreen('settings',document.querySelector('[data-label=Settings]'));
+}
+
+// ─── STEP 1: BREAKS ───
+function ttRenderBreaks(){
+  const n = parseInt(document.getElementById('ttNumBreaks')?.value)||0;
+  while(ttSetupData.breaks.length < n) ttSetupData.breaks.push({name:'Break '+(ttSetupData.breaks.length+1), after_period:Math.floor(parseInt(document.getElementById('ttPeriodsPerDay')?.value||8)/2), duration:20});
+  ttSetupData.breaks = ttSetupData.breaks.slice(0,n);
+  const wrap = document.getElementById('ttBreaksWrap');
+  if(!wrap) return;
+  wrap.innerHTML = ttSetupData.breaks.map((b,i)=>`
+    <div class="tt-break-row">
+      <input class="text-input tt-break-label-input" type="text" placeholder="${T('tt_break_name_ph')}" value="${escHtml(b.name||'')}" oninput="ttSetupData.breaks[${i}].name=this.value">
+      <input class="number-input" type="number" min="1" max="11" value="${b.after_period||1}" placeholder="${T('tt_after_period')}" style="width:60px" title="${T('tt_after_period')}" oninput="ttSetupData.breaks[${i}].after_period=parseInt(this.value)||1">
+      <input class="number-input" type="number" min="5" max="60" value="${b.duration||20}" placeholder="min" style="width:55px" oninput="ttSetupData.breaks[${i}].duration=parseInt(this.value)||20">
+      <button class="tt-break-del" onclick="ttDeleteBreak(${i})" title="${T('btn_cancel')}">✕</button>
+    </div>
+    <div style="font-size:0.63rem;color:var(--color-text-muted);padding:0 2px">After Period ${b.after_period||1} · ${b.duration||20} min</div>
+  `).join('');
+  if(n===0) wrap.innerHTML=`<div style="font-size:0.75rem;color:var(--color-text-muted);padding:4px 0" data-i18n="tt_no_breaks">No breaks configured.</div>`;
+}
+
+function ttAddBreak(){
+  const nb = document.getElementById('ttNumBreaks');
+  const cur = parseInt(nb?.value||0);
+  if(cur>=4) return;
+  if(nb) nb.value = cur+1;
+  ttSetupData.breaks.push({name:'Break '+(cur+1), after_period:Math.ceil(parseInt(document.getElementById('ttPeriodsPerDay')?.value||8)/2), duration:20});
+  ttRenderBreaks();
+}
+
+function ttDeleteBreak(i){
+  ttSetupData.breaks.splice(i,1);
+  const nb = document.getElementById('ttNumBreaks');
+  if(nb) nb.value=ttSetupData.breaks.length;
+  ttRenderBreaks();
+}
+
+// ─── STEP 2: SCHEDULE TYPE ───
+function ttSelectScheduleType(type, updateData=true){
+  if(updateData) ttSetupData.scheduleType = type;
+  document.getElementById('stSame')?.classList.toggle('selected', type==='same');
+  document.getElementById('stDiff')?.classList.toggle('selected', type==='different');
+}
+
+// ─── STEP 3: PERIOD SETUP ───
+function ttRenderStep3(){
+  ttSetupData.startTime = document.getElementById('ttStartTime')?.value || '07:30';
+  ttSetupData.periodsPerDay = parseInt(document.getElementById('ttPeriodsPerDay')?.value)||8;
+  ttSetupData.periodDuration = parseInt(document.getElementById('ttPeriodDuration')?.value)||40;
+
+  const tabs = document.getElementById('ttPeriodDayTabs');
+  const type = ttSetupData.scheduleType;
+
+  if(type==='same'){
+    if(tabs) tabs.style.display='none';
+    ttSetupData.currentSetupDay = 'same';
+    ttRenderPeriodsGrid('same');
+  } else {
+    if(tabs){
+      tabs.style.display='';
+      const days = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+      tabs.innerHTML = days.map(d=>`<button class="tt-period-day-tab${d===ttSetupData.currentSetupDay?' active':''}" onclick="ttSwitchSetupDay('${d}')">${dayLabel(d)}</button>`).join('');
+    }
+    ttRenderPeriodsGrid(ttSetupData.currentSetupDay==='same'?'Monday':ttSetupData.currentSetupDay);
+  }
+}
+
+function ttSwitchSetupDay(day){
+  ttSetupData.currentSetupDay = day;
+  document.querySelectorAll('.tt-period-day-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tt-period-day-tab').forEach(t=>{ if(t.textContent===dayLabel(day)) t.classList.add('active'); });
+  ttRenderPeriodsGrid(day);
+}
+
+function ttRenderPeriodsGrid(dayKey){
+  const grid = document.getElementById('ttPeriodsGrid');
+  if(!grid) return;
+  const n = ttSetupData.periodsPerDay;
+  const times = calcPeriodTimes(ttSetupData.startTime, ttSetupData.periodDuration, ttSetupData.breaks, n);
+  if(!ttSetupData.periods[dayKey]) ttSetupData.periods[dayKey]=[];
+
+  const subjectOpts = CAPS_SUBJECTS_LIST.map(s=>`<option value="${escHtml(s)}">${escHtml(s)}</option>`).join('');
+
+  let html='';
+  for(let i=0;i<n;i++){
+    const p = ttSetupData.periods[dayKey][i] || {};
+    const t = times[i];
+    if(i>0){
+      const brk = (ttSetupData.breaks||[]).find(b=>parseInt(b.after_period)===i);
+      if(brk) html+=`<div style="font-size:0.7rem;color:var(--color-accent-dk);font-weight:600;padding:4px 0;display:flex;align-items:center;gap:6px"><span>☕</span><span>${escHtml(brk.name||'Break')} · ${brk.duration} min</span></div>`;
+    }
+    html+=`<div class="tt-period-row">
+      <div class="tt-period-num">P${i+1}</div>
+      <div class="tt-period-time">${t.start}–${t.end}</div>
+      <div class="tt-period-subj">
+        <select class="select-input" style="font-size:0.73rem;padding:5px 8px" id="p_${dayKey}_${i}_subj" onchange="ttSavePeriod('${dayKey}',${i})">
+          <option value="">${T('opt_select_subject')}</option>
+          ${subjectOpts}
+        </select>
+      </div>
+      <div class="tt-period-grade">
+        <select class="select-input" style="font-size:0.73rem;padding:5px 8px" id="p_${dayKey}_${i}_grade" onchange="ttSavePeriod('${dayKey}',${i})">
+          <option value="">${T('lbl_grade')}...</option>
+          ${[1,2,3,4,5,6,7,8,9,10,11,12].map(g=>`<option value="Grade ${g}">${T('grade_prefix')} ${g}</option>`).join('')}
+        </select>
+      </div>
+      <div class="tt-period-room">
+        <input type="text" class="text-input" style="font-size:0.73rem;padding:5px 8px" placeholder="${T('tt_room_ph')}" id="p_${dayKey}_${i}_room" oninput="ttSavePeriod('${dayKey}',${i})" value="${escHtml(p.room||'')}">
+      </div>
+    </div>`;
+  }
+  grid.innerHTML=html;
+
+  for(let i=0;i<n;i++){
+    const p=ttSetupData.periods[dayKey][i]||{};
+    const sEl=document.getElementById(`p_${dayKey}_${i}_subj`);
+    const gEl=document.getElementById(`p_${dayKey}_${i}_grade`);
+    if(sEl&&p.subject) sEl.value=p.subject;
+    if(gEl&&p.grade) gEl.value=p.grade;
+  }
+}
+
+function ttSavePeriod(dayKey, i){
+  if(!ttSetupData.periods[dayKey]) ttSetupData.periods[dayKey]=[];
+  while(ttSetupData.periods[dayKey].length<=i) ttSetupData.periods[dayKey].push({});
+  ttSetupData.periods[dayKey][i] = {
+    subject: document.getElementById(`p_${dayKey}_${i}_subj`)?.value||'',
+    grade:   document.getElementById(`p_${dayKey}_${i}_grade`)?.value||'',
+    room:    document.getElementById(`p_${dayKey}_${i}_room`)?.value||''
+  };
+}
+
+// ─── STEP 4: REVIEW & SAVE ───
+function ttRenderReview(){
+  const el = document.getElementById('ttReviewSummary');
+  if(!el) return;
+  const type = ttSetupData.scheduleType==='same' ? T('tt_same_daily') : T('tt_diff_daily');
+  const brks = ttSetupData.breaks.map(b=>`${b.name} (${b.duration} min)`).join(', ');
+  el.innerHTML = `
+    <b>${T('tt_lbl_start')}:</b> ${ttSetupData.startTime}<br>
+    <b>${T('tt_lbl_periods')}:</b> ${ttSetupData.periodsPerDay}<br>
+    <b>${T('tt_lbl_duration')}:</b> ${ttSetupData.periodDuration} min<br>
+    <b>${T('tt_step2_label')}:</b> ${type}<br>
+    ${brks?`<b>${T('tt_lbl_breaks')}:</b> ${escHtml(brks)}`:''}
+  `;
+}
+
+async function ttSaveAndActivate(){
+  const btn = document.getElementById('ttSaveBtn');
+  const status = document.getElementById('ttSaveStatus');
+  if(btn){ btn.disabled=true; btn.textContent=T('tt_saving'); }
+  if(status){ status.style.display='none'; }
+
+  const { error } = await ttSaveToSupabase();
+
+  if(btn){ btn.disabled=false; btn.textContent=T('tt_save_btn'); }
+  if(error){
+    if(status){
+      status.textContent='⚠️ '+(error.message||error);
+      status.style.display='';
+      status.style.background='var(--color-red-lt)';
+      status.style.color='var(--color-red)';
+    }
+  } else {
+    if(status){
+      status.textContent='✅ '+T('tt_saved_ok');
+      status.style.display='';
+      status.style.background='var(--color-green-lt)';
+      status.style.color='var(--color-green)';
+    }
+    setTimeout(()=>{ ttUpdateAllViews(); }, 1200);
+  }
+}
+
+// ─── MY ROOSTER RENDERING ───
 function initTimetableTabs(){
   const tabRow = document.getElementById('ttTabRow');
   if(!tabRow) return;
-  tabRow.innerHTML = TT_DAYS.map(day =>
+  tabRow.innerHTML = TT_DAYS.map(day=>
     `<div class="tab${day===currentDay?' active':''}" onclick="switchDay('${day}',this)">${dayLabel(day)}</div>`
   ).join('');
 }
@@ -1411,466 +1805,128 @@ function switchDay(day, el){
 function renderTimetable(){
   const body = document.getElementById('ttBody');
   if(!body) return;
-  const periods = timetableData[currentDay];
 
-  // Check if ALL days are empty — show setup message
-  const totalPeriods = Object.values(timetableData).reduce((s,d)=>s+d.length,0);
-  if(totalPeriods === 0){
-    body.innerHTML = `<div class="empty-state" style="padding:32px 18px"><div class="empty-state-icon">📅</div><b style="color:var(--color-primary)">${T('tt_empty_title')}</b><br><span style="font-size:0.75rem">${T('tt_setup_hint_pre')} <a href="#" onclick="switchScreen('settings',null);return false;" style="color:var(--color-primary)">${T('nav_settings')}</a> ${T('tt_setup_hint_post')}</span></div>`;
+  if(!savedTimetable){
+    body.innerHTML=`<div class="empty-state" style="padding:32px 18px"><div class="empty-state-icon">📅</div><b style="color:var(--color-primary)">${T('tt_empty_title')}</b><br><span style="font-size:0.75rem">${T('tt_setup_hint_pre')} <a href="#" onclick="switchScreen('settings',null);return false;" style="color:var(--color-primary)">${T('nav_settings')}</a> ${T('tt_setup_hint_post')}</span></div>`;
     return;
   }
 
-  let html = '';
+  const n = savedTimetable.periods_per_day;
+  const times = calcPeriodTimes(savedTimetable.school_start_time, savedTimetable.period_duration, savedTimetable.breaks, n);
+  const dayPeriods = savedTimetable.schedule_type==='same'
+    ? (savedTimetable.periods.same||savedTimetable.periods[Object.keys(savedTimetable.periods)[0]]||[])
+    : (savedTimetable.periods[currentDay]||[]);
 
-  // Unlock hint banner
-  if(!ttLocked){
-    html += `<div class="unlock-hint">&#128161; <span><b>${T('tt_lock_label_open')}</b> &mdash; ${T('tt_unlock_sub')}</span></div>`;
-  }
-
-  html += '<div class="timetable-body" id="ttPeriodList">';
-
-  periods.forEach((p, idx) => {
-    const isTeaching = p.type === 'teaching';
-    const label = isTeaching
-      ? `${p.subject} &middot; ${p.grade}${p.cls ? ' / '+p.cls : ''}`
-      : (p.type === 'free' ? T('tt_free_period') : T('tt_admin_period'));
-    const task = p.notes || '';
-
-    const rowClasses = [
-      'period-row',
-      !ttLocked ? 'editable' : '',
-      p.done ? 'done' : '',
-      p.carryover ? 'carryover' : '',
-      (!p.done && !p.carryover && idx === 3 && ttLocked) ? 'active-period' : ''
-    ].filter(Boolean).join(' ');
-
-    const typeTag = !isTeaching
-      ? `<span class="type-chip ${p.type==='free'?'chip-free':'chip-admin'}">${p.type==='free'?T('tt_free'):T('tt_admin')}</span>`
-      : '';
-
-    // RIGHT SIDE: locked = checkbox for teaching; unlocked = delete btn only (whole row taps to edit)
-    let rightEl = '';
-    if(ttLocked){
-      if(isTeaching){
-        rightEl = `<div class="period-check${p.done?' checked':''}" onclick="event.stopPropagation();toggleDone('${currentDay}',${idx})"></div>`;
-      } else if(p.carryover){
-        rightEl = `<span class="carryover-badge">&#10227; ${T('tt_carryover')}</span>`;
-      }
-    } else {
-      rightEl = `<button class="period-delete-btn" onclick="event.stopPropagation();deletePeriod('${currentDay}',${idx})" title="Remove">&#10005;</button>`;
-    }
-
-    const rowClick = !ttLocked ? `onclick="openEdit('${currentDay}',${idx})"` : '';
-
-    html += `<div class="${rowClasses}" id="prow_${currentDay}_${idx}" ${rowClick}>
-      <div class="period-num">P${idx+1}</div>
-      <div class="period-subject">
-        <div class="subject-name">${typeTag}${label}</div>
-        <div style="font-size:0.63rem;color:var(--color-text-muted);margin-top:1px;font-weight:500">${p.start}&ndash;${p.end}</div>
-        ${task ? `<div class="period-task" style="margin-top:2px">${task}</div>` : ''}
+  let html='<div style="padding:4px 0">';
+  for(let i=0;i<n;i++){
+    const p=dayPeriods[i]||{};
+    const t=times[i];
+    const hasSubj=!!(p.subject);
+    html+=`<div class="period-card${hasSubj?'':' period-card-empty'}">
+      <div class="period-card-num">P${i+1}</div>
+      <div class="period-card-info">
+        <div class="period-card-subj">${hasSubj?escHtml(p.subject):T('tt_no_subject')}</div>
+        <div class="period-card-meta">${t.start}–${t.end}${hasSubj&&p.grade?' · '+escHtml(p.grade):''}${hasSubj&&p.room?' · '+escHtml(p.room):''}</div>
       </div>
-      <div class="period-row-actions" style="flex-shrink:0">${rightEl}</div>
     </div>`;
-  });
-
-  html += '</div>';
+    const brk=(savedTimetable.breaks||[]).find(b=>parseInt(b.after_period)===i+1);
+    if(brk) html+=`<div class="tt-break-sep"><div class="tt-break-sep-line"></div><div class="tt-break-sep-label">☕ ${escHtml(brk.name||'Break')} · ${brk.duration} min</div><div class="tt-break-sep-line"></div></div>`;
+  }
+  html+='</div>';
 
   if(!ttLocked){
-    html += `<div class="add-period-bar">
-      <button class="add-period-btn" onclick="addPeriod('${currentDay}')">&#43;&nbsp; ${T('tt_add_period')} ${dayLabel(currentDay)}</button>
-    </div>`;
+    html+=`<div style="padding:10px 18px;text-align:center"><button class="btn-secondary" style="font-size:0.75rem;padding:7px 14px" onclick="ttStartEdit()">✏️ ${T('tt_edit_in_settings')}</button></div>`;
+  }
+  body.innerHTML=html;
+}
+
+// ─── DASHBOARD PERIODS ───
+function renderDashboardPeriods(){
+  const el = document.getElementById('dashPeriodsBody');
+  const statEl = document.getElementById('statPeriods');
+  const statSub = document.getElementById('statPeriodsSub');
+
+  if(!savedTimetable){
+    if(statEl) statEl.textContent='0';
+    if(statSub) statSub.textContent=T('stat_periods_sub');
+    if(el) el.innerHTML=`<div class="empty-state" style="padding:14px 18px;text-align:left"><span style="color:var(--color-text-muted);font-size:0.78rem">${T('tt_setup_hint_pre')} <a href="#" onclick="switchScreen(\'settings\',null);return false;" style="color:var(--color-primary)">${T('nav_settings')}</a> ${T('tt_setup_hint_post')}</span></div>`;
+    return;
   }
 
-  body.innerHTML = html;
-}
+  const n=savedTimetable.periods_per_day;
+  const dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const todayName=dayNames[new Date().getDay()];
+  const isWeekday=new Date().getDay()>=1&&new Date().getDay()<=5;
 
-function toggleDone(day, idx){
-  timetableData[day][idx].done = !timetableData[day][idx].done;
-  renderTimetable();
-}
+  if(statEl) statEl.textContent=isWeekday?n:'0';
+  if(statSub) statSub.textContent=isWeekday?(T('tt_periods_today')+' '+dayLabel(todayName)):'Weekend';
 
-// ─── EDIT MODAL ───
-function openEdit(day, idx){
-  if(ttLocked) return;
-  editingPeriod = {day, idx};
-  const p = timetableData[day][idx];
-  const m = document.getElementById('periodEditModal');
-
-  document.getElementById('editStart').value = p.start;
-  document.getElementById('editEnd').value = p.end;
-  document.getElementById('editType').value = p.type;
-  renderEditFields(p);
-  m.classList.add('open');
-}
-
-function renderEditFields(p){
-  const wrap = document.getElementById('editFieldsWrap');
-  if(p.type === 'teaching'){
-    // Build CAPS subject options
-    let subjectOpts = '<option value="">Subject...</option>';
-    for(const [phase, subjects] of Object.entries(CAPS_SUBJECTS)){
-      subjectOpts += `<optgroup label="${phase}">`;
-      subjects.forEach(s => { subjectOpts += `<option value="${s}"${p.subject===s?' selected':''}>${s}</option>`; });
-      subjectOpts += '</optgroup>';
-    }
-    if(customSubjects.length){
-      subjectOpts += '<optgroup label="&#9135; My Custom Subjects &#9135;">';
-      customSubjects.forEach(s=>{ subjectOpts += `<option value="${s}"${p.subject===s?' selected':''}>${s}</option>`; });
-      subjectOpts += '</optgroup>';
-    }
-    subjectOpts += '<optgroup label="&#9135;&#9135;&#9135;&#9135;&#9135;&#9135;&#9135;&#9135;&#9135;"><option value="__add__">&#65291; Add Custom Subject</option></optgroup>';
-
-    wrap.innerHTML = `
-      <div><label class="input-label">Subject</label>
-        <select class="select-input" id="editSubject" onchange="handleEditSubjectChange(this)">
-          ${subjectOpts}
-        </select>
-        <div class="custom-subj-row" id="editCustomRow" style="display:none">
-          <input class="custom-subj-input" id="editCustomInp" type="text" placeholder="Type subject name...">
-          <button class="custom-subj-save" onclick="saveEditCustom()">Save</button>
-          <button class="custom-subj-cancel" onclick="document.getElementById('editCustomRow').style.display='none'">&#10005;</button>
-        </div>
-      </div>
-      <div class="select-row-2">
-        <div><label class="input-label">Grade</label>
-          <select class="select-input" id="editGrade">
-            <option value="">Grade...</option>
-            ${[1,2,3,4,5,6,7,8,9,10,11,12].map(g=>`<option${p.grade==='Grade '+g?' selected':''}>${'Grade '+g}</option>`).join('')}
-          </select>
-        </div>
-        <div><label class="input-label">Class</label>
-          <select class="select-input" id="editClass">
-            <option value="">Class...</option>
-            ${['A','B','C','D','E','F'].map(c=>`<option${p.cls===c?' selected':''}>${c}</option>`).join('')}
-          </select>
+  if(el){
+    const times = calcPeriodTimes(savedTimetable.school_start_time, savedTimetable.period_duration, savedTimetable.breaks, n);
+    const dayPeriods = savedTimetable.schedule_type==='same'
+      ? (savedTimetable.periods.same||savedTimetable.periods[Object.keys(savedTimetable.periods)[0]]||[])
+      : (isWeekday ? (savedTimetable.periods[todayName]||[]) : []);
+    let html='<div style="padding:4px 0">';
+    const showCount = Math.min(n, 4);
+    for(let i=0;i<showCount;i++){
+      const p=dayPeriods[i]||{};
+      const t=times[i];
+      const hasSubj=!!(p.subject);
+      html+=`<div class="period-card${hasSubj?'':' period-card-empty'}">
+        <div class="period-card-num">P${i+1}</div>
+        <div class="period-card-info">
+          <div class="period-card-subj">${hasSubj?escHtml(p.subject):T('tt_no_subject')}</div>
+          <div class="period-card-meta">${t.start}–${t.end}${hasSubj&&p.grade?' · '+escHtml(p.grade):''}</div>
         </div>
       </div>`;
-  } else {
-    wrap.innerHTML = `<div><label class="input-label">Notes</label>
-      <textarea class="textarea-input" id="editNotes" placeholder="Add notes for this period...">${p.notes||''}</textarea></div>`;
+    }
+    if(n>showCount) html+=`<div style="padding:8px 14px;font-size:0.7rem;color:var(--color-text-muted)">+${n-showCount} more periods</div>`;
+    html+='</div>';
+    el.innerHTML=html;
   }
 }
-
-function handleEditSubjectChange(sel){
-  if(sel.value==='__add__'){
-    sel.value='';
-    document.getElementById('editCustomRow').style.display='flex';
-    document.getElementById('editCustomInp').focus();
-  }
-}
-
-function saveEditCustom(){
-  const val = document.getElementById('editCustomInp').value.trim();
-  if(!val) return;
-  if(!customSubjects.includes(val)) customSubjects.push(val);
-  // Re-render fields with saved value pre-selected
-  const p = timetableData[editingPeriod.day][editingPeriod.idx];
-  p.subject = val;
-  renderEditFields({...p, subject: val});
-}
-
-function saveEdit(){
-  if(!editingPeriod) return;
-  const {day, idx} = editingPeriod;
-  const p = timetableData[day][idx];
-  p.start = document.getElementById('editStart').value || p.start;
-  p.end   = document.getElementById('editEnd').value   || p.end;
-  p.type  = document.getElementById('editType').value;
-  if(p.type === 'teaching'){
-    p.subject = document.getElementById('editSubject')?.value || p.subject;
-    p.grade   = document.getElementById('editGrade')?.value   || p.grade;
-    p.cls     = document.getElementById('editClass')?.value   || p.cls;
-    p.notes   = '';
-  } else {
-    p.subject = ''; p.grade = ''; p.cls = '';
-    p.notes = document.getElementById('editNotes')?.value || '';
-  }
-  document.getElementById('periodEditModal').classList.remove('open');
-  editingPeriod = null;
-  renderTimetable();
-  showSaveFeedback(day);
-}
-
-function cancelEdit(){
-  document.getElementById('periodEditModal').classList.remove('open');
-  editingPeriod = null;
-}
-
-function showSaveFeedback(day){
-  // Brief "Saved" toast
-  let toast = document.getElementById('ttSaveToast');
-  if(!toast){ toast=document.createElement('div'); toast.id='ttSaveToast'; toast.className='tt-save-toast'; document.body.appendChild(toast); }
-  toast.textContent = day + ' saved';
-  toast.classList.add('show');
-  setTimeout(()=>toast.classList.remove('show'), 2000);
-}
-
-// ─── ADD / DELETE PERIODS ───
-function addPeriod(day){
-  const periods = timetableData[day];
-  const lastEnd = periods.length ? periods[periods.length-1].end : '07:30';
-  // Auto-calculate start = last end, end = last end + 40min
-  const [h,m] = lastEnd.split(':').map(Number);
-  const newStart = lastEnd;
-  const endMin = m+40; const newEnd = `${String(h+(endMin>=60?1:0)).padStart(2,'0')}:${String(endMin%60).padStart(2,'0')}`;
-  timetableData[day].push({start:newStart,end:newEnd,type:'teaching',subject:'',grade:'',cls:'',notes:'',done:false,carryover:false});
-  renderTimetable();
-  // Auto-open edit for the new period
-  openEdit(day, timetableData[day].length-1);
-}
-
-function deletePeriod(day, idx){
-  if(!confirm(`Remove Period ${idx+1} from ${day}?`)) return;
-  timetableData[day].splice(idx,1);
-  renderTimetable();
-  showSaveFeedback(day);
-}
-
-// ─── TABS ───
-function setTab(el){ switchDay(el.textContent, el); }
 
 // ─── TIMETABLE LOCK ───
 function toggleLock(){
-  ttLocked = !ttLocked;
-  const btn  = document.getElementById('lockBtn');
-  const warn = document.getElementById('lockWarning');
-  const changeTTBtn = document.getElementById('changeTTBtn');
+  ttLocked=!ttLocked;
+  const btn=document.getElementById('lockBtn');
+  const warn=document.getElementById('lockWarning');
+  const changeTTBtn=document.getElementById('changeTTBtn');
   if(ttLocked){
     btn.classList.remove('unlocked');
-    document.getElementById('lockIcon').textContent  = '🔒';
-    document.getElementById('lockLabel').textContent = T('tt_lock_label');
-    document.getElementById('lockStatus').textContent= T('tt_lock_status');
+    document.getElementById('lockIcon').textContent='🔒';
+    document.getElementById('lockLabel').textContent=T('tt_lock_label');
+    document.getElementById('lockStatus').textContent=T('tt_lock_status');
     warn.classList.remove('visible');
     if(changeTTBtn) changeTTBtn.style.display='none';
   } else {
     btn.classList.add('unlocked');
-    document.getElementById('lockIcon').textContent  = '🔓';
-    document.getElementById('lockLabel').textContent = T('tt_lock_label_open');
-    document.getElementById('lockStatus').textContent= T('tt_lock_status_open');
+    document.getElementById('lockIcon').textContent='🔓';
+    document.getElementById('lockLabel').textContent=T('tt_lock_label_open');
+    document.getElementById('lockStatus').textContent=T('tt_lock_status_open');
     warn.classList.add('visible');
     if(changeTTBtn) changeTTBtn.style.display='inline';
   }
   renderTimetable();
 }
 
+// ─── MODAL ───
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
 // Init on load
 document.addEventListener('DOMContentLoaded', ()=>{
   initTimetableTabs();
   renderTimetable();
+  renderDashboardPeriods();
   renderRemindersScreen();
   renderDashboardReminders();
   renderModerationScreen();
   renderDashboardModeration();
   updateDashboardStats();
   updateDateChip();
+  ttRenderBreaks();
   initAuth();
 });
-
-// ─── SETUP WIZARD (PATCH 3) ───
-function goStep(n){
-  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('step'+n).classList.add('active');
-  // Update dots
-  for(let i=1;i<=3;i++){
-    const dot=document.getElementById('dot'+i);
-    if(i<n){dot.className='step-dot done';dot.textContent='✓';}
-    else if(i===n){dot.className='step-dot active';dot.textContent=i;}
-    else{dot.className='step-dot';dot.textContent=i;}
-  }
-  for(let i=1;i<=2;i++){
-    const line=document.getElementById('line'+i);
-    if(line) line.classList.toggle('done',i<n);
-  }
-  if(n===2) buildGrid();
-}
-
-function updateDayNames(){
-  const n=Math.min(Math.max(parseInt(document.getElementById('cycledays').value)||5,5),10);
-  const wrap=document.getElementById('dayNamesWrap');
-  const cols=Math.min(n,5);
-  wrap.style.gridTemplateColumns=`repeat(${cols},1fr)`;
-  wrap.innerHTML='';
-  for(let i=1;i<=n;i++){
-    const inp=document.createElement('input');
-    inp.type='text';inp.className='text-input';inp.value='Day '+i;inp.placeholder='Day '+i;
-    inp.style.textAlign='center';inp.style.fontWeight='600';
-    wrap.appendChild(inp);
-  }
-}
-updateDayNames();
-
-// ─── CAPS SUBJECT MASTER LIST ───
-const CAPS_SUBJECTS = {
-  'Foundation Phase (Gr 1–3)': [
-    'Home Language','First Additional Language','Mathematics','Life Skills'
-  ],
-  'Intermediate Phase (Gr 4–6)': [
-    'Home Language','First Additional Language','Mathematics',
-    'Natural Sciences & Technology','Social Sciences','Life Skills','Arts & Culture'
-  ],
-  'Senior Phase (Gr 7–9)': [
-    'Home Language','First Additional Language','Mathematics',
-    'Natural Sciences','Technology','Social Sciences',
-    'Economic & Management Sciences','Life Orientation',
-    'Arts & Culture','Creative Arts'
-  ],
-  'FET Phase (Gr 10–12)': [
-    'Home Language','First Additional Language','Mathematics',
-    'Mathematical Literacy','Life Orientation','Physical Sciences',
-    'Life Sciences','Geography','History','Accounting','Business Studies',
-    'Economics','Consumer Studies','Hospitality Studies','Tourism',
-    'Engineering Graphics & Design','Information Technology',
-    'Computer Applications Technology','Dramatic Arts','Music','Visual Arts',
-    'Agricultural Sciences','Agricultural Technology','Civil Technology',
-    'Electrical Technology','Mechanical Technology','Religion Studies'
-  ]
-};
-
-// Teacher's saved custom subjects (persists in memory for this session)
-let customSubjects = [];
-
-// Build the subject <select> HTML for a given cell id
-function buildSubjectSelectHTML(cellId) {
-  let html = `<select class="cell-sub-select caps-subject-select" id="subj_${cellId}" onchange="handleSubjectChange('${cellId}',this)">`;
-  html += '<option value="">Subject…</option>';
-  for (const [phase, subjects] of Object.entries(CAPS_SUBJECTS)) {
-    html += `<optgroup label="${phase}">`;
-    subjects.forEach(s => { html += `<option value="${s}">${s}</option>`; });
-    html += '</optgroup>';
-  }
-  if (customSubjects.length > 0) {
-    html += '<optgroup label="─ My Custom Subjects ─">';
-    customSubjects.forEach(s => { html += `<option value="${s}">${s}</option>`; });
-    html += '</optgroup>';
-  }
-  html += '<optgroup label="─────────────────">';
-  html += '<option value="__add_custom__">＋ Add Custom Subject</option>';
-  html += '</optgroup>';
-  html += '</select>';
-  // Custom subject inline input (hidden by default)
-  html += `<div class="custom-subj-row" id="customrow_${cellId}" style="display:none">
-    <input class="custom-subj-input" id="custominp_${cellId}" type="text" placeholder="Type subject name…" onkeydown="handleCustomKey(event,'${cellId}')">
-    <button class="custom-subj-save" onclick="saveCustomSubject('${cellId}')">Save</button>
-    <button class="custom-subj-cancel" onclick="cancelCustomSubject('${cellId}')">✕</button>
-  </div>`;
-  return html;
-}
-
-function handleSubjectChange(cellId, sel) {
-  if (sel.value === '__add_custom__') {
-    sel.value = ''; // reset dropdown
-    document.getElementById('customrow_' + cellId).style.display = 'flex';
-    document.getElementById('custominp_' + cellId).focus();
-  }
-}
-
-function saveCustomSubject(cellId) {
-  const inp = document.getElementById('custominp_' + cellId);
-  const val = inp.value.trim();
-  if (!val) return;
-  if (!customSubjects.includes(val)) customSubjects.push(val);
-  // Rebuild all subject selects on the grid
-  refreshAllSubjectSelects();
-  // Select the new subject in this cell
-  const sel = document.getElementById('subj_' + cellId);
-  if (sel) sel.value = val;
-  cancelCustomSubject(cellId);
-}
-
-function cancelCustomSubject(cellId) {
-  const row = document.getElementById('customrow_' + cellId);
-  if (row) { row.style.display = 'none'; document.getElementById('custominp_' + cellId).value = ''; }
-}
-
-function handleCustomKey(e, cellId) {
-  if (e.key === 'Enter') saveCustomSubject(cellId);
-  if (e.key === 'Escape') cancelCustomSubject(cellId);
-}
-
-function refreshAllSubjectSelects() {
-  // Find all subject selects currently rendered and rebuild their options
-  document.querySelectorAll('.caps-subject-select').forEach(sel => {
-    const cellId = sel.id.replace('subj_', '');
-    const currentVal = sel.value;
-    // Rebuild options
-    sel.innerHTML = '';
-    let tempDiv = document.createElement('div');
-    tempDiv.innerHTML = buildSubjectSelectHTML(cellId);
-    const newSel = tempDiv.querySelector('select');
-    sel.innerHTML = newSel.innerHTML;
-    sel.value = currentVal; // restore selection
-  });
-}
-
-function buildGrid(){
-  const days=Math.min(Math.max(parseInt(document.getElementById('cycledays').value)||5,5),10);
-  const periods=Math.min(Math.max(parseInt(document.getElementById('cycleperiods').value)||8,5),14);
-  const dayInputs=document.querySelectorAll('#dayNamesWrap input');
-  const dayNames=Array.from(dayInputs).map((inp,i)=>inp.value||'Day '+(i+1));
-  const table=document.getElementById('ttGrid');
-  let html='<tr><th>Period</th>';
-  for(let d=0;d<days;d++) html+=`<th>${dayNames[d]}</th>`;
-  html+='</tr>';
-  for(let p=1;p<=periods;p++){
-    html+=`<tr><td class="period-label">P${p}</td>`;
-    for(let d=0;d<days;d++){
-      const id=`c_d${d}_p${p}`;
-      html+=`<td>
-        <select class="cell-type-select" id="t_${id}" onchange="updateCell('${id}')">
-          <option value="teaching">Teaching</option>
-          <option value="free">Free Period</option>
-          <option value="admin">Admin Period</option>
-        </select>
-        <div id="${id}">
-          ${buildSubjectSelectHTML(id)}
-          <select class="cell-sub-select"><option value="">Grade…</option><option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option><option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option><option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option></select>
-          <select class="cell-sub-select"><option value="">Class…</option><option>A</option><option>B</option><option>C</option><option>D</option></select>
-        </div>
-      </td>`;
-    }
-    html+='</tr>';
-  }
-  table.innerHTML=html;
-}
-
-function updateCell(id){
-  const type=document.getElementById('t_'+id).value;
-  const content=document.getElementById(id);
-  if(type==='teaching'){
-    content.innerHTML=
-      buildSubjectSelectHTML(id)+
-      `<select class="cell-sub-select"><option value="">Grade…</option><option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option><option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option><option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option></select>
-       <select class="cell-sub-select"><option value="">Class…</option><option>A</option><option>B</option><option>C</option><option>D</option></select>`;
-  } else {
-    const label=type==='free'?'Free Period':'Admin Period';
-    const cls=type==='free'?'cell-free':'cell-admin';
-    content.innerHTML=`<span class="cell-tag ${cls}">${label}</span><textarea class="cell-note" placeholder="Add a note…"></textarea>`;
-  }
-}
-
-function saveTimetable(){
-  goStep(1);
-  document.getElementById('changeTTBtn').style.display='inline';
-  switchScreen('timetable',document.querySelector('[data-label="My Timetable"]'));
-  ttLocked=true;
-  document.getElementById('lockBtn').classList.remove('unlocked');
-  document.getElementById('lockIcon').textContent='🔒';
-  document.getElementById('lockLabel').textContent=T('tt_lock_label');
-  document.getElementById('lockStatus').textContent=T('tt_lock_save');
-  document.getElementById('lockWarning').classList.remove('visible');
-}
-
-// ─── MODAL ───
-function showChangeTTModal(){
-  if(ttLocked){alert('Please unlock the timetable first before making changes.');return;}
-  document.getElementById('changeTTModal').classList.add('open');
-}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-function confirmChangeTT(){
-  closeModal('changeTTModal');
-  switchScreen('settings',document.querySelector('[data-label="Settings"]'));
-  goStep(1);
-}
 
 // ════════════════════════════════════════════
 // LESSON PLAN GENERATOR + CAPS PDF EXPORT
@@ -2599,6 +2655,7 @@ function _showApp(user){
   screen.classList.add('fading');
   setTimeout(() => { screen.style.display = 'none'; screen.classList.remove('fading'); }, 300);
   _populateProfile(user);
+  ttLoad();
 }
 
 function _showAuth(){
@@ -2882,6 +2939,8 @@ function updateDashboardStats(){
   const smS = document.getElementById('statModSub');
   if(sm)  sm.textContent  = modPct+'%';
   if(smS) smS.textContent = outstanding ? outstanding+' '+T(outstanding>1?'stat_items_out':'stat_item_out') : (moderationItems.length?T('stat_all_uptodate'):T('stat_mod_no'));
+
+  renderDashboardPeriods();
 }
 
 </script>
