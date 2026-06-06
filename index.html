@@ -1474,22 +1474,8 @@ function calcPeriodTimes(startTime, duration, breaks, count){
 }
 
 // ─── SUPABASE TIMETABLE CRUD ───
-// Run in Supabase SQL Editor:
-// CREATE TABLE IF NOT EXISTS timetables (
-//   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-//   user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-//   schedule_type text NOT NULL DEFAULT 'same',
-//   school_start_time text NOT NULL DEFAULT '07:30',
-//   periods_per_day integer NOT NULL DEFAULT 8,
-//   period_duration integer NOT NULL DEFAULT 40,
-//   breaks jsonb NOT NULL DEFAULT '[]',
-//   periods jsonb NOT NULL DEFAULT '{}',
-//   created_at timestamptz DEFAULT now(),
-//   updated_at timestamptz DEFAULT now(),
-//   UNIQUE(user_id)
-// );
-// ALTER TABLE timetables ENABLE ROW LEVEL SECURITY;
-// CREATE POLICY "own_timetable" ON timetables USING (auth.uid()=user_id) WITH CHECK (auth.uid()=user_id);
+// Table: timetables — columns: id, created_at, user_id, schedule_type, school_start_time, periods (jsonb), breaks (jsonb), updated_at
+// periods jsonb stores: { _meta: { periodsPerDay, periodDuration }, same: [...], Monday: [...], ... }
 
 async function ttLoad(){
   try {
@@ -1497,11 +1483,12 @@ async function ttLoad(){
     if(!session) return;
     const { data, error } = await _sb.from('timetables').select('*').eq('user_id', session.user.id).maybeSingle();
     if(!error && data){
+      const meta = data.periods?._meta || {};
       savedTimetable = {
         schedule_type: data.schedule_type,
         school_start_time: data.school_start_time,
-        periods_per_day: data.periods_per_day,
-        period_duration: data.period_duration,
+        periods_per_day: meta.periodsPerDay || 8,
+        period_duration: meta.periodDuration || 40,
         breaks: data.breaks||[],
         periods: data.periods||{}
       };
@@ -1515,23 +1502,26 @@ async function ttLoad(){
 async function ttSaveToSupabase(){
   const { data:{ session } } = await _sb.auth.getSession();
   if(!session) return { error:'Not logged in' };
+  const periodsWithMeta = {
+    _meta: { periodsPerDay: parseInt(ttSetupData.periodsPerDay)||8, periodDuration: parseInt(ttSetupData.periodDuration)||40 },
+    ...ttSetupData.periods
+  };
   const payload = {
     user_id: session.user.id,
     schedule_type: ttSetupData.scheduleType,
     school_start_time: ttSetupData.startTime,
-    periods_per_day: parseInt(ttSetupData.periodsPerDay)||8,
-    period_duration: parseInt(ttSetupData.periodDuration)||40,
     breaks: ttSetupData.breaks,
-    periods: ttSetupData.periods,
+    periods: periodsWithMeta,
     updated_at: new Date().toISOString()
   };
   const { data, error } = await _sb.from('timetables').upsert(payload,{onConflict:'user_id'}).select().single();
   if(!error && data){
+    const meta = data.periods?._meta || {};
     savedTimetable = {
       schedule_type: data.schedule_type,
       school_start_time: data.school_start_time,
-      periods_per_day: data.periods_per_day,
-      period_duration: data.period_duration,
+      periods_per_day: meta.periodsPerDay || 8,
+      period_duration: meta.periodDuration || 40,
       breaks: data.breaks||[],
       periods: data.periods||{}
     };
@@ -1596,7 +1586,8 @@ function ttStartEdit(){
     ttSetupData.periodDuration = savedTimetable.period_duration;
     ttSetupData.breaks = JSON.parse(JSON.stringify(savedTimetable.breaks||[]));
     ttSetupData.scheduleType = savedTimetable.schedule_type;
-    ttSetupData.periods = JSON.parse(JSON.stringify(savedTimetable.periods||{}));
+    const { _meta, ...dayPeriods } = savedTimetable.periods || {};
+    ttSetupData.periods = JSON.parse(JSON.stringify(dayPeriods));
   }
   document.getElementById('ttSavedView').style.display='none';
   document.getElementById('ttWizard').style.display='';
@@ -1814,7 +1805,7 @@ function renderTimetable(){
   const n = savedTimetable.periods_per_day;
   const times = calcPeriodTimes(savedTimetable.school_start_time, savedTimetable.period_duration, savedTimetable.breaks, n);
   const dayPeriods = savedTimetable.schedule_type==='same'
-    ? (savedTimetable.periods.same||savedTimetable.periods[Object.keys(savedTimetable.periods)[0]]||[])
+    ? (savedTimetable.periods.same||[])
     : (savedTimetable.periods[currentDay]||[]);
 
   let html='<div style="padding:4px 0">';
@@ -1864,7 +1855,7 @@ function renderDashboardPeriods(){
   if(el){
     const times = calcPeriodTimes(savedTimetable.school_start_time, savedTimetable.period_duration, savedTimetable.breaks, n);
     const dayPeriods = savedTimetable.schedule_type==='same'
-      ? (savedTimetable.periods.same||savedTimetable.periods[Object.keys(savedTimetable.periods)[0]]||[])
+      ? (savedTimetable.periods.same||[])
       : (isWeekday ? (savedTimetable.periods[todayName]||[]) : []);
     let html='<div style="padding:4px 0">';
     const showCount = Math.min(n, 4);
@@ -1891,21 +1882,18 @@ function toggleLock(){
   ttLocked=!ttLocked;
   const btn=document.getElementById('lockBtn');
   const warn=document.getElementById('lockWarning');
-  const changeTTBtn=document.getElementById('changeTTBtn');
   if(ttLocked){
     btn.classList.remove('unlocked');
     document.getElementById('lockIcon').textContent='🔒';
     document.getElementById('lockLabel').textContent=T('tt_lock_label');
     document.getElementById('lockStatus').textContent=T('tt_lock_status');
     warn.classList.remove('visible');
-    if(changeTTBtn) changeTTBtn.style.display='none';
   } else {
     btn.classList.add('unlocked');
     document.getElementById('lockIcon').textContent='🔓';
     document.getElementById('lockLabel').textContent=T('tt_lock_label_open');
     document.getElementById('lockStatus').textContent=T('tt_lock_status_open');
     warn.classList.add('visible');
-    if(changeTTBtn) changeTTBtn.style.display='inline';
   }
   renderTimetable();
 }
