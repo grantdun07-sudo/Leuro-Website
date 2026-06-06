@@ -158,14 +158,6 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
   .three-col{grid-template-columns:1fr}
   .quick-actions{grid-template-columns:1fr 1fr}
 }
-  .period-time{font-size:0.62rem;display:none}
-  .period-num{font-size:0.68rem;flex-shrink:0;min-width:28px}
-  .subject-name{font-size:0.76rem}
-  .period-task{font-size:0.64rem;max-width:160px}
-  .tt-lock-bar{flex-wrap:wrap;gap:8px;padding:10px 12px}
-  .lock-status{width:100%;order:3;font-size:0.65rem}
-  .lock-warning{font-size:0.68rem;padding:5px 10px}
-}
 .timetable-body{padding:10px 12px;display:flex;flex-direction:column;gap:6px}
 .period-row{display:flex;align-items:center;gap:8px;padding:11px 12px;border-radius:var(--radius-sm);background:var(--color-background);border:1px solid var(--color-border-lt);transition:all 0.18s;cursor:default;width:100%;box-sizing:border-box}
 .period-row:hover{border-color:var(--color-border);box-shadow:var(--shadow-sm)}
@@ -523,7 +515,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 .plan-footer{padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--color-border-lt);flex-wrap:wrap}
 .plan-save-status{font-size:0.75rem;font-weight:600}
 /* ─── PERIOD TRACKING ─── */
-.period-track{padding:8px 14px 10px;border-top:1px solid var(--color-border-lt);display:flex;flex-direction:column;gap:6px;background:var(--color-bg)}
+.period-track{padding:8px 14px 10px;border-top:1px solid var(--color-border-lt);display:flex;flex-direction:column;gap:6px;background:var(--color-background)}
 .period-track-focus{font-size:0.68rem;color:var(--color-primary);font-weight:600;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .period-track-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .period-track-input{flex:1;min-width:80px;font-size:0.73rem;padding:4px 8px}
@@ -1234,12 +1226,6 @@ const UI_STRINGS = {
     // Sign out + AI input
     btn_signout:'Sign Out',
     ai_placeholder:'Ask Leuro Assistant anything…',btn_ask_ai:'Ask →',
-    // Lesson Planning screen
-    planning_greeting:'Lesson Planning',
-    planning_sub:'Build weekly and term plans with AI. Fully CAPS-aligned per phase and subject.',
-    planning_card_title:'Week 18 — Term 2 Plan',
-    planning_new_plan:'+ New Plan',
-    planning_coming:'Weekly planning view — coming in next patch build.',
     // Timetable days
     day_mon:'Monday',day_tue:'Tuesday',day_wed:'Wednesday',day_thu:'Thursday',day_fri:'Friday',
     // Reminders modal
@@ -1280,6 +1266,7 @@ const UI_STRINGS = {
     tt_periods_label:'periods',tt_starts_at:'Starts at',tt_breaks_label:'break(s)',
     tt_periods_today:'periods today ·',
     // Lesson planning & tracking
+    planning_greeting:'Lesson Planning',
     planning_sub:'Plan your lessons for the week and track completion across all subjects.',
     reports_sub:'Track your weekly lesson completion, carry-overs, and subject progress.',
     plan_prev_week:'← Previous Week',plan_next_week:'Next Week →',
@@ -1293,7 +1280,22 @@ const UI_STRINGS = {
     carry_confirm_btn:'Carry Over →',carry_no_periods:'No future periods found for this subject.',
     carry_banner:'You have',carry_banner2:'carry-over(s) pending',carry_from:'Carry-over from',
     report_done:'done',report_missed:'not done',report_carry:'carry-over(s)',
-    report_no_tt:'Set up your timetable to view weekly reports.'
+    report_no_tt:'Set up your timetable to view weekly reports.',
+    // Alert / confirm messages
+    alert_grade_subject:'Please select a Grade and Subject first.',
+    alert_gen_lp_first:'Generate a lesson plan first.',
+    alert_gen_ws_first:'Generate a worksheet first.',
+    alert_enter_name:'Please enter your full name.',
+    alert_enter_reminder:'Please enter a reminder title.',
+    alert_enter_mod_title:'Please enter a title for this entry.',
+    confirm_delete_mod:'Remove this moderation entry?',
+    // Generating states
+    gen_lp:'Generating CAPS-aligned lesson plan...',
+    gen_ws:'Generating worksheet and memo...',
+    // Dashboard
+    dash_more_periods:'more periods',
+    // Moderation stat
+    mod_stat_of:' of ',mod_stat_tasks_mod:' tasks moderated',
   },
   af:{
     // Nav
@@ -1379,11 +1381,6 @@ const UI_STRINGS = {
     btn_signout:'Teken Uit',
     ai_placeholder:'Vra Leuro Assistent enigiets…',btn_ask_ai:'Vra →',
     // Lesson Planning screen
-    planning_greeting:'Lesbeplanning',
-    planning_sub:'Bou weeklikse en kwartaalplanne met KI. Volledig CAPS-ooreenstemmend per fase en vak.',
-    planning_card_title:'Week 18 — Kwartaal 2 Plan',
-    planning_new_plan:'+ Nuwe Plan',
-    planning_coming:'Weeklikse planningaansig — kom in die volgende opdatering.',
     // Timetable days
     day_mon:'Maandag',day_tue:'Dinsdag',day_wed:'Woensdag',day_thu:'Donderdag',day_fri:'Vrydag',
     // Reminders modal
@@ -1424,6 +1421,7 @@ const UI_STRINGS = {
     tt_periods_label:'periodes',tt_starts_at:'Begin om',tt_breaks_label:'pouse(s)',
     tt_periods_today:'periodes vandag ·',
     // Lesson planning & tracking
+    planning_greeting:'Lesbeplanning',
     planning_sub:'Beplan u lesse vir die week en volg voltooiing oor alle vakke.',
     reports_sub:'Volg u weeklikse lesse, oordraers en vakvordering.',
     plan_prev_week:'← Vorige Week',plan_next_week:'Volgende Week →',
@@ -1437,7 +1435,22 @@ const UI_STRINGS = {
     carry_confirm_btn:'Dra Oor →',carry_no_periods:'Geen toekomstige periodes gevind nie.',
     carry_banner:'U het',carry_banner2:'oordrager(s) hangende',carry_from:'Oordrag van',
     report_done:'gedoen',report_missed:'nie gedoen',report_carry:'oordraer(s)',
-    report_no_tt:'Stel u rooster op om weeklikse verslae te sien.'
+    report_no_tt:'Stel u rooster op om weeklikse verslae te sien.',
+    // Alert / confirm messages
+    alert_grade_subject:"Kies eers 'n Graad en Vak.",
+    alert_gen_lp_first:"Genereer eers 'n lesplan.",
+    alert_gen_ws_first:"Genereer eers 'n werksvel.",
+    alert_enter_name:'Voer asseblief u volle naam in.',
+    alert_enter_reminder:"Voer asseblief 'n herinneringstitel in.",
+    alert_enter_mod_title:"Voer asseblief 'n titel vir hierdie inskrywing in.",
+    confirm_delete_mod:'Verwyder hierdie modereringsinskrywing?',
+    // Generating states
+    gen_lp:'Genereer CAPS-ooreenstemmende lesplan...',
+    gen_ws:'Genereer werksvel en memo...',
+    // Dashboard
+    dash_more_periods:'meer periodes',
+    // Moderation stat
+    mod_stat_of:' van ',mod_stat_tasks_mod:' take gemodereer',
   }
 };
 const pageTitlesI18n = {
@@ -1539,7 +1552,7 @@ const CAPS_SUBJECTS_LIST = [
 // ─── STATE ───
 let savedTimetable = null;
 let currentDay = 'Monday';
-let ttLocked = true;
+let docsGenerated = 0;
 const TT_DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
 
 let ttSetupData = {
@@ -2031,31 +2044,10 @@ function renderDashboardPeriods(){
         </div>
       </div>`;
     }
-    if(n>showCount) html+=`<div style="padding:8px 14px;font-size:0.7rem;color:var(--color-text-muted)">+${n-showCount} more periods</div>`;
+    if(n>showCount) html+=`<div style="padding:8px 14px;font-size:0.7rem;color:var(--color-text-muted)">+${n-showCount} ${T('dash_more_periods')}</div>`;
     html+='</div>';
     el.innerHTML=html;
   }
-}
-
-// ─── TIMETABLE LOCK ───
-function toggleLock(){
-  ttLocked=!ttLocked;
-  const btn=document.getElementById('lockBtn');
-  const warn=document.getElementById('lockWarning');
-  if(ttLocked){
-    btn.classList.remove('unlocked');
-    document.getElementById('lockIcon').textContent='🔒';
-    document.getElementById('lockLabel').textContent=T('tt_lock_label');
-    document.getElementById('lockStatus').textContent=T('tt_lock_status');
-    warn.classList.remove('visible');
-  } else {
-    btn.classList.add('unlocked');
-    document.getElementById('lockIcon').textContent='🔓';
-    document.getElementById('lockLabel').textContent=T('tt_lock_label_open');
-    document.getElementById('lockStatus').textContent=T('tt_lock_status_open');
-    warn.classList.add('visible');
-  }
-  renderTimetable();
 }
 
 // ─── MODAL ───
@@ -2116,24 +2108,17 @@ function generateLessonPlan(){
   const week=document.getElementById('lp_week')?.value;
   const duration=document.getElementById('lp_duration')?.value;
   const topic=document.getElementById('lp_topic')?.value;
-  if(!grade||!subject){alert('Please select a Grade and Subject first.');return;}
+  if(!grade||!subject){alert(T('alert_grade_subject'));return;}
   document.getElementById('lessonFormSection').style.display='none';
   const preview=document.getElementById('lessonPlanPreview');
   preview.style.display='block';
   document.getElementById('previewTitle').textContent=grade+' — '+subject+(topic?': '+topic:'');
-  document.getElementById('lessonPlanContent').innerHTML='<div class="lp-generating"><div class="lp-spinner"></div>Generating CAPS-aligned lesson plan...</div>';
+  document.getElementById('lessonPlanContent').innerHTML=`<div class="lp-generating"><div class="lp-spinner"></div>${T('gen_lp')}</div>`;
   setTimeout(()=>{
     currentLessonData=buildLessonData(grade,subject,term,week,duration,topic);
     renderLessonPreview(currentLessonData);
+    docsGenerated++; updateDashboardStats();
   },900);
-}
-
-function loadSamplePlan(){
-  currentLessonData=buildLessonData('Grade 6','Natural Sciences & Technology','2','18','40','Separation of Mixtures — Filtration and Evaporation');
-  document.getElementById('lessonFormSection').style.display='none';
-  document.getElementById('lessonPlanPreview').style.display='block';
-  document.getElementById('previewTitle').textContent='Gr6 NS&T — Separation of Mixtures';
-  renderLessonPreview(currentLessonData);
 }
 
 function closeLessonPreview(){
@@ -2183,7 +2168,7 @@ function renderLessonPreview(d){
 }
 
 function downloadLessonPDF(){
-  if(!currentLessonData){alert('Generate a lesson plan first.');return;}
+  if(!currentLessonData){alert(T('alert_gen_lp_first'));return;}
   const d=currentLessonData;
   const cells=document.querySelectorAll('#lessonPlanContent .lp-value[contenteditable]');
   function gc(i){return cells[i]?cells[i].innerText.trim():'';}
@@ -2411,27 +2396,19 @@ function generateWorksheet() {
   const topic   = document.getElementById('ws_topic')?.value;
   const qcount  = document.getElementById('ws_qcount')?.value;
   const qtype   = document.getElementById('ws_qtype')?.value;
-  if(!grade||!subject){alert('Please select a Grade and Subject first.');return;}
+  if(!grade||!subject){alert(T('alert_grade_subject'));return;}
   document.getElementById('wsFormSection').style.display = 'none';
   const preview = document.getElementById('wsPreview');
   preview.style.display = 'block';
-  document.getElementById('wsContent').innerHTML = '<div class="lp-generating"><div class="lp-spinner"></div>Generating worksheet and memo...</div>';
+  document.getElementById('wsContent').innerHTML = `<div class="lp-generating"><div class="lp-spinner"></div>${T('gen_ws')}</div>`;
   document.getElementById('memoContent').innerHTML = '';
   showWsTab('ws');
   setTimeout(()=>{
     currentWsData = buildWorksheetData(grade,subject,topic,qcount,30,qtype);
     renderWorksheet(currentWsData);
     renderMemo(currentWsData);
+    docsGenerated++; updateDashboardStats();
   },800);
-}
-
-function loadSampleWorksheet() {
-  currentWsData = buildWorksheetData('Grade 6','Natural Sciences & Technology','Separation of Mixtures — Filtration and Evaporation',8,30,'Mixed');
-  document.getElementById('wsFormSection').style.display = 'none';
-  document.getElementById('wsPreview').style.display = 'block';
-  showWsTab('ws');
-  renderWorksheet(currentWsData);
-  renderMemo(currentWsData);
 }
 
 // ── Render worksheet ──
@@ -2555,7 +2532,7 @@ function getWsHeaderVals() {
 }
 
 function buildWsPDF(isMemo) {
-  if(!currentWsData){alert('Generate a worksheet first.');return null;}
+  if(!currentWsData){alert(T('alert_gen_ws_first'));return null;}
   const d = currentWsData;
   const h = getWsHeaderVals();
   const { jsPDF } = window.jspdf;
@@ -2899,7 +2876,7 @@ async function handleRegister(e){
 async function saveProfile(e){
   const name   = document.getElementById('profileName').value.trim();
   const school = document.getElementById('profileSchool').value.trim();
-  if(!name){ alert('Please enter your full name.'); return; }
+  if(!name){ alert(T('alert_enter_name')); return; }
 
   const btn      = e.currentTarget;
   const origText = btn.textContent;
@@ -2978,7 +2955,7 @@ function saveReminder(){
   const notes   = document.getElementById('remNotes').value.trim();
   const time    = document.getElementById('remTime').value.trim();
   const urgency = document.getElementById('remUrgency').value;
-  if(!title){ alert('Please enter a reminder title.'); return; }
+  if(!title){ alert(T('alert_enter_reminder')); return; }
   reminders.push({title,notes,time,urgency});
   closeModal('reminderModal');
   renderRemindersScreen();
@@ -3011,7 +2988,7 @@ function renderModerationScreen(){
       <div class="mod-progress-wrap">
         <div class="mod-title">${escHtml(item.title)}</div>
         <div class="mod-bar"><div class="mod-bar-fill ${barCls}" style="width:${pct}%"></div></div>
-        <div class="mod-stat">${item.done} of ${item.total} tasks moderated${item.due?' &middot; Due: '+escHtml(item.due):''}</div>
+        <div class="mod-stat">${item.done}${T('mod_stat_of')}${item.total}${T('mod_stat_tasks_mod')}${item.due?' &middot; Due: '+escHtml(item.due):''}</div>
       </div>
       <div class="mod-pct ${pctCls}">${pct}%</div>
       <div class="mod-item-actions">
@@ -3033,7 +3010,7 @@ function renderDashboardModeration(){
     const pct = item.total>0?Math.round((item.done/item.total)*100):0;
     const barCls = pct===100?'bar-green':pct>=60?'bar-purple':'bar-gold';
     const pctCls = pct===100?'c-green':pct>=60?'c-purple':'c-gold';
-    return `<div class="mod-item"><div class="mod-progress-wrap"><div class="mod-title">${escHtml(item.title)}</div><div class="mod-bar"><div class="mod-bar-fill ${barCls}" style="width:${pct}%"></div></div><div class="mod-stat">${item.done} of ${item.total} tasks moderated</div></div><div class="mod-pct ${pctCls}">${pct}%</div></div>`;
+    return `<div class="mod-item"><div class="mod-progress-wrap"><div class="mod-title">${escHtml(item.title)}</div><div class="mod-bar"><div class="mod-bar-fill ${barCls}" style="width:${pct}%"></div></div><div class="mod-stat">${item.done}${T('mod_stat_of')}${item.total}${T('mod_stat_tasks_mod')}</div></div><div class="mod-pct ${pctCls}">${pct}%</div></div>`;
   }).join('') + '</div>';
 }
 
@@ -3056,7 +3033,7 @@ function saveMod(){
   const done  = Math.min(parseInt(document.getElementById('modEntryDone').value)||0, total);
   const due   = document.getElementById('modEntryDue').value.trim();
   const idVal = document.getElementById('modEntryId').value;
-  if(!title){ alert('Please enter a title for this entry.'); return; }
+  if(!title){ alert(T('alert_enter_mod_title')); return; }
   const item = {title,total,done,due};
   if(idVal!=='') moderationItems[parseInt(idVal)] = item;
   else moderationItems.push(item);
@@ -3067,7 +3044,7 @@ function saveMod(){
 }
 
 function deleteMod(i){
-  if(!confirm('Remove this moderation entry?')) return;
+  if(!confirm(T('confirm_delete_mod'))) return;
   moderationItems.splice(i,1);
   renderModerationScreen();
   renderDashboardModeration();
@@ -3439,6 +3416,9 @@ function updateDashboardStats(){
   const ss = document.getElementById('statTasksSub');
   if(st){ st.textContent = reminders.length; }
   if(ss){ ss.textContent = reminders.length ? reminders.length+' '+T(reminders.length>1?'stat_rems_n':'stat_rem_1') : T('stat_tasks_no'); }
+
+  const sd = document.getElementById('statDocs');
+  if(sd) sd.textContent = docsGenerated;
 
   const modAll = moderationItems.filter(m=>m.total>0);
   const modPct = modAll.length ? Math.round(modAll.reduce((s,m)=>s+(m.done/m.total)*100,0)/modAll.length) : 0;
