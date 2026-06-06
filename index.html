@@ -506,6 +506,47 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 .mod-item-actions{display:flex;gap:4px;flex-shrink:0;margin-left:8px}
 .rem-delete-btn{background:none;border:none;color:var(--color-text-muted);cursor:pointer;font-size:0.9rem;padding:4px 6px;border-radius:4px;flex-shrink:0;transition:all 0.15s;font-family:var(--font-family);line-height:1}
 .rem-delete-btn:hover{color:var(--color-red);background:var(--color-red-lt)}
+/* ─── WEEKLY PLANNING ─── */
+.plan-week-nav{display:flex;align-items:center;gap:8px;padding:12px 18px;border-bottom:1px solid var(--color-border-lt);flex-wrap:wrap}
+.plan-week-label{font-size:0.82rem;font-weight:700;color:var(--color-primary);flex:1;text-align:center;min-width:120px}
+.plan-subject-group{border-bottom:1px solid var(--color-border-lt);padding:14px 18px 16px}
+.plan-subject-group:last-child{border-bottom:none}
+.plan-focus-row{margin-bottom:10px}
+.plan-period-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--color-border-lt);flex-wrap:wrap}
+.plan-period-meta{display:flex;align-items:center;gap:6px;flex-shrink:0;width:120px}
+.plan-day-badge{font-size:0.67rem;background:var(--color-primary-xl);color:var(--color-primary);padding:2px 7px;border-radius:20px;font-weight:700}
+.plan-time-badge{font-size:0.67rem;color:var(--color-text-muted);white-space:nowrap}
+.plan-lesson-input{flex:1;min-width:100px;font-size:0.75rem;padding:5px 8px}
+.plan-check-label{display:flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--color-text-mid);cursor:pointer;white-space:nowrap;flex-shrink:0}
+.plan-check-label input{accent-color:var(--color-primary);width:14px;height:14px;flex-shrink:0}
+.plan-footer{padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--color-border-lt);flex-wrap:wrap}
+.plan-save-status{font-size:0.75rem;font-weight:600}
+/* ─── PERIOD TRACKING ─── */
+.period-track{padding:8px 14px 10px;border-top:1px solid var(--color-border-lt);display:flex;flex-direction:column;gap:6px;background:var(--color-bg)}
+.period-track-focus{font-size:0.68rem;color:var(--color-primary);font-weight:600;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.period-track-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.period-track-input{flex:1;min-width:80px;font-size:0.73rem;padding:4px 8px}
+.period-track-check{display:flex;align-items:center;gap:4px;font-size:0.71rem;color:var(--color-text-mid);cursor:pointer;flex-shrink:0}
+.period-track-check input{accent-color:var(--color-primary);width:13px;height:13px}
+.period-carry-btn{font-size:0.68rem;padding:3px 9px;background:var(--color-red-lt);color:var(--color-red);border:1px solid rgba(220,53,69,0.25);border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font-family);white-space:nowrap;flex-shrink:0;transition:all 0.15s}
+.period-carry-btn:hover{background:var(--color-red);color:#fff}
+.period-carry-banner{font-size:0.68rem;color:var(--color-accent-dk);background:var(--color-accent-lt);border:1px solid rgba(230,179,71,0.3);border-radius:var(--radius-sm);padding:4px 8px;line-height:1.4}
+.tt-carryover-banner{padding:10px 16px;background:var(--color-accent-lt);border:1px solid rgba(230,179,71,0.4);border-radius:var(--radius-sm);margin:8px 18px 0;font-size:0.75rem;color:var(--color-accent-dk);font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px}
+/* ─── WEEKLY REPORT ─── */
+.report-subject-row{padding:12px 18px;border-bottom:1px solid var(--color-border-lt);display:flex;flex-direction:column;gap:6px}
+.report-subject-row:last-child{border-bottom:none}
+.report-subject-name{font-size:0.82rem;font-weight:700;color:var(--color-text)}
+.report-focus{font-size:0.72rem;color:var(--color-text-muted);font-style:italic}
+.report-chips{display:flex;gap:5px;flex-wrap:wrap}
+.report-chip{font-size:0.7rem;padding:3px 10px;border-radius:20px;font-weight:700;white-space:nowrap}
+.chip-done{background:#e6f9ee;color:#1a7a40}
+.chip-missed{background:var(--color-red-lt);color:var(--color-red)}
+.chip-carry{background:var(--color-accent-lt);color:var(--color-accent-dk)}
+/* ─── CARRY-OVER MODAL ─── */
+.carry-period-opt{padding:10px 14px;border:1px solid var(--color-border);border-radius:var(--radius-sm);cursor:pointer;font-size:0.78rem;color:var(--color-text);transition:all 0.15s;margin-bottom:6px;line-height:1.5}
+.carry-period-opt:hover{border-color:var(--color-primary);background:var(--color-primary-xl);color:var(--color-primary)}
+.carry-period-opt.selected{border-color:var(--color-primary);background:var(--color-primary);color:#fff}
+.carry-period-opt.selected span{color:#fff !important}
 </style>
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -990,14 +1031,32 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 
     <!-- PLANNING -->
     <div class="screen" id="screen-planning">
-      <div class="ai-strip"><div class="ai-avatar">🗂️</div><div class="ai-text"><div class="ai-greeting" data-i18n="planning_greeting">Lesson Planning</div><div class="ai-sub" data-i18n="planning_sub">Build weekly and term plans with AI. Fully CAPS-aligned per phase and subject.</div></div></div>
-      <div class="card"><div class="card-header"><span class="card-icon">🗂️</span><div class="card-title" data-i18n="planning_card_title">Week 18 — Term 2 Plan</div><button class="card-action" data-i18n="planning_new_plan">+ New Plan</button></div><div style="padding:20px;color:var(--color-text-muted);font-size:0.82rem" data-i18n="planning_coming">Weekly planning view — coming in next patch build.</div></div>
+      <div class="ai-strip"><div class="ai-avatar">🗂️</div><div class="ai-text"><div class="ai-greeting" data-i18n="planning_greeting">Lesson Planning</div><div class="ai-sub" data-i18n="planning_sub">Plan your lessons for the week and track completion across all subjects.</div></div></div>
+      <div class="card" id="planCard">
+        <div class="plan-week-nav">
+          <button class="btn-secondary" onclick="shiftPlanWeek(-1)" style="padding:5px 12px;font-size:0.75rem" data-i18n="plan_prev_week">← Previous Week</button>
+          <div class="plan-week-label" id="planWeekLabel">—</div>
+          <button class="btn-secondary" onclick="shiftPlanWeek(1)" style="padding:5px 12px;font-size:0.75rem" data-i18n="plan_next_week">Next Week →</button>
+        </div>
+        <div id="planBody" style="min-height:60px"></div>
+        <div class="plan-footer">
+          <div class="plan-save-status" id="planSaveStatus"></div>
+          <button class="btn-primary" onclick="savePlanWeek()" data-i18n="plan_save_btn">💾 Save Week Plan</button>
+        </div>
+      </div>
     </div>
 
     <!-- REPORTS -->
     <div class="screen" id="screen-reports">
-      <div class="ai-strip"><div class="ai-avatar">📊</div><div class="ai-text"><div class="ai-greeting" data-i18n="reports_greeting">Reports</div><div class="ai-sub" data-i18n="reports_sub">Track productivity, document output, and moderation completion across terms.</div></div></div>
-      <div class="card"><div class="card-header"><span class="card-icon">📊</span><div class="card-title" data-i18n="reports_card_title">Term 2 Activity Summary</div></div><div style="padding:20px;color:var(--color-text-muted);font-size:0.82rem" data-i18n="reports_coming">Reports view — coming in next patch build.</div></div>
+      <div class="ai-strip"><div class="ai-avatar">📊</div><div class="ai-text"><div class="ai-greeting" data-i18n="reports_greeting">Reports</div><div class="ai-sub" data-i18n="reports_sub">Track your weekly lesson completion, carry-overs, and subject progress.</div></div></div>
+      <div class="card" id="reportCard">
+        <div class="plan-week-nav">
+          <button class="btn-secondary" onclick="shiftReportWeek(-1)" style="padding:5px 12px;font-size:0.75rem" data-i18n="plan_prev_week">← Previous Week</button>
+          <div class="plan-week-label" id="reportWeekLabel">—</div>
+          <button class="btn-secondary" onclick="shiftReportWeek(1)" style="padding:5px 12px;font-size:0.75rem" data-i18n="plan_next_week">Next Week →</button>
+        </div>
+        <div id="reportBody" style="min-height:60px;padding-bottom:4px"></div>
+      </div>
     </div>
 
     <!-- SETTINGS -->
@@ -1061,6 +1120,8 @@ function switchScreen(name,navEl){
   if(name==='timetable'){ttShowTimetablePage();initTimetableTabs();renderTimetable();}
   if(name==='reminders'){renderRemindersScreen();}
   if(name==='moderation'){renderModerationScreen();}
+  if(name==='planning'){renderPlanningScreen();}
+  if(name==='reports'){renderReportScreen();}
 }
 
 // ─── NOTIFICATION TOGGLE ───
@@ -1216,7 +1277,22 @@ const UI_STRINGS = {
     tt_not_configured:'Not configured',
     tt_setup_btn:'Set Up My Timetable →',
     tt_periods_label:'periods',tt_starts_at:'Starts at',tt_breaks_label:'break(s)',
-    tt_periods_today:'periods today ·'
+    tt_periods_today:'periods today ·',
+    // Lesson planning & tracking
+    planning_sub:'Plan your lessons for the week and track completion across all subjects.',
+    reports_sub:'Track your weekly lesson completion, carry-overs, and subject progress.',
+    plan_prev_week:'← Previous Week',plan_next_week:'Next Week →',
+    plan_weekly_focus:'Weekly Focus',plan_focus_ph:'What are you covering this week in this subject?',
+    plan_lesson_ph:"Today's lesson focus",plan_completed:'Lesson completed ✓',
+    plan_save_btn:'💾 Save Week Plan',plan_saving:'Saving…',plan_saved:'✅ Week plan saved!',
+    plan_no_tt:'Set up your timetable first to use weekly planning.',
+    plan_week_label:'Week',
+    carry_over:'Carry Over',carry_modal_title:'🔁 Carry Over — Select a Period',
+    carry_modal_desc:'Choose which future period to carry this lesson to:',
+    carry_confirm_btn:'Carry Over →',carry_no_periods:'No future periods found for this subject.',
+    carry_banner:'You have',carry_banner2:'carry-over(s) pending',carry_from:'Carry-over from',
+    report_done:'done',report_missed:'not done',report_carry:'carry-over(s)',
+    report_no_tt:'Set up your timetable to view weekly reports.'
   },
   af:{
     // Nav
@@ -1345,7 +1421,22 @@ const UI_STRINGS = {
     tt_not_configured:'Nie opgestel nie',
     tt_setup_btn:'Stel My Rooster Op →',
     tt_periods_label:'periodes',tt_starts_at:'Begin om',tt_breaks_label:'pouse(s)',
-    tt_periods_today:'periodes vandag ·'
+    tt_periods_today:'periodes vandag ·',
+    // Lesson planning & tracking
+    planning_sub:'Beplan u lesse vir die week en volg voltooiing oor alle vakke.',
+    reports_sub:'Volg u weeklikse lesse, oordraers en vakvordering.',
+    plan_prev_week:'← Vorige Week',plan_next_week:'Volgende Week →',
+    plan_weekly_focus:'Weeklikse Fokus',plan_focus_ph:'Wat dek u hierdie week in hierdie vak?',
+    plan_lesson_ph:"Vandag se lesfokus",plan_completed:'Les voltooi ✓',
+    plan_save_btn:'💾 Stoor Weekplan',plan_saving:'Stoor…',plan_saved:'✅ Weekplan gestoor!',
+    plan_no_tt:'Stel eers u rooster op om weekplanning te gebruik.',
+    plan_week_label:'Week',
+    carry_over:'Dra Oor',carry_modal_title:"🔁 Dra Oor — Kies 'n Periode",
+    carry_modal_desc:'Kies na watter toekomstige periode u hierdie les wil oordra:',
+    carry_confirm_btn:'Dra Oor →',carry_no_periods:'Geen toekomstige periodes gevind nie.',
+    carry_banner:'U het',carry_banner2:'oordrager(s) hangende',carry_from:'Oordrag van',
+    report_done:'gedoen',report_missed:'nie gedoen',report_carry:'oordraer(s)',
+    report_no_tt:'Stel u rooster op om weeklikse verslae te sien.'
   }
 };
 const pageTitlesI18n = {
@@ -1824,24 +1915,70 @@ function renderTimetable(){
   const body = document.getElementById('ttBody');
   if(!body || !savedTimetable) return;
 
+  const wi = getWeekInfo(0);
   const n = savedTimetable.periods_per_day;
   const times = calcPeriodTimes(savedTimetable.school_start_time, savedTimetable.period_duration, savedTimetable.breaks, n);
   const dayPeriods = savedTimetable.schedule_type==='same'
     ? (savedTimetable.periods.same||[])
     : (savedTimetable.periods[currentDay]||[]);
 
-  let html='<div style="padding:4px 0">';
+  // Count carry-overs for today
+  let coCount = 0;
+  for(let i=0;i<n;i++){
+    const e = lessonData[lKey(wi.year,wi.weekNum,currentDay,i)];
+    if(e && e.carry_over_from && !e.completed) coCount++;
+  }
+
+  let html = '';
+  if(coCount > 0){
+    html += `<div class="tt-carryover-banner" onclick="scrollToFirstCarryOver()">📌 ${T('carry_banner')} ${coCount} ${T('carry_banner2')}</div>`;
+  }
+
+  html += '<div style="padding:4px 0">';
   for(let i=0;i<n;i++){
     const p=dayPeriods[i]||{};
     const t=times[i];
     const hasSubj=!!(p.subject);
+    const lk = lKey(wi.year, wi.weekNum, currentDay, i);
+    const entry = lessonData[lk] || {};
+    const weekFocus = hasSubj ? ((planData[pKey(wi.year,wi.weekNum,p.subject,p.grade||'')]||{}).focus||'') : '';
+    let carryInfo = null;
+    if(entry.carry_over_from){ try{ carryInfo = JSON.parse(entry.carry_over_from); }catch(e){} }
+
     html+=`<div class="period-card${hasSubj?'':' period-card-empty'}">
       <div class="period-card-num">P${i+1}</div>
-      <div class="period-card-info">
+      <div class="period-card-info" style="flex:1;min-width:0">
         <div class="period-card-subj">${hasSubj?escHtml(p.subject):T('tt_no_subject')}</div>
         <div class="period-card-meta">${t.start}–${t.end}${hasSubj&&p.grade?' · '+escHtml(p.grade):''}${hasSubj&&p.room?' · '+escHtml(p.room):''}</div>
       </div>
     </div>`;
+
+    if(hasSubj){
+      const subj_s = escHtml(p.subject), grade_s = escHtml(p.grade||'');
+      html += `<div class="period-track" id="pt_${i}">`;
+      if(weekFocus) html += `<div class="period-track-focus">📋 ${escHtml(weekFocus)}</div>`;
+      if(carryInfo) html += `<div class="period-carry-banner">🔁 ${T('carry_from')}: <b>${escHtml(carryInfo.topic||'')}</b></div>`;
+      html += `<div class="period-track-row">
+        <input type="text" class="text-input period-track-input"
+          data-lk="${lk}" data-subj="${subj_s}" data-grade="${grade_s}"
+          data-yr="${wi.year}" data-wk="${wi.weekNum}" data-day="${currentDay}" data-pidx="${i}"
+          value="${escHtml(entry.lesson_detail||'')}"
+          placeholder="${T('plan_lesson_ph')}"
+          oninput="ttTrackDetail(this)">
+        <label class="period-track-check">
+          <input type="checkbox" ${entry.completed?'checked':''}
+            data-lk="${lk}" data-subj="${subj_s}" data-grade="${grade_s}"
+            data-yr="${wi.year}" data-wk="${wi.weekNum}" data-day="${currentDay}" data-pidx="${i}"
+            onchange="ttTrackComplete(this)">
+          ${T('plan_completed')}
+        </label>
+        ${!entry.completed?`<button class="period-carry-btn"
+          onclick="openCarryOverModal('${lk}','${subj_s}','${grade_s}',this.closest('.period-track').querySelector('.period-track-input').value)">
+          🔁 ${T('carry_over')}</button>`:''}
+      </div>`;
+      html += '</div>';
+    }
+
     const brk=(savedTimetable.breaks||[]).find(b=>parseInt(b.after_period)===i+1);
     if(brk) html+=`<div class="tt-break-sep"><div class="tt-break-sep-line"></div><div class="tt-break-sep-label">☕ ${escHtml(brk.name||'Break')} · ${brk.duration} min</div><div class="tt-break-sep-line"></div></div>`;
   }
@@ -2662,6 +2799,7 @@ function _showApp(user){
   setTimeout(() => { screen.style.display = 'none'; screen.classList.remove('fading'); }, 300);
   _populateProfile(user);
   ttLoad();
+  lessonDataLoad();
 }
 
 function _showAuth(){
@@ -2931,6 +3069,365 @@ function deleteMod(i){
   updateDashboardStats();
 }
 
+// ════════════════════════════════════════════
+// ─── LESSON PLANNING & TRACKING ─────────────
+// ════════════════════════════════════════════
+
+let lessonData   = {};  // key: lKey() → lesson_entries row
+let planData     = {};  // key: pKey() → weekly_plans row
+let planWeekOffset   = 0;
+let reportWeekOffset = 0;
+let _carryCtx    = null;
+let _carryTarget = null;
+const _lsTimers  = {};
+
+// Week utilities
+function getWeekInfo(offset){
+  const d = new Date();
+  if(offset) d.setDate(d.getDate() + offset * 7);
+  const dow = d.getDay();
+  const mon = new Date(d);
+  mon.setDate(d.getDate() - (dow===0?6:dow-1));
+  mon.setHours(0,0,0,0);
+  const thu = new Date(mon); thu.setDate(mon.getDate()+3);
+  const yr = thu.getFullYear();
+  const jan4 = new Date(yr,0,4);
+  const wk = Math.ceil(((thu-jan4)/86400000 + jan4.getDay()+1)/7);
+  const fri = new Date(mon); fri.setDate(mon.getDate()+4);
+  return { year:yr, weekNum:wk, monday:mon, friday:fri };
+}
+
+function weekDispLabel(wi){
+  const f = d => d.toLocaleDateString('en-ZA',{day:'numeric',month:'short'});
+  return `${T('plan_week_label')||'Week'} ${wi.weekNum}  ·  ${f(wi.monday)} – ${f(wi.friday)}`;
+}
+
+function lKey(yr, wk, day, pidx){ return `${yr}_W${wk}_${day}_${pidx}`; }
+function pKey(yr, wk, subj, grade){ return `${yr}_W${wk}_${subj}_${grade||''}`; }
+
+// Supabase helpers
+async function _getUid(){
+  try { const { data:{ session } } = await _sb.auth.getSession(); return session?.user?.id||null; }
+  catch(e){ return null; }
+}
+
+async function lessonDataLoad(){
+  try {
+    const uid = await _getUid(); if(!uid) return;
+    const wi = getWeekInfo(0);
+    const [ld, pd] = await Promise.all([
+      _sb.from('lesson_entries').select('*').eq('user_id',uid).eq('year',wi.year).eq('week_number',wi.weekNum),
+      _sb.from('weekly_plans').select('*').eq('user_id',uid)
+    ]);
+    if(!ld.error&&ld.data) ld.data.forEach(r=>{ lessonData[lKey(r.year,r.week_number,r.day,r.period_index)]=r; });
+    if(!pd.error&&pd.data) pd.data.forEach(r=>{ planData[pKey(r.year,r.week_number,r.subject,r.grade)]=r; });
+    renderTimetable();
+  } catch(e){ console.warn('Lesson data load:',e); }
+}
+
+async function _ensureWeekData(wi){
+  try {
+    const uid = await _getUid(); if(!uid) return;
+    const weekPfx = `${wi.year}_W${wi.weekNum}_`;
+    if(Object.keys(lessonData).some(k=>k.startsWith(weekPfx))){ return; }
+    const [ld, pd] = await Promise.all([
+      _sb.from('lesson_entries').select('*').eq('user_id',uid).eq('year',wi.year).eq('week_number',wi.weekNum),
+      _sb.from('weekly_plans').select('*').eq('user_id',uid).eq('year',wi.year).eq('week_number',wi.weekNum)
+    ]);
+    if(!ld.error&&ld.data) ld.data.forEach(r=>{ lessonData[lKey(r.year,r.week_number,r.day,r.period_index)]=r; });
+    if(!pd.error&&pd.data) pd.data.forEach(r=>{ planData[pKey(r.year,r.week_number,r.subject,r.grade)]=r; });
+  } catch(e){ console.warn('_ensureWeekData:',e); }
+}
+
+async function upsertLesson(yr, wk, day, pidx, subj, grade, fields){
+  try {
+    const uid = await _getUid(); if(!uid) return;
+    const payload = { user_id:uid, year:yr, week_number:wk, day, period_index:pidx, subject:subj, grade:grade||'', ...fields, updated_at:new Date().toISOString() };
+    const { data, error } = await _sb.from('lesson_entries').upsert(payload,{onConflict:'user_id,year,week_number,day,period_index'}).select().single();
+    if(!error&&data) lessonData[lKey(yr,wk,day,pidx)] = data;
+  } catch(e){ console.warn('Lesson upsert:',e); }
+}
+
+// Subject helper — unique subjects across all weekdays from timetable
+function getWeekSubjects(){
+  if(!savedTimetable) return [];
+  const seen={}, list=[];
+  TT_DAYS.forEach(day=>{
+    const dp = savedTimetable.schedule_type==='same'?(savedTimetable.periods.same||[]):(savedTimetable.periods[day]||[]);
+    const times = calcPeriodTimes(savedTimetable.school_start_time, savedTimetable.period_duration, savedTimetable.breaks, savedTimetable.periods_per_day);
+    dp.forEach((p,idx)=>{
+      if(!p.subject) return;
+      const sk = p.subject+'|'+(p.grade||'');
+      if(!seen[sk]){ seen[sk]=true; list.push({subject:p.subject, grade:p.grade||'', periods:[]}); }
+      list.find(x=>x.subject===p.subject&&x.grade===(p.grade||'')).periods.push({day, idx, time:times[idx]});
+    });
+  });
+  return list;
+}
+
+// ─── PLANNING SCREEN ───
+function shiftPlanWeek(delta){ planWeekOffset+=delta; renderPlanningScreen(); }
+
+async function renderPlanningScreen(){
+  const body = document.getElementById('planBody');
+  const lbl  = document.getElementById('planWeekLabel');
+  if(!body) return;
+  const wi = getWeekInfo(planWeekOffset);
+  if(lbl) lbl.textContent = weekDispLabel(wi);
+  body.innerHTML = `<div style="padding:20px;text-align:center;color:var(--color-text-muted);font-size:0.8rem">⏳ Loading…</div>`;
+
+  if(!savedTimetable){
+    body.innerHTML=`<div class="empty-state" style="padding:28px 18px"><div class="empty-state-icon">🗂️</div>${T('plan_no_tt')}</div>`;
+    return;
+  }
+
+  await _ensureWeekData(wi);
+
+  const subjects = getWeekSubjects();
+  if(!subjects.length){
+    body.innerHTML=`<div class="empty-state" style="padding:28px 18px"><div class="empty-state-icon">🗂️</div>${T('plan_no_tt')}</div>`;
+    return;
+  }
+
+  let html='';
+  subjects.forEach(sg=>{
+    const pk = pKey(wi.year,wi.weekNum,sg.subject,sg.grade);
+    const plan = planData[pk]||{};
+    const sLabel = escHtml(sg.subject)+(sg.grade?' · '+escHtml(sg.grade):'');
+    html += `<div class="plan-subject-group">
+      <div style="font-size:0.85rem;font-weight:700;color:var(--color-primary);margin-bottom:8px">📚 ${sLabel}</div>
+      <div class="plan-focus-row">
+        <label class="input-label" style="display:block;margin-bottom:4px">${T('plan_weekly_focus')}: ${sLabel}</label>
+        <input type="text" class="text-input"
+          data-yr="${wi.year}" data-wk="${wi.weekNum}"
+          data-subj="${escHtml(sg.subject)}" data-grade="${escHtml(sg.grade)}"
+          value="${escHtml(plan.focus||'')}"
+          placeholder="${T('plan_focus_ph')}">
+      </div>
+      <div style="margin-top:6px">`;
+    sg.periods.forEach(pp=>{
+      const lk = lKey(wi.year,wi.weekNum,pp.day,pp.idx);
+      const entry = lessonData[lk]||{};
+      const dayShort = T('day_'+pp.day.toLowerCase().slice(0,3))||pp.day.slice(0,3);
+      html += `<div class="plan-period-row">
+        <div class="plan-period-meta">
+          <span class="plan-day-badge">${dayShort}</span>
+          <span class="plan-time-badge">P${pp.idx+1} ${pp.time.start}</span>
+        </div>
+        <input type="text" class="text-input plan-lesson-input"
+          data-lk="${lk}" data-subj="${escHtml(sg.subject)}" data-grade="${escHtml(sg.grade)}"
+          data-yr="${wi.year}" data-wk="${wi.weekNum}" data-day="${pp.day}" data-pidx="${pp.idx}"
+          value="${escHtml(entry.lesson_detail||'')}"
+          placeholder="${T('plan_lesson_ph')}">
+        <label class="plan-check-label">
+          <input type="checkbox" data-lk="${lk}" ${entry.completed?'checked':''}>
+          ${T('plan_completed')}
+        </label>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+
+  body.innerHTML = html;
+}
+
+async function savePlanWeek(){
+  const btn = document.querySelector('#planCard .btn-primary');
+  const statusEl = document.getElementById('planSaveStatus');
+  if(btn){ btn.disabled=true; btn.textContent=T('plan_saving'); }
+  if(statusEl) statusEl.textContent='';
+
+  try {
+    const uid = await _getUid();
+    if(!uid) throw new Error('Not logged in');
+    const wi = getWeekInfo(planWeekOffset);
+
+    // Collect lesson entries from DOM
+    const lessonPayloads = [];
+    document.querySelectorAll('.plan-lesson-input').forEach(inp=>{
+      if(!inp.dataset.lk) return;
+      const chk = document.querySelector(`input[type=checkbox][data-lk="${inp.dataset.lk}"]`);
+      const lk = inp.dataset.lk;
+      lessonPayloads.push({
+        user_id:uid, year:parseInt(inp.dataset.yr), week_number:parseInt(inp.dataset.wk),
+        day:inp.dataset.day, period_index:parseInt(inp.dataset.pidx),
+        subject:inp.dataset.subj||'', grade:inp.dataset.grade||'',
+        lesson_detail:inp.value||'', completed:chk?.checked||false,
+        updated_at:new Date().toISOString()
+      });
+    });
+
+    // Collect plan focuses from DOM
+    const planPayloads = [];
+    document.querySelectorAll('.plan-focus-row input[data-yr]').forEach(inp=>{
+      planPayloads.push({
+        user_id:uid, year:parseInt(inp.dataset.yr), week_number:parseInt(inp.dataset.wk),
+        subject:inp.dataset.subj||'', grade:inp.dataset.grade||'',
+        focus:inp.value||'', updated_at:new Date().toISOString()
+      });
+    });
+
+    if(lessonPayloads.length){
+      const {error} = await _sb.from('lesson_entries').upsert(lessonPayloads,{onConflict:'user_id,year,week_number,day,period_index'});
+      if(error) throw error;
+      lessonPayloads.forEach(r=>{ lessonData[lKey(r.year,r.week_number,r.day,r.period_index)]=r; });
+    }
+    if(planPayloads.length){
+      const {error} = await _sb.from('weekly_plans').upsert(planPayloads,{onConflict:'user_id,year,week_number,subject,grade'});
+      if(error) throw error;
+      planPayloads.forEach(r=>{ planData[pKey(r.year,r.week_number,r.subject,r.grade)]=r; });
+    }
+
+    if(statusEl){ statusEl.textContent=T('plan_saved'); statusEl.style.color='var(--color-green)'; }
+    setTimeout(()=>{ if(statusEl&&statusEl.textContent===T('plan_saved')) statusEl.textContent=''; },3000);
+    renderTimetable();
+  } catch(e){
+    if(statusEl){ statusEl.textContent='⚠️ '+(e.message||String(e)); statusEl.style.color='var(--color-red)'; }
+  }
+  if(btn){ btn.disabled=false; btn.textContent=T('plan_save_btn'); }
+}
+
+// ─── REPORT SCREEN ───
+function shiftReportWeek(delta){ reportWeekOffset+=delta; renderReportScreen(); }
+
+async function renderReportScreen(){
+  const body = document.getElementById('reportBody');
+  const lbl  = document.getElementById('reportWeekLabel');
+  if(!body) return;
+  const wi = getWeekInfo(reportWeekOffset);
+  if(lbl) lbl.textContent = weekDispLabel(wi);
+  body.innerHTML=`<div style="padding:20px;text-align:center;color:var(--color-text-muted);font-size:0.8rem">⏳ Loading…</div>`;
+
+  if(!savedTimetable){
+    body.innerHTML=`<div class="empty-state" style="padding:28px 18px"><div class="empty-state-icon">📊</div>${T('report_no_tt')}</div>`;
+    return;
+  }
+
+  await _ensureWeekData(wi);
+
+  const subjects = getWeekSubjects();
+  if(!subjects.length){
+    body.innerHTML=`<div class="empty-state" style="padding:28px 18px"><div class="empty-state-icon">📊</div>${T('report_no_tt')}</div>`;
+    return;
+  }
+
+  let html='<div style="padding:4px 0">';
+  subjects.forEach(sg=>{
+    const pk = pKey(wi.year,wi.weekNum,sg.subject,sg.grade);
+    const plan = planData[pk]||{};
+    const sLabel = escHtml(sg.subject)+(sg.grade?' · '+escHtml(sg.grade):'');
+    let done=0, missed=0, carries=0;
+    sg.periods.forEach(pp=>{
+      const e = lessonData[lKey(wi.year,wi.weekNum,pp.day,pp.idx)]||{};
+      if(e.completed) done++;
+      else if(e.lesson_detail) missed++;
+      if(e.carry_over_from) carries++;
+    });
+    const total=sg.periods.length;
+    html+=`<div class="report-subject-row">
+      <div class="report-subject-name">📚 ${sLabel}</div>
+      ${plan.focus?`<div class="report-focus">"${escHtml(plan.focus)}"</div>`:''}
+      <div class="report-chips">
+        <span class="report-chip chip-done">✓ ${done}/${total} ${T('report_done')}</span>
+        ${missed?`<span class="report-chip chip-missed">✗ ${missed} ${T('report_missed')}</span>`:''}
+        ${carries?`<span class="report-chip chip-carry">→ ${carries} ${T('report_carry')}</span>`:''}
+      </div>
+    </div>`;
+  });
+  html+='</div>';
+  body.innerHTML=html;
+}
+
+// ─── CARRY-OVER SYSTEM ───
+function openCarryOverModal(lk, subject, grade, topic){
+  _carryCtx = { lk, subject, grade, topic };
+  _carryTarget = null;
+  const opts = document.getElementById('carryOverOptions');
+  if(!opts || !savedTimetable) return;
+
+  let html='', found=false;
+  for(let offset=0; offset<=3; offset++){
+    const w = getWeekInfo(offset);
+    TT_DAYS.forEach(day=>{
+      const dp = savedTimetable.schedule_type==='same'?(savedTimetable.periods.same||[]):(savedTimetable.periods[day]||[]);
+      const times = calcPeriodTimes(savedTimetable.school_start_time, savedTimetable.period_duration, savedTimetable.breaks, savedTimetable.periods_per_day);
+      dp.forEach((p,idx)=>{
+        if(p.subject!==subject||(p.grade||'')!==grade) return;
+        const fk = lKey(w.year,w.weekNum,day,idx);
+        if(fk===lk) return; // skip source
+        const existing = lessonData[fk];
+        const dayShort = T('day_'+day.toLowerCase().slice(0,3))||day.slice(0,3);
+        const dateStr = new Date(w.monday.getTime()+TT_DAYS.indexOf(day)*86400000).toLocaleDateString('en-ZA',{day:'numeric',month:'short'});
+        html+=`<div class="carry-period-opt"
+          data-fk="${fk}" data-yr="${w.year}" data-wk="${w.weekNum}"
+          data-day="${day}" data-pidx="${idx}"
+          data-subj="${escHtml(subject)}" data-grade="${escHtml(grade)}"
+          onclick="selectCarryTarget(this)">
+          <b>${dayShort} ${dateStr}</b> — P${idx+1} · ${times[idx].start}–${times[idx].end}
+          ${existing?.lesson_detail?`<br><span style="font-size:0.68rem;color:inherit;opacity:0.75;font-style:italic">${escHtml(existing.lesson_detail)}</span>`:''}
+        </div>`;
+        found=true;
+      });
+    });
+  }
+
+  opts.innerHTML = found ? html : `<div style="padding:14px;font-size:0.8rem;color:var(--color-text-muted)">${T('carry_no_periods')}</div>`;
+  document.getElementById('carryOverModal').classList.add('open');
+}
+
+function selectCarryTarget(el){
+  _carryTarget = {
+    fk:el.dataset.fk, year:parseInt(el.dataset.yr), weekNum:parseInt(el.dataset.wk),
+    day:el.dataset.day, pidx:parseInt(el.dataset.pidx),
+    subject:el.dataset.subj, grade:el.dataset.grade
+  };
+  document.querySelectorAll('.carry-period-opt').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+async function confirmCarryOver(){
+  if(!_carryCtx||!_carryTarget){ alert(T('carry_no_periods')); return; }
+  const src = lessonData[_carryCtx.lk]||{};
+  const carryPayload = {
+    lesson_detail: src.lesson_detail||'',
+    completed: false,
+    carry_over_from: JSON.stringify({ lk:_carryCtx.lk, topic:_carryCtx.topic||src.lesson_detail||'' })
+  };
+  await upsertLesson(_carryTarget.year,_carryTarget.weekNum,_carryTarget.day,_carryTarget.pidx,_carryTarget.subject,_carryTarget.grade,carryPayload);
+  closeModal('carryOverModal');
+  renderTimetable();
+}
+
+function scrollToFirstCarryOver(){
+  const el = document.querySelector('.period-carry-banner');
+  if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+// ─── PERIOD TRACKING HANDLERS ───
+function ttTrackDetail(el){
+  const {lk, subj, grade, day, yr, wk} = el.dataset;
+  const pidx = parseInt(el.dataset.pidx);
+  lessonData[lk] = lessonData[lk]||{day,period_index:pidx,subject:subj,grade:grade||'',year:parseInt(yr),week_number:parseInt(wk)};
+  lessonData[lk].lesson_detail = el.value;
+  clearTimeout(_lsTimers[lk]);
+  _lsTimers[lk] = setTimeout(()=>{
+    upsertLesson(parseInt(yr),parseInt(wk),day,pidx,subj,grade||'',{
+      lesson_detail:el.value, completed:!!(lessonData[lk]?.completed)
+    });
+  }, 1400);
+}
+
+async function ttTrackComplete(el){
+  const {lk, subj, grade, day, yr, wk} = el.dataset;
+  const pidx = parseInt(el.dataset.pidx);
+  lessonData[lk] = lessonData[lk]||{day,period_index:pidx,subject:subj,grade:grade||'',year:parseInt(yr),week_number:parseInt(wk)};
+  lessonData[lk].completed = el.checked;
+  await upsertLesson(parseInt(yr),parseInt(wk),day,pidx,subj,grade||'',{
+    lesson_detail:lessonData[lk].lesson_detail||'', completed:el.checked
+  });
+  renderTimetable();
+}
+
 // ─── DASHBOARD STATS ───
 function updateDashboardStats(){
   const st = document.getElementById('statTasks');
@@ -3013,6 +3510,19 @@ function updateDashboardStats(){
   </div>
 </div>
 
+
+<!-- CARRY OVER MODAL -->
+<div class="modal-overlay" id="carryOverModal">
+  <div class="modal modal-lg">
+    <h3 data-i18n="carry_modal_title">🔁 Carry Over — Select a Period</h3>
+    <p data-i18n="carry_modal_desc" style="margin-bottom:12px">Choose which future period to carry this lesson to:</p>
+    <div id="carryOverOptions" style="max-height:260px;overflow-y:auto"></div>
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="btn-secondary" onclick="closeModal('carryOverModal')" data-i18n="btn_cancel">Cancel</button>
+      <button class="btn-primary" onclick="confirmCarryOver()" data-i18n="carry_confirm_btn">Carry Over →</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
