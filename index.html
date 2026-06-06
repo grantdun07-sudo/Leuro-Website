@@ -905,11 +905,8 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
           <span class="card-icon">📅</span>
           <div class="card-title" data-i18n="settings_tt_card">Timetable Setup</div>
           <span id="ttCardStatus" style="font-size:0.72rem;color:var(--color-text-muted);flex:1;margin-left:6px"></span>
-          <span id="ttChevron" style="font-size:0.85rem;color:var(--color-text-muted);transition:transform 0.2s;margin-left:auto">▼</span>
+          <span id="ttChevron" style="font-size:0.85rem;color:var(--color-text-muted);transition:transform 0.2s;margin-left:8px">▼</span>
         </div>
-
-        <!-- COLLAPSIBLE BODY -->
-        <div id="ttCardBody" style="display:none">
 
         <!-- SAVED SUMMARY (shown when timetable already saved) -->
         <div id="ttSavedView" style="display:none">
@@ -926,7 +923,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
         </div>
 
         <!-- WIZARD (shown when setting up or editing) -->
-        <div id="ttWizard">
+        <div id="ttWizard" style="display:none">
           <div class="setup-steps" id="ttStepNav">
             <div class="step-indicator"><div class="step-dot active" id="ttDot1">1</div><span class="step-label" id="ttLbl1" data-i18n="tt_step1_label">Daily Structure</span></div>
             <div class="step-line" id="ttLine1"></div>
@@ -938,7 +935,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
           </div>
 
           <!-- STEP 1: Daily Structure -->
-          <div class="step-panel active" id="ttStep1">
+          <div class="step-panel" id="ttStep1">
             <div class="tt-step-form">
               <p style="font-size:0.78rem;color:var(--color-text-mid);line-height:1.6;margin:0" data-i18n="tt_step1_desc">Configure your daily schedule structure — periods, durations, and breaks.</p>
               <div class="select-row-2">
@@ -974,7 +971,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
           </div>
 
           <!-- STEP 2: Schedule Type -->
-          <div class="step-panel" id="ttStep2">
+          <div class="step-panel" id="ttStep2" style="display:none">
             <p style="font-size:0.78rem;color:var(--color-text-mid);line-height:1.6;padding:14px 18px 0;margin:0" data-i18n="tt_step2_desc">Choose whether all days share the same periods, or each day has its own unique timetable.</p>
             <div class="schedule-type-opts">
               <button class="schedule-type-btn selected" id="stSame" onclick="ttSelectScheduleType('same')">
@@ -993,7 +990,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
           </div>
 
           <!-- STEP 3: Period Setup -->
-          <div class="step-panel" id="ttStep3">
+          <div class="step-panel" id="ttStep3" style="display:none">
             <div id="ttPeriodDayTabs" class="tt-period-setup-tabs"></div>
             <div class="tt-periods-grid" id="ttPeriodsGrid"></div>
             <div class="tt-step-nav">
@@ -1003,7 +1000,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
           </div>
 
           <!-- STEP 4: Review & Save -->
-          <div class="step-panel" id="ttStep4">
+          <div class="step-panel" id="ttStep4" style="display:none">
             <div class="tt-step-form">
               <div style="background:var(--color-primary-xl);border:1px solid rgba(90,62,118,0.18);border-radius:var(--radius-md);padding:16px">
                 <div style="font-size:0.85rem;font-weight:700;color:var(--color-primary);margin-bottom:8px" data-i18n="tt_ready">✅ Timetable Ready to Save</div>
@@ -1018,7 +1015,6 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
             </div>
           </div>
         </div>
-        </div><!-- /ttCardBody -->
       </div>
 
       <!-- Profile + Notifications -->
@@ -1545,57 +1541,42 @@ function ttUpdateAllViews(){
   updateDashboardStats();
 }
 
+// Track accordion open state separately from display state
+let _ttCardOpen = false;
+
 function ttToggleSetupCard(){
-  const body = document.getElementById('ttCardBody');
+  _ttCardOpen = !_ttCardOpen;
   const chevron = document.getElementById('ttChevron');
-  if(!body) return;
-  if(body.style.display === 'none'){
-    body.style.display = 'block';
-    if(chevron) chevron.style.transform = 'rotate(180deg)';
-    ttShowCorrectView();
+  if(chevron) chevron.style.transform = _ttCardOpen ? 'rotate(180deg)' : '';
+  if(_ttCardOpen){
+    _ttApplyView();
   } else {
-    body.style.display = 'none';
-    if(chevron) chevron.style.transform = '';
+    const savedView = document.getElementById('ttSavedView');
+    const wizard = document.getElementById('ttWizard');
+    if(savedView) savedView.style.display = 'none';
+    if(wizard) wizard.style.display = 'none';
   }
 }
 
 function ttOpenSetupCard(){
-  const body = document.getElementById('ttCardBody');
-  const chevron = document.getElementById('ttChevron');
-  if(body && body.style.display === 'none'){
-    body.style.display = 'block';
+  if(!_ttCardOpen){
+    _ttCardOpen = true;
+    const chevron = document.getElementById('ttChevron');
     if(chevron) chevron.style.transform = 'rotate(180deg)';
-    ttShowCorrectView();
   }
+  _ttApplyView();
 }
 
-function ttShowCorrectView(){
-  const savedView = document.getElementById('ttSavedView');
-  const wizard = document.getElementById('ttWizard');
-  if(!savedView || !wizard) return;
-  if(savedTimetable){
-    savedView.style.display = 'block';
-    wizard.style.display = 'none';
-  } else {
-    savedView.style.display = 'none';
-    wizard.style.display = 'block';
-    // ensure step 1 is active and visible
-    document.querySelectorAll('.step-panel').forEach(p => p.style.display = 'none');
-    const step1 = document.getElementById('ttStep1');
-    if(step1) step1.style.display = 'block';
-    ttRenderBreaks();
-  }
-  ttUpdateSettingsView();
-}
-
-function ttUpdateSettingsView(){
+// Single function that decides what to show inside the card — no early returns
+function _ttApplyView(){
   const savedView = document.getElementById('ttSavedView');
   const wizard = document.getElementById('ttWizard');
   const statusEl = document.getElementById('ttCardStatus');
-  if(!savedView || !wizard) return;
+
   if(savedTimetable){
-    savedView.style.display='';
-    wizard.style.display='none';
+    // Show saved summary
+    if(wizard) wizard.style.display = 'none';
+    if(savedView) savedView.style.display = 'block';
     const type = savedTimetable.schedule_type==='same' ? T('tt_same_daily') : T('tt_diff_daily');
     const brks = (savedTimetable.breaks||[]).length;
     const summary = savedTimetable.periods_per_day+' '+T('tt_periods_label')+' · '+savedTimetable.period_duration+' min · '+T('tt_starts_at')+' '+savedTimetable.school_start_time;
@@ -1603,9 +1584,30 @@ function ttUpdateSettingsView(){
     const sub = document.getElementById('ttSavedSub');
     if(sub) sub.textContent = summary+' · '+type+(brks?' · '+brks+' '+T('tt_breaks_label'):'');
   } else {
-    savedView.style.display='none';
-    wizard.style.display='block';
+    // Show wizard at step 1
+    if(savedView) savedView.style.display = 'none';
+    if(wizard) wizard.style.display = 'block';
+    // Show step 1, hide others
+    for(let i=1;i<=4;i++){
+      const p = document.getElementById('ttStep'+i);
+      if(p) p.style.display = (i===1) ? 'block' : 'none';
+    }
+    ttRenderBreaks();
     if(statusEl) statusEl.textContent = T('tt_not_configured')||'Not configured';
+  }
+}
+
+function ttUpdateSettingsView(){
+  // Update header status text (called by ttUpdateAllViews after async Supabase ops)
+  const statusEl = document.getElementById('ttCardStatus');
+  if(!statusEl) return;
+  if(savedTimetable){
+    const summary = savedTimetable.periods_per_day+' '+T('tt_periods_label')+' · '+savedTimetable.period_duration+' min · '+T('tt_starts_at')+' '+savedTimetable.school_start_time;
+    statusEl.textContent = '✅ '+summary;
+    // If card is open, refresh the view to show saved state
+    if(_ttCardOpen) _ttApplyView();
+  } else {
+    statusEl.textContent = T('tt_not_configured')||'Not configured';
   }
 }
 
@@ -1639,9 +1641,14 @@ function ttStartEdit(){
     const { _meta, ...dayPeriods } = savedTimetable.periods || {};
     ttSetupData.periods = JSON.parse(JSON.stringify(dayPeriods));
   }
-  document.getElementById('ttSavedView').style.display='none';
-  document.getElementById('ttWizard').style.display='';
-  ttOpenSetupCard();
+  // Force show wizard directly (bypass _ttApplyView savedTimetable branch)
+  const savedView = document.getElementById('ttSavedView');
+  const wizard = document.getElementById('ttWizard');
+  if(savedView) savedView.style.display = 'none';
+  if(wizard) wizard.style.display = 'block';
+  _ttCardOpen = true;
+  const chevron = document.getElementById('ttChevron');
+  if(chevron) chevron.style.transform = 'rotate(180deg)';
   const st=document.getElementById('ttStartTime');
   const ppd=document.getElementById('ttPeriodsPerDay');
   const pd=document.getElementById('ttPeriodDuration');
