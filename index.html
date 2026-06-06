@@ -460,7 +460,8 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 .tt-period-time{font-size:0.68rem;color:var(--color-text-muted);min-width:90px;flex-shrink:0;font-weight:500}
 .tt-period-subj{flex:2;min-width:130px}
 .tt-period-grade{flex:1;min-width:90px}
-.tt-period-room{flex:1;min-width:90px}
+.tt-period-class{flex:1;min-width:80px}
+.tt-period-room{flex:1;min-width:80px}
 .tt-saved-badge{display:flex;align-items:center;gap:10px;padding:14px 18px;background:linear-gradient(90deg,var(--color-primary-xl) 0%,transparent 100%);border-bottom:1px solid var(--color-border-lt)}
 .tt-saved-icon{font-size:1.3rem;flex-shrink:0}
 .tt-saved-text{flex:1}
@@ -1263,7 +1264,7 @@ const UI_STRINGS = {
     tt_step1_label:'Daily Structure',tt_step2_label:'Schedule Type',tt_step3_label:'Period Setup',tt_step4_label:'Save',
     tt_step1_desc:'Configure your daily schedule structure — periods, durations, and breaks.',
     tt_step2_desc:'Choose whether all days share the same periods, or each day has its own unique timetable.',
-    tt_lbl_start:'School Start Time',tt_lbl_periods:'Periods Per Day',tt_lbl_duration:'Period Duration (min)',
+    tt_lbl_start:'School Start Time',tt_lbl_periods:'Periods Per Day',tt_lbl_duration:'Period Duration (min)',tt_lbl_class:'Class',
     tt_lbl_num_breaks:'Number of Breaks',tt_lbl_breaks:'Breaks',
     tt_add_break:'+ Add Break',tt_no_breaks:'No breaks configured.',
     tt_break_name_ph:'Break name...',tt_after_period:'After period #',
@@ -1407,7 +1408,7 @@ const UI_STRINGS = {
     tt_step1_label:'Daaglikse Struktuur',tt_step2_label:'Roostertipe',tt_step3_label:'Periodeopstelling',tt_step4_label:'Stoor',
     tt_step1_desc:"Stel u daaglikse roostersstruktuur op — periodes, duur en pouses.",
     tt_step2_desc:'Kies of alle dae dieselfde periodes deel, of elke dag sy eie rooster het.',
-    tt_lbl_start:'Skool Begintyd',tt_lbl_periods:'Periodes Per Dag',tt_lbl_duration:'Periodduur (min)',
+    tt_lbl_start:'Skool Begintyd',tt_lbl_periods:'Periodes Per Dag',tt_lbl_duration:'Periodduur (min)',tt_lbl_class:'Klas',
     tt_lbl_num_breaks:'Aantal Pouses',tt_lbl_breaks:'Pouses',
     tt_add_break:'+ Voeg Pouse By',tt_no_breaks:'Geen pouses opgestel nie.',
     tt_break_name_ph:'Pousenaam...',tt_after_period:'Na periode #',
@@ -1821,6 +1822,9 @@ function ttRenderPeriodsGrid(dayKey){
           ${subjectOpts}
         </select>
       </div>
+      <div class="tt-period-class">
+        <input type="text" class="text-input" style="font-size:0.73rem;padding:5px 8px" placeholder="${T('tt_lbl_class')||'Class'}" id="p_${dayKey}_${i}_class" oninput="ttSavePeriod('${dayKey}',${i})" value="${escHtml(p.class_name||'')}">
+      </div>
       <div class="tt-period-grade">
         <select class="select-input" style="font-size:0.73rem;padding:5px 8px" id="p_${dayKey}_${i}_grade" onchange="ttSavePeriod('${dayKey}',${i})">
           <option value="">${T('lbl_grade')}...</option>
@@ -1847,9 +1851,10 @@ function ttSavePeriod(dayKey, i){
   if(!ttSetupData.periods[dayKey]) ttSetupData.periods[dayKey]=[];
   while(ttSetupData.periods[dayKey].length<=i) ttSetupData.periods[dayKey].push({});
   ttSetupData.periods[dayKey][i] = {
-    subject: document.getElementById(`p_${dayKey}_${i}_subj`)?.value||'',
-    grade:   document.getElementById(`p_${dayKey}_${i}_grade`)?.value||'',
-    room:    document.getElementById(`p_${dayKey}_${i}_room`)?.value||''
+    subject:    document.getElementById(`p_${dayKey}_${i}_subj`)?.value||'',
+    class_name: document.getElementById(`p_${dayKey}_${i}_class`)?.value||'',
+    grade:      document.getElementById(`p_${dayKey}_${i}_grade`)?.value||'',
+    room:       document.getElementById(`p_${dayKey}_${i}_room`)?.value||''
   };
 }
 
@@ -1941,7 +1946,7 @@ function renderTimetable(){
     const hasSubj=!!(p.subject);
     const lk = lKey(wi.year, wi.weekNum, currentDay, i);
     const entry = lessonData[lk] || {};
-    const weekFocus = hasSubj ? ((planData[pKey(wi.year,wi.weekNum,p.subject,p.grade||'')]||{}).focus||'') : '';
+    const weekFocus = hasSubj ? ((planData[pKey(wi.year,wi.weekNum,p.subject,p.grade||'',p.class_name||'')]||{}).focus||'') : '';
     let carryInfo = null;
     if(entry.carry_over_from){ try{ carryInfo = JSON.parse(entry.carry_over_from); }catch(e){} }
 
@@ -1949,31 +1954,31 @@ function renderTimetable(){
       <div class="period-card-num">P${i+1}</div>
       <div class="period-card-info" style="flex:1;min-width:0">
         <div class="period-card-subj">${hasSubj?escHtml(p.subject):T('tt_no_subject')}</div>
-        <div class="period-card-meta">${t.start}–${t.end}${hasSubj&&p.grade?' · '+escHtml(p.grade):''}${hasSubj&&p.room?' · '+escHtml(p.room):''}</div>
+        <div class="period-card-meta">${t.start}–${t.end}${hasSubj&&p.class_name?' · '+escHtml(p.class_name):''}${hasSubj&&p.grade?' · '+escHtml(p.grade):''}${hasSubj&&p.room?' · '+escHtml(p.room):''}</div>
       </div>
     </div>`;
 
     if(hasSubj){
-      const subj_s = escHtml(p.subject), grade_s = escHtml(p.grade||'');
+      const subj_s = escHtml(p.subject), grade_s = escHtml(p.grade||''), cls_s = escHtml(p.class_name||'');
       html += `<div class="period-track" id="pt_${i}">`;
       if(weekFocus) html += `<div class="period-track-focus">📋 ${escHtml(weekFocus)}</div>`;
       if(carryInfo) html += `<div class="period-carry-banner">🔁 ${T('carry_from')}: <b>${escHtml(carryInfo.topic||'')}</b></div>`;
       html += `<div class="period-track-row">
         <input type="text" class="text-input period-track-input"
-          data-lk="${lk}" data-subj="${subj_s}" data-grade="${grade_s}"
+          data-lk="${lk}" data-subj="${subj_s}" data-grade="${grade_s}" data-cls="${cls_s}"
           data-yr="${wi.year}" data-wk="${wi.weekNum}" data-day="${currentDay}" data-pidx="${i}"
           value="${escHtml(entry.lesson_detail||'')}"
           placeholder="${T('plan_lesson_ph')}"
           oninput="ttTrackDetail(this)">
         <label class="period-track-check">
           <input type="checkbox" ${entry.completed?'checked':''}
-            data-lk="${lk}" data-subj="${subj_s}" data-grade="${grade_s}"
+            data-lk="${lk}" data-subj="${subj_s}" data-grade="${grade_s}" data-cls="${cls_s}"
             data-yr="${wi.year}" data-wk="${wi.weekNum}" data-day="${currentDay}" data-pidx="${i}"
             onchange="ttTrackComplete(this)">
           ${T('plan_completed')}
         </label>
         ${!entry.completed?`<button class="period-carry-btn"
-          onclick="openCarryOverModal('${lk}','${subj_s}','${grade_s}',this.closest('.period-track').querySelector('.period-track-input').value)">
+          onclick="openCarryOverModal('${lk}','${subj_s}','${grade_s}','${cls_s}',this.closest('.period-track').querySelector('.period-track-input').value)">
           🔁 ${T('carry_over')}</button>`:''}
       </div>`;
       html += '</div>';
@@ -2022,7 +2027,7 @@ function renderDashboardPeriods(){
         <div class="period-card-num">P${i+1}</div>
         <div class="period-card-info">
           <div class="period-card-subj">${hasSubj?escHtml(p.subject):T('tt_no_subject')}</div>
-          <div class="period-card-meta">${t.start}–${t.end}${hasSubj&&p.grade?' · '+escHtml(p.grade):''}</div>
+          <div class="period-card-meta">${t.start}–${t.end}${hasSubj&&p.class_name?' · '+escHtml(p.class_name):''}${hasSubj&&p.grade?' · '+escHtml(p.grade):''}</div>
         </div>
       </div>`;
     }
@@ -3103,7 +3108,7 @@ function weekDispLabel(wi){
 }
 
 function lKey(yr, wk, day, pidx){ return `${yr}_W${wk}_${day}_${pidx}`; }
-function pKey(yr, wk, subj, grade){ return `${yr}_W${wk}_${subj}_${grade||''}`; }
+function pKey(yr, wk, subj, grade, cls){ return `${yr}_W${wk}_${subj}_${grade||''}_${cls||''}`; }
 
 // Supabase helpers
 async function _getUid(){
@@ -3120,7 +3125,7 @@ async function lessonDataLoad(){
       _sb.from('weekly_plans').select('*').eq('user_id',uid)
     ]);
     if(!ld.error&&ld.data) ld.data.forEach(r=>{ lessonData[lKey(r.year,r.week_number,r.day,r.period_index)]=r; });
-    if(!pd.error&&pd.data) pd.data.forEach(r=>{ planData[pKey(r.year,r.week_number,r.subject,r.grade)]=r; });
+    if(!pd.error&&pd.data) pd.data.forEach(r=>{ planData[pKey(r.year,r.week_number,r.subject,r.grade,r.class_name)]=r; });
     renderTimetable();
   } catch(e){ console.warn('Lesson data load:',e); }
 }
@@ -3135,7 +3140,7 @@ async function _ensureWeekData(wi){
       _sb.from('weekly_plans').select('*').eq('user_id',uid).eq('year',wi.year).eq('week_number',wi.weekNum)
     ]);
     if(!ld.error&&ld.data) ld.data.forEach(r=>{ lessonData[lKey(r.year,r.week_number,r.day,r.period_index)]=r; });
-    if(!pd.error&&pd.data) pd.data.forEach(r=>{ planData[pKey(r.year,r.week_number,r.subject,r.grade)]=r; });
+    if(!pd.error&&pd.data) pd.data.forEach(r=>{ planData[pKey(r.year,r.week_number,r.subject,r.grade,r.class_name)]=r; });
   } catch(e){ console.warn('_ensureWeekData:',e); }
 }
 
@@ -3157,9 +3162,9 @@ function getWeekSubjects(){
     const times = calcPeriodTimes(savedTimetable.school_start_time, savedTimetable.period_duration, savedTimetable.breaks, savedTimetable.periods_per_day);
     dp.forEach((p,idx)=>{
       if(!p.subject) return;
-      const sk = p.subject+'|'+(p.grade||'');
-      if(!seen[sk]){ seen[sk]=true; list.push({subject:p.subject, grade:p.grade||'', periods:[]}); }
-      list.find(x=>x.subject===p.subject&&x.grade===(p.grade||'')).periods.push({day, idx, time:times[idx]});
+      const sk = p.subject+'|'+(p.grade||'')+'|'+(p.class_name||'');
+      if(!seen[sk]){ seen[sk]=true; list.push({subject:p.subject, grade:p.grade||'', class_name:p.class_name||'', periods:[]}); }
+      list.find(x=>x.subject===p.subject&&x.grade===(p.grade||'')&&x.class_name===(p.class_name||'')).periods.push({day, idx, time:times[idx], class_name:p.class_name||''});
     });
   });
   return list;
@@ -3191,16 +3196,16 @@ async function renderPlanningScreen(){
 
   let html='';
   subjects.forEach(sg=>{
-    const pk = pKey(wi.year,wi.weekNum,sg.subject,sg.grade);
+    const pk = pKey(wi.year,wi.weekNum,sg.subject,sg.grade,sg.class_name);
     const plan = planData[pk]||{};
-    const sLabel = escHtml(sg.subject)+(sg.grade?' · '+escHtml(sg.grade):'');
+    const sLabel = escHtml(sg.subject)+(sg.class_name?' · '+escHtml(sg.class_name):'')+(sg.grade?' · '+escHtml(sg.grade):'');
     html += `<div class="plan-subject-group">
       <div style="font-size:0.85rem;font-weight:700;color:var(--color-primary);margin-bottom:8px">📚 ${sLabel}</div>
       <div class="plan-focus-row">
         <label class="input-label" style="display:block;margin-bottom:4px">${T('plan_weekly_focus')}: ${sLabel}</label>
         <input type="text" class="text-input"
           data-yr="${wi.year}" data-wk="${wi.weekNum}"
-          data-subj="${escHtml(sg.subject)}" data-grade="${escHtml(sg.grade)}"
+          data-subj="${escHtml(sg.subject)}" data-grade="${escHtml(sg.grade)}" data-cls="${escHtml(sg.class_name)}"
           value="${escHtml(plan.focus||'')}"
           placeholder="${T('plan_focus_ph')}">
       </div>
@@ -3215,7 +3220,7 @@ async function renderPlanningScreen(){
           <span class="plan-time-badge">P${pp.idx+1} ${pp.time.start}</span>
         </div>
         <input type="text" class="text-input plan-lesson-input"
-          data-lk="${lk}" data-subj="${escHtml(sg.subject)}" data-grade="${escHtml(sg.grade)}"
+          data-lk="${lk}" data-subj="${escHtml(sg.subject)}" data-grade="${escHtml(sg.grade)}" data-cls="${escHtml(sg.class_name)}"
           data-yr="${wi.year}" data-wk="${wi.weekNum}" data-day="${pp.day}" data-pidx="${pp.idx}"
           value="${escHtml(entry.lesson_detail||'')}"
           placeholder="${T('plan_lesson_ph')}">
@@ -3251,7 +3256,7 @@ async function savePlanWeek(){
       lessonPayloads.push({
         user_id:uid, year:parseInt(inp.dataset.yr), week_number:parseInt(inp.dataset.wk),
         day:inp.dataset.day, period_index:parseInt(inp.dataset.pidx),
-        subject:inp.dataset.subj||'', grade:inp.dataset.grade||'',
+        subject:inp.dataset.subj||'', grade:inp.dataset.grade||'', class_name:inp.dataset.cls||'',
         lesson_detail:inp.value||'', completed:chk?.checked||false,
         updated_at:new Date().toISOString()
       });
@@ -3262,7 +3267,7 @@ async function savePlanWeek(){
     document.querySelectorAll('.plan-focus-row input[data-yr]').forEach(inp=>{
       planPayloads.push({
         user_id:uid, year:parseInt(inp.dataset.yr), week_number:parseInt(inp.dataset.wk),
-        subject:inp.dataset.subj||'', grade:inp.dataset.grade||'',
+        subject:inp.dataset.subj||'', grade:inp.dataset.grade||'', class_name:inp.dataset.cls||'',
         focus:inp.value||'', updated_at:new Date().toISOString()
       });
     });
@@ -3275,7 +3280,7 @@ async function savePlanWeek(){
     if(planPayloads.length){
       const {error} = await _sb.from('weekly_plans').upsert(planPayloads,{onConflict:'user_id,year,week_number,subject,grade'});
       if(error) throw error;
-      planPayloads.forEach(r=>{ planData[pKey(r.year,r.week_number,r.subject,r.grade)]=r; });
+      planPayloads.forEach(r=>{ planData[pKey(r.year,r.week_number,r.subject,r.grade,r.class_name)]=r; });
     }
 
     if(statusEl){ statusEl.textContent=T('plan_saved'); statusEl.style.color='var(--color-green)'; }
@@ -3313,9 +3318,9 @@ async function renderReportScreen(){
 
   let html='<div style="padding:4px 0">';
   subjects.forEach(sg=>{
-    const pk = pKey(wi.year,wi.weekNum,sg.subject,sg.grade);
+    const pk = pKey(wi.year,wi.weekNum,sg.subject,sg.grade,sg.class_name);
     const plan = planData[pk]||{};
-    const sLabel = escHtml(sg.subject)+(sg.grade?' · '+escHtml(sg.grade):'');
+    const sLabel = escHtml(sg.subject)+(sg.class_name?' · '+escHtml(sg.class_name):'')+(sg.grade?' · '+escHtml(sg.grade):'');
     let done=0, missed=0, carries=0;
     sg.periods.forEach(pp=>{
       const e = lessonData[lKey(wi.year,wi.weekNum,pp.day,pp.idx)]||{};
@@ -3339,8 +3344,8 @@ async function renderReportScreen(){
 }
 
 // ─── CARRY-OVER SYSTEM ───
-function openCarryOverModal(lk, subject, grade, topic){
-  _carryCtx = { lk, subject, grade, topic };
+function openCarryOverModal(lk, subject, grade, cls, topic){
+  _carryCtx = { lk, subject, grade, cls, topic };
   _carryTarget = null;
   const opts = document.getElementById('carryOverOptions');
   if(!opts || !savedTimetable) return;
@@ -3352,7 +3357,7 @@ function openCarryOverModal(lk, subject, grade, topic){
       const dp = savedTimetable.schedule_type==='same'?(savedTimetable.periods.same||[]):(savedTimetable.periods[day]||[]);
       const times = calcPeriodTimes(savedTimetable.school_start_time, savedTimetable.period_duration, savedTimetable.breaks, savedTimetable.periods_per_day);
       dp.forEach((p,idx)=>{
-        if(p.subject!==subject||(p.grade||'')!==grade) return;
+        if(p.subject!==subject||(p.grade||'')!==grade||(p.class_name||'')!==(cls||'')) return;
         const fk = lKey(w.year,w.weekNum,day,idx);
         if(fk===lk) return; // skip source
         const existing = lessonData[fk];
@@ -3405,25 +3410,25 @@ function scrollToFirstCarryOver(){
 
 // ─── PERIOD TRACKING HANDLERS ───
 function ttTrackDetail(el){
-  const {lk, subj, grade, day, yr, wk} = el.dataset;
+  const {lk, subj, grade, cls, day, yr, wk} = el.dataset;
   const pidx = parseInt(el.dataset.pidx);
-  lessonData[lk] = lessonData[lk]||{day,period_index:pidx,subject:subj,grade:grade||'',year:parseInt(yr),week_number:parseInt(wk)};
+  lessonData[lk] = lessonData[lk]||{day,period_index:pidx,subject:subj,grade:grade||'',class_name:cls||'',year:parseInt(yr),week_number:parseInt(wk)};
   lessonData[lk].lesson_detail = el.value;
   clearTimeout(_lsTimers[lk]);
   _lsTimers[lk] = setTimeout(()=>{
     upsertLesson(parseInt(yr),parseInt(wk),day,pidx,subj,grade||'',{
-      lesson_detail:el.value, completed:!!(lessonData[lk]?.completed)
+      class_name:cls||'', lesson_detail:el.value, completed:!!(lessonData[lk]?.completed)
     });
   }, 1400);
 }
 
 async function ttTrackComplete(el){
-  const {lk, subj, grade, day, yr, wk} = el.dataset;
+  const {lk, subj, grade, cls, day, yr, wk} = el.dataset;
   const pidx = parseInt(el.dataset.pidx);
-  lessonData[lk] = lessonData[lk]||{day,period_index:pidx,subject:subj,grade:grade||'',year:parseInt(yr),week_number:parseInt(wk)};
+  lessonData[lk] = lessonData[lk]||{day,period_index:pidx,subject:subj,grade:grade||'',class_name:cls||'',year:parseInt(yr),week_number:parseInt(wk)};
   lessonData[lk].completed = el.checked;
   await upsertLesson(parseInt(yr),parseInt(wk),day,pidx,subj,grade||'',{
-    lesson_detail:lessonData[lk].lesson_detail||'', completed:el.checked
+    class_name:cls||'', lesson_detail:lessonData[lk].lesson_detail||'', completed:el.checked
   });
   renderTimetable();
 }
