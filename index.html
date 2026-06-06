@@ -1479,14 +1479,14 @@ function calcPeriodTimes(startTime, duration, breaks, count){
 }
 
 // ─── SUPABASE TIMETABLE CRUD ───
-// Table: timetables — columns: id, created_at, user_id, schedule_type, school_start_time, periods (jsonb), breaks (jsonb), updated_at
+// Table: timetable — columns: id, created_at, user_id, schedule_type, school_start_time, periods (jsonb), breaks (jsonb), updated_at
 // periods jsonb stores: { _meta: { periodsPerDay, periodDuration }, same: [...], Monday: [...], ... }
 
 async function ttLoad(){
   try {
     const { data:{ session } } = await _sb.auth.getSession();
     if(!session) return;
-    const { data, error } = await _sb.from('timetables').select('*').eq('user_id', session.user.id).maybeSingle();
+    const { data, error } = await _sb.from('timetable').select('*').eq('user_id', session.user.id).maybeSingle();
     if(!error && data){
       const meta = data.periods?._meta || {};
       savedTimetable = {
@@ -1520,7 +1520,7 @@ async function ttSaveToSupabase(){
     periods: periodsWithMeta,
     updated_at: new Date().toISOString()
   };
-  const { data, error } = await _sb.from('timetables').upsert(payload,{onConflict:'user_id'}).select().single();
+  const { data, error } = await _sb.from('timetable').upsert(payload,{onConflict:'user_id'}).select().single();
   if(!error && data){
     const meta = data.periods?._meta || {};
     savedTimetable = {
