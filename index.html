@@ -435,6 +435,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 }
 
 /* ─── TIMETABLE SETUP v2 ─── */
+.tt-card-toggle:hover{background:var(--color-primary-xl)}
 .tt-step-form{padding:18px 18px 6px;display:flex;flex-direction:column;gap:16px}
 .tt-step-nav{padding:12px 18px 18px;display:flex;gap:10px;justify-content:space-between}
 .tt-break-row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;padding:10px 12px;background:var(--color-primary-xl);border-radius:var(--radius-sm);border:1px solid rgba(90,62,118,0.12)}
@@ -900,11 +901,15 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 
       <!-- TIMETABLE SETUP CARD -->
       <div class="card" id="ttSetupCard">
-        <div class="card-header">
+        <div class="card-header tt-card-toggle" onclick="ttToggleSetupCard()" style="cursor:pointer;user-select:none">
           <span class="card-icon">📅</span>
           <div class="card-title" data-i18n="settings_tt_card">Timetable Setup</div>
-          <button class="card-action" id="ttEditBtn" onclick="ttStartEdit()" style="display:none" data-i18n="tt_edit_btn">✏️ Edit Timetable</button>
+          <span id="ttCardStatus" style="font-size:0.72rem;color:var(--color-text-muted);flex:1;margin-left:6px"></span>
+          <span id="ttChevron" style="font-size:0.85rem;color:var(--color-text-muted);transition:transform 0.2s;margin-left:auto">▼</span>
         </div>
+
+        <!-- COLLAPSIBLE BODY -->
+        <div id="ttCardBody" style="display:none">
 
         <!-- SAVED SUMMARY (shown when timetable already saved) -->
         <div id="ttSavedView" style="display:none">
@@ -1013,6 +1018,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
             </div>
           </div>
         </div>
+        </div><!-- /ttCardBody -->
       </div>
 
       <!-- Profile + Notifications -->
@@ -1212,6 +1218,7 @@ const UI_STRINGS = {
     tt_save_btn:'🔒 Save Timetable',tt_saving:'Saving...',tt_saved_ok:'Timetable saved successfully!',
     tt_room_ph:'Room/Venue (optional)',tt_no_subject:'No subject assigned',
     tt_edit_in_settings:'Edit Timetable in Settings',
+    tt_not_configured:'Not configured — click to set up',
     tt_periods_label:'periods',tt_starts_at:'Starts at',tt_breaks_label:'break(s)',
     tt_periods_today:'periods today ·'
   },
@@ -1339,6 +1346,7 @@ const UI_STRINGS = {
     tt_save_btn:'🔒 Stoor Rooster',tt_saving:'Stoor...',tt_saved_ok:'Rooster suksesvol gestoor!',
     tt_room_ph:'Kamer/Lokaal (opsioneel)',tt_no_subject:'Geen vak toegewys',
     tt_edit_in_settings:'Wysig Rooster in Instellings',
+    tt_not_configured:'Nie opgestel nie — klik om op te stel',
     tt_periods_label:'periodes',tt_starts_at:'Begin om',tt_breaks_label:'pouse(s)',
     tt_periods_today:'periodes vandag ·'
   }
@@ -1537,25 +1545,48 @@ function ttUpdateAllViews(){
   updateDashboardStats();
 }
 
+function ttToggleSetupCard(){
+  const body = document.getElementById('ttCardBody');
+  const chevron = document.getElementById('ttChevron');
+  if(!body) return;
+  if(body.style.display === 'none'){
+    body.style.display = '';
+    if(chevron) chevron.style.transform = 'rotate(180deg)';
+    ttUpdateSettingsView();
+    if(!savedTimetable) ttRenderBreaks();
+  } else {
+    body.style.display = 'none';
+    if(chevron) chevron.style.transform = '';
+  }
+}
+
+function ttOpenSetupCard(){
+  const body = document.getElementById('ttCardBody');
+  const chevron = document.getElementById('ttChevron');
+  if(body && body.style.display === 'none'){
+    body.style.display = '';
+    if(chevron) chevron.style.transform = 'rotate(180deg)';
+  }
+}
+
 function ttUpdateSettingsView(){
   const savedView = document.getElementById('ttSavedView');
   const wizard = document.getElementById('ttWizard');
-  const editBtn = document.getElementById('ttEditBtn');
+  const statusEl = document.getElementById('ttCardStatus');
   if(!savedView || !wizard) return;
   if(savedTimetable){
     savedView.style.display='';
     wizard.style.display='none';
-    if(editBtn) editBtn.style.display='none';
+    const type = savedTimetable.schedule_type==='same' ? T('tt_same_daily') : T('tt_diff_daily');
+    const brks = (savedTimetable.breaks||[]).length;
+    const summary = savedTimetable.periods_per_day+' '+T('tt_periods_label')+' · '+savedTimetable.period_duration+' min · '+T('tt_starts_at')+' '+savedTimetable.school_start_time;
+    if(statusEl) statusEl.textContent = '✅ '+summary;
     const sub = document.getElementById('ttSavedSub');
-    if(sub){
-      const type = savedTimetable.schedule_type==='same' ? T('tt_same_daily') : T('tt_diff_daily');
-      const brks = (savedTimetable.breaks||[]).length;
-      sub.textContent = savedTimetable.periods_per_day+' '+T('tt_periods_label')+' · '+savedTimetable.period_duration+' min · '+T('tt_starts_at')+' '+savedTimetable.school_start_time+' · '+type+(brks?' · '+brks+' '+T('tt_breaks_label'):'');
-    }
+    if(sub) sub.textContent = summary+' · '+type+(brks?' · '+brks+' '+T('tt_breaks_label'):'');
   } else {
     savedView.style.display='none';
     wizard.style.display='';
-    if(editBtn) editBtn.style.display='none';
+    if(statusEl) statusEl.textContent = T('tt_not_configured')||'Not configured';
   }
 }
 
@@ -1591,6 +1622,7 @@ function ttStartEdit(){
   }
   document.getElementById('ttSavedView').style.display='none';
   document.getElementById('ttWizard').style.display='';
+  ttOpenSetupCard();
   const st=document.getElementById('ttStartTime');
   const ppd=document.getElementById('ttPeriodsPerDay');
   const pd=document.getElementById('ttPeriodDuration');
