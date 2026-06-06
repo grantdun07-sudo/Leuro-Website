@@ -687,15 +687,120 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 
     <!-- TIMETABLE -->
     <div class="screen" id="screen-timetable">
-      <div class="ai-strip"><div class="ai-avatar">&#128197;</div><div class="ai-text"><div class="ai-greeting" data-i18n="tt_greeting">My Timetable</div><div class="ai-sub" data-i18n="tt_sub">Configure your timetable in Settings, then return here to manage your day.</div></div></div>
-      <div class="card">
-        <div class="tt-lock-bar">
-          <button class="lock-btn" id="lockBtn" onclick="toggleLock()"><span id="lockIcon">&#128274;</span><span id="lockLabel" data-i18n="tt_lock_label">Timetable Locked</span></button>
-          <div class="lock-warning" id="lockWarning" data-i18n="tt_lock_warning">⚠️ Timetable is unlocked. Tap any period to edit.</div>
-          <span class="lock-status" id="lockStatus" data-i18n="tt_lock_status">Display only · Unlock to edit</span>
+      <div class="ai-strip"><div class="ai-avatar">&#128197;</div><div class="ai-text"><div class="ai-greeting" data-i18n="tt_greeting">My Timetable</div><div class="ai-sub" data-i18n="tt_sub">Set up your timetable below and manage your daily teaching schedule.</div></div></div>
+
+      <!-- TIMETABLE VIEW (shown when timetable is saved and not editing) -->
+      <div id="ttViewSection" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">&#128197;</span>
+            <div class="card-title" data-i18n="tt_greeting">My Timetable</div>
+            <button class="card-action" onclick="ttStartEdit()" data-i18n="tt_edit_btn">✏️ Edit Timetable</button>
+          </div>
+          <div class="tab-row" id="ttTabRow"></div>
+          <div id="ttBody"></div>
         </div>
-        <div class="tab-row" id="ttTabRow"></div>
-        <div id="ttBody"></div>
+      </div>
+
+      <!-- WIZARD (shown when no timetable saved, or editing) -->
+      <div id="ttWizard" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">🗓️</span>
+            <div class="card-title" data-i18n="settings_tt_card">Timetable Setup</div>
+            <button id="ttCancelBtn" class="card-action" onclick="ttCancelEdit()" style="display:none" data-i18n="btn_cancel">✕ Cancel</button>
+          </div>
+          <div class="setup-steps" id="ttStepNav">
+            <div class="step-indicator"><div class="step-dot active" id="ttDot1">1</div><span class="step-label" id="ttLbl1" data-i18n="tt_step1_label">Daily Structure</span></div>
+            <div class="step-line" id="ttLine1"></div>
+            <div class="step-indicator"><div class="step-dot" id="ttDot2">2</div><span class="step-label" id="ttLbl2" data-i18n="tt_step2_label">Schedule Type</span></div>
+            <div class="step-line" id="ttLine2"></div>
+            <div class="step-indicator"><div class="step-dot" id="ttDot3">3</div><span class="step-label" id="ttLbl3" data-i18n="tt_step3_label">Period Setup</span></div>
+            <div class="step-line" id="ttLine3"></div>
+            <div class="step-indicator"><div class="step-dot" id="ttDot4">4</div><span class="step-label" id="ttLbl4" data-i18n="tt_step4_label">Save</span></div>
+          </div>
+
+          <!-- STEP 1: Daily Structure -->
+          <div class="step-panel" id="ttStep1">
+            <div class="tt-step-form">
+              <p style="font-size:0.78rem;color:var(--color-text-mid);line-height:1.6;margin:0" data-i18n="tt_step1_desc">Configure your daily schedule structure — periods, durations, and breaks.</p>
+              <div class="select-row-2">
+                <div>
+                  <label class="input-label" data-i18n="tt_lbl_start">School Start Time</label>
+                  <input type="time" class="text-input" id="ttStartTime" value="07:30">
+                </div>
+                <div>
+                  <label class="input-label" data-i18n="tt_lbl_periods">Periods Per Day</label>
+                  <input type="number" class="number-input" id="ttPeriodsPerDay" min="1" max="12" value="8">
+                </div>
+              </div>
+              <div class="select-row-2">
+                <div>
+                  <label class="input-label" data-i18n="tt_lbl_duration">Period Duration (min)</label>
+                  <input type="number" class="number-input" id="ttPeriodDuration" min="10" max="90" value="40">
+                </div>
+                <div>
+                  <label class="input-label" data-i18n="tt_lbl_num_breaks">Number of Breaks</label>
+                  <input type="number" class="number-input" id="ttNumBreaks" min="0" max="4" value="1" oninput="ttRenderBreaks()">
+                </div>
+              </div>
+              <div>
+                <label class="input-label" data-i18n="tt_lbl_breaks">Breaks</label>
+                <div id="ttBreaksWrap" style="display:flex;flex-direction:column;gap:8px"></div>
+                <button class="card-action" onclick="ttAddBreak()" style="margin-top:8px;font-size:0.73rem" data-i18n="tt_add_break">+ Add Break</button>
+              </div>
+            </div>
+            <div class="tt-step-nav">
+              <div></div>
+              <button class="btn-primary" onclick="ttGoStep(2)" data-i18n="tt_next_1">Next: Schedule Type →</button>
+            </div>
+          </div>
+
+          <!-- STEP 2: Schedule Type -->
+          <div class="step-panel" id="ttStep2" style="display:none">
+            <p style="font-size:0.78rem;color:var(--color-text-mid);line-height:1.6;padding:14px 18px 0;margin:0" data-i18n="tt_step2_desc">Choose whether all days share the same periods, or each day has its own unique timetable.</p>
+            <div class="schedule-type-opts">
+              <button class="schedule-type-btn selected" id="stSame" onclick="ttSelectScheduleType('same')">
+                <span class="stype-icon">📋</span>
+                <span data-i18n="tt_same_daily">Same every day</span>
+              </button>
+              <button class="schedule-type-btn" id="stDiff" onclick="ttSelectScheduleType('different')">
+                <span class="stype-icon">🗓️</span>
+                <span data-i18n="tt_diff_daily">Different per day</span>
+              </button>
+            </div>
+            <div class="tt-step-nav">
+              <button class="btn-secondary" onclick="ttGoStep(1)" data-i18n="tt_back">← Back</button>
+              <button class="btn-primary" onclick="ttGoStep(3)" data-i18n="tt_next_2">Next: Period Setup →</button>
+            </div>
+          </div>
+
+          <!-- STEP 3: Period Setup -->
+          <div class="step-panel" id="ttStep3" style="display:none">
+            <div id="ttPeriodDayTabs" class="tt-period-setup-tabs"></div>
+            <div class="tt-periods-grid" id="ttPeriodsGrid"></div>
+            <div class="tt-step-nav">
+              <button class="btn-secondary" onclick="ttGoStep(2)" data-i18n="tt_back">← Back</button>
+              <button class="btn-primary" onclick="ttGoStep(4)" data-i18n="tt_next_3">Next: Review & Save →</button>
+            </div>
+          </div>
+
+          <!-- STEP 4: Review & Save -->
+          <div class="step-panel" id="ttStep4" style="display:none">
+            <div class="tt-step-form">
+              <div style="background:var(--color-primary-xl);border:1px solid rgba(90,62,118,0.18);border-radius:var(--radius-md);padding:16px">
+                <div style="font-size:0.85rem;font-weight:700;color:var(--color-primary);margin-bottom:8px" data-i18n="tt_ready">✅ Timetable Ready to Save</div>
+                <div id="ttReviewSummary" style="font-size:0.75rem;color:var(--color-text-mid);line-height:1.8"></div>
+              </div>
+              <div style="background:var(--color-accent-lt);border:1px solid rgba(230,179,71,0.3);border-radius:var(--radius-md);padding:14px;font-size:0.75rem;color:var(--color-accent-dk);line-height:1.6" data-i18n="tt_save_note">📌 Your timetable saves to your account and is immediately available in My Timetable.</div>
+              <div id="ttSaveStatus" style="font-size:0.78rem;font-weight:600;display:none;padding:10px 12px;border-radius:var(--radius-sm)"></div>
+            </div>
+            <div class="tt-step-nav">
+              <button class="btn-secondary" onclick="ttGoStep(3)" data-i18n="tt_back">← Back</button>
+              <button class="btn-gold" id="ttSaveBtn" onclick="ttSaveAndActivate()" data-i18n="tt_save_btn">🔒 Save Timetable</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -901,119 +1006,13 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 
       <!-- TIMETABLE SETUP CARD -->
       <div class="card" id="ttSetupCard">
-        <div class="card-header tt-card-toggle" onclick="ttToggleSetupCard()" style="cursor:pointer;user-select:none">
+        <div class="card-header">
           <span class="card-icon">📅</span>
           <div class="card-title" data-i18n="settings_tt_card">Timetable Setup</div>
-          <span id="ttCardStatus" style="font-size:0.72rem;color:var(--color-text-muted);flex:1;margin-left:6px"></span>
-          <span id="ttChevron" style="font-size:0.85rem;color:var(--color-text-muted);transition:transform 0.2s;margin-left:8px">▼</span>
         </div>
-
-        <!-- SAVED SUMMARY (shown when timetable already saved) -->
-        <div id="ttSavedView" style="display:none">
-          <div class="tt-saved-badge">
-            <div class="tt-saved-icon">✅</div>
-            <div class="tt-saved-text">
-              <div class="tt-saved-title" id="ttSavedTitle" data-i18n="tt_active">Timetable Active</div>
-              <div class="tt-saved-sub" id="ttSavedSub">Loading...</div>
-            </div>
-          </div>
-          <div style="padding:12px 18px;display:flex;justify-content:flex-end">
-            <button class="btn-secondary" onclick="ttStartEdit()" data-i18n="tt_edit_btn" style="font-size:0.78rem;padding:7px 14px">✏️ Edit Timetable</button>
-          </div>
-        </div>
-
-        <!-- WIZARD (shown when setting up or editing) -->
-        <div id="ttWizard" style="display:none">
-          <div class="setup-steps" id="ttStepNav">
-            <div class="step-indicator"><div class="step-dot active" id="ttDot1">1</div><span class="step-label" id="ttLbl1" data-i18n="tt_step1_label">Daily Structure</span></div>
-            <div class="step-line" id="ttLine1"></div>
-            <div class="step-indicator"><div class="step-dot" id="ttDot2">2</div><span class="step-label" id="ttLbl2" data-i18n="tt_step2_label">Schedule Type</span></div>
-            <div class="step-line" id="ttLine2"></div>
-            <div class="step-indicator"><div class="step-dot" id="ttDot3">3</div><span class="step-label" id="ttLbl3" data-i18n="tt_step3_label">Period Setup</span></div>
-            <div class="step-line" id="ttLine3"></div>
-            <div class="step-indicator"><div class="step-dot" id="ttDot4">4</div><span class="step-label" id="ttLbl4" data-i18n="tt_step4_label">Save</span></div>
-          </div>
-
-          <!-- STEP 1: Daily Structure -->
-          <div class="step-panel" id="ttStep1">
-            <div class="tt-step-form">
-              <p style="font-size:0.78rem;color:var(--color-text-mid);line-height:1.6;margin:0" data-i18n="tt_step1_desc">Configure your daily schedule structure — periods, durations, and breaks.</p>
-              <div class="select-row-2">
-                <div>
-                  <label class="input-label" data-i18n="tt_lbl_start">School Start Time</label>
-                  <input type="time" class="text-input" id="ttStartTime" value="07:30">
-                </div>
-                <div>
-                  <label class="input-label" data-i18n="tt_lbl_periods">Periods Per Day</label>
-                  <input type="number" class="number-input" id="ttPeriodsPerDay" min="1" max="12" value="8">
-                </div>
-              </div>
-              <div class="select-row-2">
-                <div>
-                  <label class="input-label" data-i18n="tt_lbl_duration">Period Duration (min)</label>
-                  <input type="number" class="number-input" id="ttPeriodDuration" min="10" max="90" value="40">
-                </div>
-                <div>
-                  <label class="input-label" data-i18n="tt_lbl_num_breaks">Number of Breaks</label>
-                  <input type="number" class="number-input" id="ttNumBreaks" min="0" max="4" value="1" oninput="ttRenderBreaks()">
-                </div>
-              </div>
-              <div>
-                <label class="input-label" data-i18n="tt_lbl_breaks">Breaks</label>
-                <div id="ttBreaksWrap" style="display:flex;flex-direction:column;gap:8px"></div>
-                <button class="card-action" onclick="ttAddBreak()" style="margin-top:8px;font-size:0.73rem" data-i18n="tt_add_break">+ Add Break</button>
-              </div>
-            </div>
-            <div class="tt-step-nav">
-              <div></div>
-              <button class="btn-primary" onclick="ttGoStep(2)" data-i18n="tt_next_1">Next: Schedule Type →</button>
-            </div>
-          </div>
-
-          <!-- STEP 2: Schedule Type -->
-          <div class="step-panel" id="ttStep2" style="display:none">
-            <p style="font-size:0.78rem;color:var(--color-text-mid);line-height:1.6;padding:14px 18px 0;margin:0" data-i18n="tt_step2_desc">Choose whether all days share the same periods, or each day has its own unique timetable.</p>
-            <div class="schedule-type-opts">
-              <button class="schedule-type-btn selected" id="stSame" onclick="ttSelectScheduleType('same')">
-                <span class="stype-icon">📋</span>
-                <span data-i18n="tt_same_daily">Same every day</span>
-              </button>
-              <button class="schedule-type-btn" id="stDiff" onclick="ttSelectScheduleType('different')">
-                <span class="stype-icon">🗓️</span>
-                <span data-i18n="tt_diff_daily">Different per day</span>
-              </button>
-            </div>
-            <div class="tt-step-nav">
-              <button class="btn-secondary" onclick="ttGoStep(1)" data-i18n="tt_back">← Back</button>
-              <button class="btn-primary" onclick="ttGoStep(3)" data-i18n="tt_next_2">Next: Period Setup →</button>
-            </div>
-          </div>
-
-          <!-- STEP 3: Period Setup -->
-          <div class="step-panel" id="ttStep3" style="display:none">
-            <div id="ttPeriodDayTabs" class="tt-period-setup-tabs"></div>
-            <div class="tt-periods-grid" id="ttPeriodsGrid"></div>
-            <div class="tt-step-nav">
-              <button class="btn-secondary" onclick="ttGoStep(2)" data-i18n="tt_back">← Back</button>
-              <button class="btn-primary" onclick="ttGoStep(4)" data-i18n="tt_next_3">Next: Review & Save →</button>
-            </div>
-          </div>
-
-          <!-- STEP 4: Review & Save -->
-          <div class="step-panel" id="ttStep4" style="display:none">
-            <div class="tt-step-form">
-              <div style="background:var(--color-primary-xl);border:1px solid rgba(90,62,118,0.18);border-radius:var(--radius-md);padding:16px">
-                <div style="font-size:0.85rem;font-weight:700;color:var(--color-primary);margin-bottom:8px" data-i18n="tt_ready">✅ Timetable Ready to Save</div>
-                <div id="ttReviewSummary" style="font-size:0.75rem;color:var(--color-text-mid);line-height:1.8"></div>
-              </div>
-              <div style="background:var(--color-accent-lt);border:1px solid rgba(230,179,71,0.3);border-radius:var(--radius-md);padding:14px;font-size:0.75rem;color:var(--color-accent-dk);line-height:1.6" data-i18n="tt_save_note">📌 Your timetable saves to your account and is immediately available in My Timetable.</div>
-              <div id="ttSaveStatus" style="font-size:0.78rem;font-weight:600;display:none;padding:10px 12px;border-radius:var(--radius-sm)"></div>
-            </div>
-            <div class="tt-step-nav">
-              <button class="btn-secondary" onclick="ttGoStep(3)" data-i18n="tt_back">← Back</button>
-              <button class="btn-gold" id="ttSaveBtn" onclick="ttSaveAndActivate()" data-i18n="tt_save_btn">🔒 Save Timetable</button>
-            </div>
-          </div>
+        <div style="padding:14px 18px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div id="ttSettingsStatus" style="font-size:0.78rem;color:var(--color-text-muted)" data-i18n="tt_not_configured">Not configured</div>
+          <button class="btn-primary" onclick="switchScreen('timetable',null)" data-i18n="tt_setup_btn" style="white-space:nowrap">Set Up My Timetable →</button>
         </div>
       </div>
 
@@ -1059,7 +1058,7 @@ function switchScreen(name,navEl){
   if(navEl){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));navEl.classList.add('active');}
   document.getElementById('mainContent').scrollTop=0;
   closeMobileSidebar();
-  if(name==='timetable'){initTimetableTabs();renderTimetable();}
+  if(name==='timetable'){ttShowTimetablePage();initTimetableTabs();renderTimetable();}
   if(name==='reminders'){renderRemindersScreen();}
   if(name==='moderation'){renderModerationScreen();}
 }
@@ -1110,7 +1109,7 @@ const UI_STRINGS = {
     dash_no_rem:'No upcoming reminders.',
     // Timetable
     tt_greeting:'My Timetable',
-    tt_sub:'Configure your timetable in Settings, then return here to manage your day.',
+    tt_sub:'View and manage your daily teaching schedule. Set up or edit your timetable below.',
     tt_lock_label:'Timetable Locked',tt_lock_status:'Display only · Unlock to edit',
     tt_lock_label_open:'Timetable Unlocked',tt_lock_status_open:'Tap any period to edit',
     tt_lock_warning:'⚠️ Timetable is unlocked. Tap any period to edit.',
@@ -1214,7 +1213,8 @@ const UI_STRINGS = {
     tt_save_btn:'🔒 Save Timetable',tt_saving:'Saving...',tt_saved_ok:'Timetable saved successfully!',
     tt_room_ph:'Room/Venue (optional)',tt_no_subject:'No subject assigned',
     tt_edit_in_settings:'Edit Timetable in Settings',
-    tt_not_configured:'Not configured — click to set up',
+    tt_not_configured:'Not configured',
+    tt_setup_btn:'Set Up My Timetable →',
     tt_periods_label:'periods',tt_starts_at:'Starts at',tt_breaks_label:'break(s)',
     tt_periods_today:'periods today ·'
   },
@@ -1238,7 +1238,7 @@ const UI_STRINGS = {
     dash_no_rem:'Geen komende herinneringe nie.',
     // Timetable
     tt_greeting:'My Rooster',
-    tt_sub:'Stel u rooster op in Instellings, keer dan terug om u dag te bestuur.',
+    tt_sub:'Bekyk en bestuur u daaglikse onderwysprogram. Stel u rooster hieronder op of wysig dit.',
     tt_lock_label:'Rooster Gesluit',tt_lock_status:'Slegs vertoon · Ontsluit om te wysig',
     tt_lock_label_open:'Rooster Ontsluit',tt_lock_status_open:'Tik enige periode om te wysig',
     tt_lock_warning:'⚠️ Rooster is ontsluit. Tik enige periode om te wysig.',
@@ -1342,7 +1342,8 @@ const UI_STRINGS = {
     tt_save_btn:'🔒 Stoor Rooster',tt_saving:'Stoor...',tt_saved_ok:'Rooster suksesvol gestoor!',
     tt_room_ph:'Kamer/Lokaal (opsioneel)',tt_no_subject:'Geen vak toegewys',
     tt_edit_in_settings:'Wysig Rooster in Instellings',
-    tt_not_configured:'Nie opgestel nie — klik om op te stel',
+    tt_not_configured:'Nie opgestel nie',
+    tt_setup_btn:'Stel My Rooster Op →',
     tt_periods_label:'periodes',tt_starts_at:'Begin om',tt_breaks_label:'pouse(s)',
     tt_periods_today:'periodes vandag ·'
   }
@@ -1385,7 +1386,7 @@ function setLang(lang, btn){
   const visible = document.querySelector('.screen.visible');
   if(visible){
     const screenId = visible.id.replace('screen-','');
-    if(screenId==='timetable'){ initTimetableTabs(); renderTimetable(); }
+    if(screenId==='timetable'){ ttShowTimetablePage(); initTimetableTabs(); renderTimetable(); }
     if(screenId==='reminders'){ renderRemindersScreen(); }
     if(screenId==='moderation'){ renderModerationScreen(); }
     // Update page title for current screen
@@ -1498,7 +1499,8 @@ async function ttLoad(){
       };
       ttUpdateAllViews();
     } else {
-      ttUpdateSettingsView();
+      ttUpdateSettingsCard();
+      ttShowTimetablePage();
     }
   } catch(e){ console.warn('Timetable load error:',e); }
 }
@@ -1534,81 +1536,54 @@ async function ttSaveToSupabase(){
 }
 
 // ─── VIEW UPDATES ───
+let ttEditing = false;
+
 function ttUpdateAllViews(){
-  ttUpdateSettingsView();
+  ttUpdateSettingsCard();
+  ttShowTimetablePage();
   renderTimetable();
   renderDashboardPeriods();
   updateDashboardStats();
 }
 
-// Track accordion open state separately from display state
-let _ttCardOpen = false;
-
-function ttToggleSetupCard(){
-  _ttCardOpen = !_ttCardOpen;
-  const chevron = document.getElementById('ttChevron');
-  if(chevron) chevron.style.transform = _ttCardOpen ? 'rotate(180deg)' : '';
-  if(_ttCardOpen){
-    _ttApplyView();
-  } else {
-    const savedView = document.getElementById('ttSavedView');
-    const wizard = document.getElementById('ttWizard');
-    if(savedView) savedView.style.display = 'none';
-    if(wizard) wizard.style.display = 'none';
-  }
-}
-
-function ttOpenSetupCard(){
-  if(!_ttCardOpen){
-    _ttCardOpen = true;
-    const chevron = document.getElementById('ttChevron');
-    if(chevron) chevron.style.transform = 'rotate(180deg)';
-  }
-  _ttApplyView();
-}
-
-// Single function that decides what to show inside the card — no early returns
-function _ttApplyView(){
-  const savedView = document.getElementById('ttSavedView');
-  const wizard = document.getElementById('ttWizard');
-  const statusEl = document.getElementById('ttCardStatus');
-
-  if(savedTimetable){
-    // Show saved summary
-    if(wizard) wizard.style.display = 'none';
-    if(savedView) savedView.style.display = 'block';
-    const type = savedTimetable.schedule_type==='same' ? T('tt_same_daily') : T('tt_diff_daily');
-    const brks = (savedTimetable.breaks||[]).length;
-    const summary = savedTimetable.periods_per_day+' '+T('tt_periods_label')+' · '+savedTimetable.period_duration+' min · '+T('tt_starts_at')+' '+savedTimetable.school_start_time;
-    if(statusEl) statusEl.textContent = '✅ '+summary;
-    const sub = document.getElementById('ttSavedSub');
-    if(sub) sub.textContent = summary+' · '+type+(brks?' · '+brks+' '+T('tt_breaks_label'):'');
-  } else {
-    // Show wizard at step 1
-    if(savedView) savedView.style.display = 'none';
-    if(wizard) wizard.style.display = 'block';
-    // Show step 1, hide others
-    for(let i=1;i<=4;i++){
-      const p = document.getElementById('ttStep'+i);
-      if(p) p.style.display = (i===1) ? 'block' : 'none';
-    }
-    ttRenderBreaks();
-    if(statusEl) statusEl.textContent = T('tt_not_configured')||'Not configured';
-  }
-}
-
-function ttUpdateSettingsView(){
-  // Update header status text (called by ttUpdateAllViews after async Supabase ops)
-  const statusEl = document.getElementById('ttCardStatus');
+function ttUpdateSettingsCard(){
+  const statusEl = document.getElementById('ttSettingsStatus');
+  const btn = document.querySelector('#ttSetupCard .btn-primary');
   if(!statusEl) return;
   if(savedTimetable){
     const summary = savedTimetable.periods_per_day+' '+T('tt_periods_label')+' · '+savedTimetable.period_duration+' min · '+T('tt_starts_at')+' '+savedTimetable.school_start_time;
     statusEl.textContent = '✅ '+summary;
-    // If card is open, refresh the view to show saved state
-    if(_ttCardOpen) _ttApplyView();
+    if(btn) btn.textContent = T('tt_edit_btn')||'✏️ Edit Timetable';
   } else {
     statusEl.textContent = T('tt_not_configured')||'Not configured';
+    if(btn) btn.textContent = T('tt_setup_btn')||'Set Up My Timetable →';
   }
+}
+
+function ttShowTimetablePage(){
+  const viewSection = document.getElementById('ttViewSection');
+  const wizard = document.getElementById('ttWizard');
+  if(!viewSection || !wizard) return;
+  if(savedTimetable && !ttEditing){
+    viewSection.style.display = 'block';
+    wizard.style.display = 'none';
+    initTimetableTabs();
+  } else {
+    viewSection.style.display = 'none';
+    wizard.style.display = 'block';
+    const cancelBtn = document.getElementById('ttCancelBtn');
+    if(cancelBtn) cancelBtn.style.display = ttEditing ? '' : 'none';
+    if(!ttEditing){
+      ttGoStep(1);
+      ttRenderBreaks();
+    }
+  }
+}
+
+function ttCancelEdit(){
+  ttEditing = false;
+  ttShowTimetablePage();
+  renderTimetable();
 }
 
 // ─── WIZARD STEPS ───
@@ -1641,14 +1616,9 @@ function ttStartEdit(){
     const { _meta, ...dayPeriods } = savedTimetable.periods || {};
     ttSetupData.periods = JSON.parse(JSON.stringify(dayPeriods));
   }
-  // Force show wizard directly (bypass _ttApplyView savedTimetable branch)
-  const savedView = document.getElementById('ttSavedView');
-  const wizard = document.getElementById('ttWizard');
-  if(savedView) savedView.style.display = 'none';
-  if(wizard) wizard.style.display = 'block';
-  _ttCardOpen = true;
-  const chevron = document.getElementById('ttChevron');
-  if(chevron) chevron.style.transform = 'rotate(180deg)';
+  ttEditing = true;
+  switchScreen('timetable', null);
+  ttShowTimetablePage();
   const st=document.getElementById('ttStartTime');
   const ppd=document.getElementById('ttPeriodsPerDay');
   const pd=document.getElementById('ttPeriodDuration');
@@ -1660,7 +1630,6 @@ function ttStartEdit(){
   ttRenderBreaks();
   ttSelectScheduleType(ttSetupData.scheduleType, false);
   ttGoStep(1);
-  switchScreen('settings',document.querySelector('[data-label=Settings]'));
 }
 
 // ─── STEP 1: BREAKS ───
@@ -1831,7 +1800,7 @@ async function ttSaveAndActivate(){
       status.style.background='var(--color-green-lt)';
       status.style.color='var(--color-green)';
     }
-    setTimeout(()=>{ ttUpdateAllViews(); }, 1200);
+    setTimeout(()=>{ ttEditing = false; ttUpdateAllViews(); }, 1200);
   }
 }
 
@@ -1853,12 +1822,7 @@ function switchDay(day, el){
 
 function renderTimetable(){
   const body = document.getElementById('ttBody');
-  if(!body) return;
-
-  if(!savedTimetable){
-    body.innerHTML=`<div class="empty-state" style="padding:32px 18px"><div class="empty-state-icon">📅</div><b style="color:var(--color-primary)">${T('tt_empty_title')}</b><br><span style="font-size:0.75rem">${T('tt_setup_hint_pre')} <a href="#" onclick="switchScreen('settings',null);return false;" style="color:var(--color-primary)">${T('nav_settings')}</a> ${T('tt_setup_hint_post')}</span></div>`;
-    return;
-  }
+  if(!body || !savedTimetable) return;
 
   const n = savedTimetable.periods_per_day;
   const times = calcPeriodTimes(savedTimetable.school_start_time, savedTimetable.period_duration, savedTimetable.breaks, n);
@@ -1882,10 +1846,6 @@ function renderTimetable(){
     if(brk) html+=`<div class="tt-break-sep"><div class="tt-break-sep-line"></div><div class="tt-break-sep-label">☕ ${escHtml(brk.name||'Break')} · ${brk.duration} min</div><div class="tt-break-sep-line"></div></div>`;
   }
   html+='</div>';
-
-  if(!ttLocked){
-    html+=`<div style="padding:10px 18px;text-align:center"><button class="btn-secondary" style="font-size:0.75rem;padding:7px 14px" onclick="ttStartEdit()">✏️ ${T('tt_edit_in_settings')}</button></div>`;
-  }
   body.innerHTML=html;
 }
 
