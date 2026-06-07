@@ -364,6 +364,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 .lp-pdf-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--color-border-lt);background:var(--color-background)}
 .lp-generating{display:flex;align-items:center;gap:12px;padding:24px 20px;color:var(--color-text-mid);font-size:0.82rem}
 .lp-spinner{width:20px;height:20px;border:2px solid var(--color-border);border-top-color:var(--color-primary);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0}
+.lp-btn-spin{display:inline-block;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:300;align-items:center;justify-content:center}
@@ -874,6 +875,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
                 <option>Life Skills</option>
                 <option>Arts &amp; Culture</option>
               </select>
+              <div id="lp_subject_err" class="lp-field-error" style="display:none;color:var(--color-red);font-size:0.7rem;margin-top:4px"></div>
             </div>
             <div class="select-row">
               <div><label class="input-label" data-i18n="lbl_term">Term</label>
@@ -894,11 +896,13 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
             </div>
             <div><label class="input-label" data-i18n="lbl_topic">Topic / CAPS Section</label>
               <textarea class="textarea-input" id="lp_topic" placeholder="e.g. Separation of mixtures — filtration and evaporation"></textarea>
+              <div id="lp_topic_err" class="lp-field-error" style="display:none;color:var(--color-red);font-size:0.7rem;margin-top:4px"></div>
             </div>
             <div><label class="input-label" data-i18n="lbl_ai_notes">Additional Notes for AI (optional)</label>
               <textarea class="textarea-input" id="lp_notes" placeholder="e.g. Class has 28 learners, some need additional support with vocabulary..."></textarea>
             </div>
-            <button class="btn-primary" onclick="generateLessonPlan()" data-i18n="btn_generate_lp">🤖 Generate CAPS Lesson Plan</button>
+            <button class="btn-primary" id="lpGenerateBtn" onclick="generateLessonPlan()" data-i18n="btn_generate_lp">🤖 Generate CAPS Lesson Plan</button>
+            <div id="lpGenStatus" style="display:none;font-size:0.72rem;color:var(--color-text-mid);margin-top:8px"></div>
           </div>
         </div>
 
@@ -1289,6 +1293,10 @@ const UI_STRINGS = {
     alert_enter_reminder:'Please enter a reminder title.',
     alert_enter_mod_title:'Please enter a title for this entry.',
     confirm_delete_mod:'Remove this moderation entry?',
+    err_field_required:'Please complete this field before generating.',
+    err_lp_generic:'Something went wrong. Please try again.',
+    btn_generating:'Generating...',
+    lp_ai_wait:'Leuro Assistant is preparing your lesson plan. This may take 10–15 seconds...',
     // Generating states
     gen_lp:'Generating CAPS-aligned lesson plan...',
     gen_ws:'Generating worksheet and memo...',
@@ -1444,6 +1452,10 @@ const UI_STRINGS = {
     alert_enter_reminder:"Voer asseblief 'n herinneringstitel in.",
     alert_enter_mod_title:"Voer asseblief 'n titel vir hierdie inskrywing in.",
     confirm_delete_mod:'Verwyder hierdie modereringsinskrywing?',
+    err_field_required:'Voltooi asseblief hierdie veld voordat u genereer.',
+    err_lp_generic:'Iets het verkeerd geloop. Probeer asseblief weer.',
+    btn_generating:'Genereer tans...',
+    lp_ai_wait:'Leuro Assistent berei tans u lesplan voor. Dit kan 10–15 sekondes neem...',
     // Generating states
     gen_lp:'Genereer CAPS-ooreenstemmende lesplan...',
     gen_ws:'Genereer werksvel en memo...',
@@ -2078,47 +2090,85 @@ function getTeacherProfile(){
   };
 }
 
-function buildLessonData(grade,subject,term,week,duration,topic){
-  const today=new Date().toLocaleDateString('en-ZA',{day:'2-digit',month:'long',year:'numeric'});
-  const p=getTeacherProfile();
-  return{
-    school:p.school, educator:p.name, subject:subject||'Natural Sciences & Technology',
-    grade:grade||'Grade 6', term:term||'2', week:week||'18',
-    date:today, duration:(duration||'40')+' minutes',
-    topic:topic||'Separation of Mixtures',
-    subTopic:'Filtration and Evaporation',
-    capsRef:'NS&T Grade 6 Term 2 — Matter & Materials: Mixtures (CAPS p. 42)',
-    objectives:'1. Identify that mixtures can be separated using different methods.\n2. Explain how filtration separates an insoluble solid from a liquid.\n3. Describe how evaporation separates a dissolved solid from a liquid.',
-    priorKnowledge:'Learners should know the difference between a mixture and a pure substance (Gr 5 Term 3). They should be able to identify soluble and insoluble substances.',
-    resources:'Textbook (NS&T Gr 6), filter paper, funnels, beakers, sand, salt, water, hot plate, safety goggles, Leuro Assistant worksheets.',
-    teacherActivities:'1. Introduction (5 min): Recap mixtures — think-pair-share: "How would you separate sand from water?"\n2. Demonstration (10 min): Demonstrate filtration using sand and water. Label apparatus on the board.\n3. Explanation (10 min): Explain evaporation using salt water. Show diagram linking to water cycle.\n4. Guided Practice (10 min): Learners complete observation table on worksheet.\n5. Closure (5 min): Summarise key points. Q&A. Preview next lesson.',
-    learnerActivities:'1. Think-pair-share: Discuss how to separate a mixture.\n2. Observe teacher demonstration — record observations in table.\n3. Label diagram of filtration apparatus.\n4. Complete worksheet: match separation method to mixture type.\n5. Write one sentence summarising what they learned.',
-    differentiation:'Support: Pre-labelled diagrams and word banks provided. Extension: Research industrial uses of filtration (e.g. water purification). EAL learners: Bilingual vocabulary list provided.',
-    assessment:'Informal: Observation during activity. Worksheet completion (formative). Exit ticket: Name one method of separation and explain when you would use it.',
-    reflection:''
-  };
-}
-
 let currentLessonData=null;
 
-function generateLessonPlan(){
+async function generateLessonPlan(){
   const grade=document.getElementById('lp_grade')?.value;
+  const language=document.getElementById('lp_lang')?.value;
   const subject=document.getElementById('lp_subject')?.value;
   const term=document.getElementById('lp_term')?.value;
   const week=document.getElementById('lp_week')?.value;
   const duration=document.getElementById('lp_duration')?.value;
-  const topic=document.getElementById('lp_topic')?.value;
-  if(!grade||!subject){alert(T('alert_grade_subject'));return;}
-  document.getElementById('lessonFormSection').style.display='none';
-  const preview=document.getElementById('lessonPlanPreview');
-  preview.style.display='block';
-  document.getElementById('previewTitle').textContent=grade+' — '+subject+(topic?': '+topic:'');
-  document.getElementById('lessonPlanContent').innerHTML=`<div class="lp-generating"><div class="lp-spinner"></div>${T('gen_lp')}</div>`;
-  setTimeout(()=>{
-    currentLessonData=buildLessonData(grade,subject,term,week,duration,topic);
+  const topic=document.getElementById('lp_topic')?.value?.trim()||'';
+  const additionalNotes=document.getElementById('lp_notes')?.value||'';
+
+  const subjErr=document.getElementById('lp_subject_err');
+  const topicErr=document.getElementById('lp_topic_err');
+  if(subjErr){subjErr.style.display='none';subjErr.textContent='';}
+  if(topicErr){topicErr.style.display='none';topicErr.textContent='';}
+
+  let valid=true;
+  if(!subject){ if(subjErr){subjErr.textContent=T('err_field_required');subjErr.style.display='block';} valid=false; }
+  if(!topic){ if(topicErr){topicErr.textContent=T('err_field_required');topicErr.style.display='block';} valid=false; }
+  if(!valid) return;
+
+  const btn=document.getElementById('lpGenerateBtn');
+  const status=document.getElementById('lpGenStatus');
+  const originalBtnHtml=btn?btn.innerHTML:'';
+  if(btn){ btn.disabled=true; btn.innerHTML='<span class="lp-btn-spin">&#10227;</span> '+T('btn_generating'); }
+  if(status){ status.textContent=T('lp_ai_wait'); status.style.display='block'; }
+
+  function restoreBtn(){
+    if(btn){ btn.disabled=false; btn.innerHTML=originalBtnHtml; }
+  }
+
+  try{
+    const { data:{ user } } = await _sb.auth.getUser();
+    const meta=user?.user_metadata||{};
+    const teacherName=meta.full_name||user?.email||'';
+    const schoolName=meta.school_name||'';
+
+    const { data, error } = await _sb.functions.invoke('generate-lesson-plan', {
+      body:{ grade, language, subject, term, week, duration, topic, additionalNotes, teacherName, schoolName }
+    });
+
+    if(error||!data||data.error){
+      if(status){ status.textContent=T('err_lp_generic'); }
+      restoreBtn();
+      return;
+    }
+
+    const today=new Date().toLocaleDateString('en-ZA',{day:'2-digit',month:'long',year:'numeric'});
+    currentLessonData={
+      school:escHtml(schoolName), educator:escHtml(teacherName),
+      subject:escHtml(subject), grade:escHtml(grade), term:escHtml(term), week:escHtml(week),
+      date:today, duration:(duration||'40')+' minutes',
+      topic:escHtml(topic),
+      subTopic:escHtml(data.sub_topic||''),
+      capsRef:escHtml(data.caps_reference||''),
+      objectives:escHtml(data.learning_objectives||''),
+      priorKnowledge:escHtml(data.prior_knowledge||''),
+      resources:escHtml(data.resources_materials||''),
+      teacherActivities:escHtml(data.teacher_activities||''),
+      learnerActivities:escHtml(data.learner_activities||''),
+      differentiation:escHtml(data.differentiation_support||''),
+      assessment:escHtml(data.assessment||''),
+      reflection:''
+    };
+
+    document.getElementById('lessonFormSection').style.display='none';
+    const preview=document.getElementById('lessonPlanPreview');
+    preview.style.display='block';
+    document.getElementById('previewTitle').textContent=grade+' — '+subject+': '+topic;
     renderLessonPreview(currentLessonData);
     docsGenerated++; updateDashboardStats();
-  },900);
+
+    if(status){ status.style.display='none'; status.textContent=''; }
+    restoreBtn();
+  } catch(err){
+    if(status){ status.textContent=T('err_lp_generic'); }
+    restoreBtn();
+  }
 }
 
 function closeLessonPreview(){
