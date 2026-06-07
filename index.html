@@ -125,29 +125,25 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 .ai-send{background:var(--color-primary);border:none;border-radius:var(--radius-sm);padding:9px 18px;color:#fff;font-size:0.78rem;font-weight:700;font-family:var(--font-family);cursor:pointer;transition:all 0.2s;white-space:nowrap;box-shadow:0 3px 10px rgba(90,62,118,0.25)}
 .ai-send:hover{background:var(--color-primary-lt)}
 
-/* ASSISTANT CARD */
-.assistant-card .card-header{gap:12px}
-.assistant-toggle-wrap{display:flex;align-items:center;gap:8px;cursor:pointer;margin-left:auto}
-.assistant-toggle-label{font-size:0.72rem;font-weight:600;color:var(--color-text-mid)}
-.toggle-switch{display:inline-flex}
-.toggle-switch input{position:absolute;opacity:0;width:0;height:0}
-.toggle-track{display:inline-block;width:38px;height:22px;background:var(--color-border);border-radius:999px;position:relative;transition:background 0.2s}
-.toggle-thumb{position:absolute;top:2px;left:2px;width:18px;height:18px;background:var(--color-surface);border-radius:50%;box-shadow:var(--shadow-sm);transition:transform 0.2s}
-.toggle-switch input:checked + .toggle-track{background:var(--color-primary)}
-.toggle-switch input:checked + .toggle-track .toggle-thumb{transform:translateX(16px)}
-.assistant-body{padding:16px 18px;display:flex;flex-direction:column;gap:14px}
-.assistant-chips{display:flex;flex-wrap:wrap;gap:8px}
-.assistant-chip{background:var(--color-primary-xl);color:var(--color-primary);border:none;border-radius:999px;padding:7px 14px;font-size:0.72rem;font-weight:600;font-family:var(--font-family);cursor:pointer;transition:all 0.18s}
-.assistant-chip:hover{background:var(--color-primary);color:#fff}
-.assistant-input-row .ai-input-wrap{flex:1}
-.assistant-response{display:none;border-left:3px solid var(--color-primary);background:var(--color-primary-xl);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:12px 16px;font-size:0.8rem;color:var(--color-text);line-height:1.6;white-space:pre-line}
-.assistant-thinking{display:inline-flex;align-items:center;gap:5px}
-.assistant-thinking .dot{width:6px;height:6px;border-radius:50%;background:var(--color-primary);animation:assistantDotPulse 1.2s ease-in-out infinite}
-.assistant-thinking .dot:nth-child(2){animation-delay:0.2s}
-.assistant-thinking .dot:nth-child(3){animation-delay:0.4s}
-@keyframes assistantDotPulse{0%,80%,100%{opacity:0.25;transform:scale(0.85)}40%{opacity:1;transform:scale(1.15)}}
+/* DASHBOARD AI ASSISTANT CARD */
+.dashboard-ai-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:20px;display:flex;flex-direction:column;gap:14px}
+.ai-card-header{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:0.9rem;font-weight:700;color:var(--color-text)}
+.ai-toggle-label{display:flex;align-items:center;gap:8px;font-size:0.72rem;font-weight:600;color:var(--color-text-mid);cursor:pointer}
+.ai-chips{display:flex;flex-wrap:wrap;gap:8px}
+.ai-chip{background:var(--color-primary-xl);color:var(--color-primary);border:none;border-radius:999px;padding:7px 14px;font-size:0.72rem;font-weight:600;font-family:var(--font-family);cursor:pointer;transition:all 0.18s}
+.ai-chip:hover{background:var(--color-primary);color:#fff}
+.ai-input-row{display:flex;gap:10px;align-items:center}
+.ai-input-row #ai-input{flex-grow:1;background:var(--color-background);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:10px 14px;color:var(--color-text);font-family:var(--font-family);font-size:0.8rem;transition:border-color 0.18s}
+.ai-input-row #ai-input:focus{outline:none;border-color:var(--color-primary)}
+.ai-input-row #ai-input::placeholder{color:var(--color-text-muted)}
+.ai-response{border-left:3px solid var(--color-primary);padding:12px 16px;margin-top:4px;font-size:0.8rem;color:var(--color-text);line-height:1.6;white-space:pre-line;background:var(--color-primary-xl);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+.ai-thinking-dots{display:inline-flex;align-items:center;gap:5px}
+.ai-thinking-dots .dot{width:6px;height:6px;border-radius:50%;background:var(--color-primary);animation:aiDotPulse 1.2s ease-in-out infinite}
+.ai-thinking-dots .dot:nth-child(2){animation-delay:0.2s}
+.ai-thinking-dots .dot:nth-child(3){animation-delay:0.4s}
+@keyframes aiDotPulse{0%,80%,100%{opacity:0.25;transform:scale(0.85)}40%{opacity:1;transform:scale(1.15)}}
 @media (max-width:860px){
-  .assistant-input-row .ai-input-wrap{flex-direction:column}
+  .ai-input-row{flex-direction:column;align-items:stretch}
 }
 
 /* TIMETABLE */
@@ -429,7 +425,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
   /* Content layout fixes */
   .stats-row{grid-template-columns:repeat(2,1fr)}
   .two-col{grid-template-columns:1fr!important}
-  .ai-strip .ai-input-wrap{display:none}
+  .ai-input-wrap{display:none}
   .date-chip{display:none}
   /* Timetable specific */
   .tt-lock-bar{flex-wrap:wrap;gap:6px;padding:8px 12px}
@@ -709,22 +705,20 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
         <div class="stat-card"><div class="stat-label" data-i18n="stat_docs">Docs Generated</div><div class="stat-value c-text" id="statDocs">0</div><div class="stat-sub" data-i18n="stat_docs_sub">This session</div></div>
         <div class="stat-card"><div class="stat-label" data-i18n="stat_moderation">Moderation</div><div class="stat-value c-green" id="statMod">0%</div><div class="stat-sub" id="statModSub" data-i18n="stat_mod_no">No entries yet</div></div>
       </div>
-      <div class="card assistant-card">
-        <div class="card-header">
-          <span class="card-icon">🤖</span>
-          <div class="card-title" data-i18n="assistant_heading">Leuro Assistant</div>
-          <label class="assistant-toggle-wrap">
-            <span class="assistant-toggle-label" data-i18n="assistant_toggle_label">Share my profile</span>
-            <span class="toggle-switch"><input type="checkbox" id="assistantShareToggle"><span class="toggle-track"><span class="toggle-thumb"></span></span></span>
+      <div class="dashboard-ai-card">
+        <div class="ai-card-header">
+          <span>🤖 Leuro Assistant</span>
+          <label class="ai-toggle-label">
+            <span data-i18n="ai_share_profile">Share my profile</span>
+            <input type="checkbox" id="ai-share-toggle">
           </label>
         </div>
-        <div class="assistant-body">
-          <div class="assistant-chips" id="assistantChips"></div>
-          <div class="assistant-input-row">
-            <div class="ai-input-wrap"><input class="ai-input" id="assistantInput" placeholder="Ask anything about teaching…" data-i18n-placeholder="assistant_placeholder"><button class="ai-send" id="assistantAskBtn" data-i18n="assistant_ask_btn">Ask →</button></div>
-          </div>
-          <div class="assistant-response" id="assistantResponse" style="display:none"></div>
+        <div class="ai-chips" id="ai-chips"></div>
+        <div class="ai-input-row">
+          <input type="text" id="ai-input" data-i18n-placeholder="ai_input_ph" placeholder="Ask anything about teaching...">
+          <button id="ai-ask-btn" class="btn-primary" data-i18n="ai_ask_btn">Ask →</button>
         </div>
+        <div class="ai-response" id="ai-response" style="display:none;"></div>
       </div>
       <div class="two-col">
         <div class="card">
@@ -1273,18 +1267,17 @@ const UI_STRINGS = {
     btn_signout:'Sign Out',
     ai_placeholder:'Ask Leuro Assistant anything…',btn_ask_ai:'Ask →',
     // Leuro Assistant card
-    assistant_heading:'Leuro Assistant',
-    assistant_toggle_label:'Share my profile',
-    assistant_placeholder:'Ask anything about teaching...',
-    assistant_ask_btn:'Ask →',
-    assistant_thinking:'Leuro is thinking...',
-    assistant_chip1_generic:'What should I focus on this week?',
-    assistant_chip2_generic:'Help me write a parent message',
-    assistant_chip3_generic:'Suggest a warm-up activity for my class',
-    assistant_chip1_personal:'What should I focus on this week, {name}?',
-    assistant_chip2_personal:'Help me plan for tomorrow',
-    assistant_chip3_personal:'Draft a message to parents about homework',
-    assistant_error:'Something went wrong. Please try again.',
+    ai_share_profile:'Share my profile',
+    ai_input_ph:'Ask anything about teaching...',
+    ai_ask_btn:'Ask →',
+    ai_thinking:'Leuro is thinking...',
+    ai_chip1_generic:'What should I focus on this week?',
+    ai_chip2_generic:'Help me write a parent message',
+    ai_chip3_generic:'Suggest a warm-up activity',
+    ai_chip1_personal:'What should I focus on this week, {name}?',
+    ai_chip2_personal:'Help me plan for tomorrow',
+    ai_chip3_personal:'Draft a message to parents about homework',
+    ai_error:'Something went wrong. Please try again.',
     // Timetable days
     day_mon:'Monday',day_tue:'Tuesday',day_wed:'Wednesday',day_thu:'Thursday',day_fri:'Friday',
     // Reminders modal
@@ -1454,18 +1447,17 @@ const UI_STRINGS = {
     btn_signout:'Teken Uit',
     ai_placeholder:'Vra Leuro Assistent enigiets…',btn_ask_ai:'Vra →',
     // Leuro Assistant card
-    assistant_heading:'Leuro Assistent',
-    assistant_toggle_label:'Deel my profiel',
-    assistant_placeholder:'Vra enigiets oor onderrig...',
-    assistant_ask_btn:'Vra →',
-    assistant_thinking:'Leuro dink...',
-    assistant_chip1_generic:'Waarop moet ek hierdie week fokus?',
-    assistant_chip2_generic:"Help my om 'n ouerberig te skryf",
-    assistant_chip3_generic:"Stel 'n opwarmingsaktiwiteit voor",
-    assistant_chip1_personal:'Waarop moet ek hierdie week fokus, {name}?',
-    assistant_chip2_personal:'Help my om vir môre te beplan',
-    assistant_chip3_personal:"Stel 'n boodskap aan ouers oor huiswerk op",
-    assistant_error:'Iets het verkeerd geloop. Probeer asseblief weer.',
+    ai_share_profile:'Deel my profiel',
+    ai_input_ph:'Vra enigiets oor onderrig...',
+    ai_ask_btn:'Vra →',
+    ai_thinking:'Leuro dink...',
+    ai_chip1_generic:'Waarop moet ek hierdie week fokus?',
+    ai_chip2_generic:"Help my om 'n ouerberig te skryf",
+    ai_chip3_generic:"Stel 'n opwarmingsaktiwiteit voor",
+    ai_chip1_personal:'Waarop moet ek hierdie week fokus, {name}?',
+    ai_chip2_personal:'Help my om vir môre te beplan',
+    ai_chip3_personal:"Stel 'n boodskap aan ouers oor huiswerk op",
+    ai_error:'Iets het verkeerd geloop. Probeer asseblief weer.',
     // Lesson Planning screen
     // Timetable days
     day_mon:'Maandag',day_tue:'Dinsdag',day_wed:'Woensdag',day_thu:'Donderdag',day_fri:'Vrydag',
@@ -3573,29 +3565,29 @@ function _assistantFirstName(){
 }
 
 function renderAssistantChips(){
-  const wrap = document.getElementById('assistantChips');
+  const wrap = document.getElementById('ai-chips');
   if(!wrap) return;
   const firstName = _assistantFirstName();
   const chips = assistantShareProfile ? [
-    firstName ? T('assistant_chip1_personal').replace('{name}', firstName) : T('assistant_chip1_generic'),
-    T('assistant_chip2_personal'),
-    T('assistant_chip3_personal'),
+    firstName ? T('ai_chip1_personal').replace('{name}', firstName) : T('ai_chip1_generic'),
+    T('ai_chip2_personal'),
+    T('ai_chip3_personal'),
   ] : [
-    T('assistant_chip1_generic'),
-    T('assistant_chip2_generic'),
-    T('assistant_chip3_generic'),
+    T('ai_chip1_generic'),
+    T('ai_chip2_generic'),
+    T('ai_chip3_generic'),
   ];
-  wrap.innerHTML = chips.map(c => `<button type="button" class="assistant-chip">${escHtml(c)}</button>`).join('');
-  wrap.querySelectorAll('.assistant-chip').forEach((btn, i) => {
+  wrap.innerHTML = chips.map(c => `<button type="button" class="ai-chip">${escHtml(c)}</button>`).join('');
+  wrap.querySelectorAll('.ai-chip').forEach((btn, i) => {
     btn.addEventListener('click', () => {
-      const input = document.getElementById('assistantInput');
+      const input = document.getElementById('ai-input');
       if(input){ input.value = chips[i]; input.focus(); }
     });
   });
 }
 
 function initAssistantCard(){
-  const toggle = document.getElementById('assistantShareToggle');
+  const toggle = document.getElementById('ai-share-toggle');
   if(toggle){
     toggle.checked = assistantShareProfile;
     toggle.addEventListener('change', () => {
@@ -3605,8 +3597,8 @@ function initAssistantCard(){
     });
   }
 
-  const askBtn = document.getElementById('assistantAskBtn');
-  const input = document.getElementById('assistantInput');
+  const askBtn = document.getElementById('ai-ask-btn');
+  const input = document.getElementById('ai-input');
   if(askBtn) askBtn.addEventListener('click', askAssistant);
   if(input) input.addEventListener('keypress', (e) => { if(e.key === 'Enter') askAssistant(); });
 
@@ -3614,14 +3606,14 @@ function initAssistantCard(){
 }
 
 async function askAssistant(){
-  const input = document.getElementById('assistantInput');
-  const responseEl = document.getElementById('assistantResponse');
+  const input = document.getElementById('ai-input');
+  const responseEl = document.getElementById('ai-response');
   if(!input || !responseEl) return;
   const question = input.value.trim();
   if(!question) return;
 
   responseEl.style.display = 'block';
-  responseEl.innerHTML = `<span class="assistant-thinking">${escHtml(T('assistant_thinking'))} <span class="dot"></span><span class="dot"></span><span class="dot"></span></span>`;
+  responseEl.innerHTML = `<span class="ai-thinking-dots">${escHtml(T('ai_thinking'))} <span class="dot"></span><span class="dot"></span><span class="dot"></span></span>`;
 
   try{
     const context = assistantShareProfile ? { name: assistantTeacherName, school: assistantSchoolName } : null;
@@ -3629,13 +3621,13 @@ async function askAssistant(){
       body: { question, context },
     });
     if(error || !data?.response){
-      responseEl.textContent = T('assistant_error');
+      responseEl.textContent = T('ai_error');
       return;
     }
     responseEl.textContent = data.response;
     input.value = '';
   }catch(_e){
-    responseEl.textContent = T('assistant_error');
+    responseEl.textContent = T('ai_error');
   }
 }
 
