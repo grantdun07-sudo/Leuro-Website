@@ -1236,6 +1236,9 @@ const UI_STRINGS = {
     // Reminders modal
     rem_modal_title:'🔔 Add Reminder',
     lbl_title_req:'Title *',lbl_notes_opt:'Notes (optional)',lbl_when:'When',lbl_priority:'Priority',
+    rem_title_ph:'e.g. Term 2 Moderation Pack due',
+    rem_notes_ph:'e.g. HOD submission · Gr 6 & 7',
+    rem_when_ph:'e.g. Tomorrow, 8am · Wednesday · Fri 3pm',
     opt_normal:'Normal',opt_soon:'Soon',opt_urgent:'Urgent',
     btn_add_rem_action:'Add Reminder',btn_cancel:'Cancel',
     // Moderation modal
@@ -1400,6 +1403,9 @@ const UI_STRINGS = {
     // Reminders modal
     rem_modal_title:'🔔 Voeg Herinnering By',
     lbl_title_req:'Titel *',lbl_notes_opt:'Notas (opsioneel)',lbl_when:'Wanneer',lbl_priority:'Prioriteit',
+    rem_title_ph:'bv. Kwartaal 2 Moderasiepak verskuldig',
+    rem_notes_ph:'bv. HOD-indiening · Gr 6 & 7',
+    rem_when_ph:'bv. Môre, 8vm · Woensdag · Vr 3nm',
     opt_normal:'Normaal',opt_soon:'Gou',opt_urgent:'Dringend',
     btn_add_rem_action:'Voeg Herinnering By',btn_cancel:'Kanselleer',
     // Moderation modal
@@ -3497,9 +3503,9 @@ function updateDashboardStats(){
   <div class="modal" style="max-width:420px;width:92%">
     <h3 data-i18n="rem_modal_title">🔔 Add Reminder</h3>
     <div style="display:flex;flex-direction:column;gap:14px;margin-top:8px">
-      <div><label class="input-label" data-i18n="lbl_title_req">Title *</label><input type="text" class="text-input" id="remTitle" placeholder="e.g. Term 2 Moderation Pack due"></div>
-      <div><label class="input-label" data-i18n="lbl_notes_opt">Notes (optional)</label><input type="text" class="text-input" id="remNotes" placeholder="e.g. HOD submission · Gr 6 & 7"></div>
-      <div><label class="input-label" data-i18n="lbl_when">When</label><input type="text" class="text-input" id="remTime" placeholder="e.g. Tomorrow, 8am · Wednesday · Fri 3pm"></div>
+      <div><label class="input-label" data-i18n="lbl_title_req">Title *</label><input type="text" class="text-input" id="remTitle" placeholder="e.g. Term 2 Moderation Pack due" data-i18n-placeholder="rem_title_ph"></div>
+      <div><label class="input-label" data-i18n="lbl_notes_opt">Notes (optional)</label><input type="text" class="text-input" id="remNotes" placeholder="e.g. HOD submission · Gr 6 & 7" data-i18n-placeholder="rem_notes_ph"></div>
+      <div><label class="input-label" data-i18n="lbl_when">When</label><input type="text" class="text-input" id="remTime" placeholder="e.g. Tomorrow, 8am · Wednesday · Fri 3pm" data-i18n-placeholder="rem_when_ph"></div>
       <div><label class="input-label" data-i18n="lbl_priority">Priority</label>
         <select class="select-input" id="remUrgency">
           <option value="info" data-i18n="opt_normal">Normal</option>
