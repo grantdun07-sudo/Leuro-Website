@@ -362,8 +362,6 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 .lp-table td.lp-value[contenteditable="true"]:focus{background:var(--color-accent-lt)}
 .lp-header-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
 .lp-pdf-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--color-border-lt);background:var(--color-background)}
-.lp-generating{display:flex;align-items:center;gap:12px;padding:24px 20px;color:var(--color-text-mid);font-size:0.82rem}
-.lp-spinner{width:20px;height:20px;border:2px solid var(--color-border);border-top-color:var(--color-primary);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0}
 .lp-btn-spin{display:inline-block;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
@@ -962,9 +960,11 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
                 <option>Social Sciences</option>
                 <option>Life Skills</option>
               </select>
+              <div id="ws_subject_err" class="lp-field-error" style="display:none;color:var(--color-red);font-size:0.7rem;margin-top:4px"></div>
             </div>
             <div><label class="input-label" data-i18n="lbl_topic">Topic / CAPS Section</label>
               <textarea class="textarea-input" id="ws_topic" placeholder="e.g. Separation of mixtures — filtration and evaporation"></textarea>
+              <div id="ws_topic_err" class="lp-field-error" style="display:none;color:var(--color-red);font-size:0.7rem;margin-top:4px"></div>
             </div>
             <div class="select-row-2">
               <div><label class="input-label" data-i18n="lbl_q_types">Question Types</label>
@@ -981,7 +981,8 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
                 </select>
               </div>
             </div>
-            <button class="btn-primary" onclick="generateWorksheet()" data-i18n="btn_generate_ws">🤖 Generate Worksheet &amp; Memo</button>
+            <button class="btn-primary" id="wsGenerateBtn" onclick="generateWorksheet()" data-i18n="btn_generate_ws">🤖 Generate Worksheet &amp; Memo</button>
+            <div id="wsGenStatus" style="display:none;font-size:0.72rem;color:var(--color-text-mid);margin-top:8px"></div>
           </div>
         </div>
         <div class="card">
@@ -1286,7 +1287,6 @@ const UI_STRINGS = {
     report_done:'done',report_missed:'not done',report_carry:'carry-over(s)',
     report_no_tt:'Set up your timetable to view weekly reports.',
     // Alert / confirm messages
-    alert_grade_subject:'Please select a Grade and Subject first.',
     alert_gen_lp_first:'Generate a lesson plan first.',
     alert_gen_ws_first:'Generate a worksheet first.',
     alert_enter_name:'Please enter your full name.',
@@ -1297,9 +1297,8 @@ const UI_STRINGS = {
     err_lp_generic:'Something went wrong. Please try again.',
     btn_generating:'Generating...',
     lp_ai_wait:'Leuro Assistant is preparing your lesson plan. This may take 10–15 seconds...',
-    // Generating states
-    gen_lp:'Generating CAPS-aligned lesson plan...',
-    gen_ws:'Generating worksheet and memo...',
+    ws_err_field_required:'Please complete this field.',
+    ws_ai_wait:'Leuro Assistant is building your worksheet. This may take 15–20 seconds...',
     // Dashboard
     dash_more_periods:'more periods',
     // Moderation stat
@@ -1445,7 +1444,6 @@ const UI_STRINGS = {
     report_done:'gedoen',report_missed:'nie gedoen',report_carry:'oordraer(s)',
     report_no_tt:'Stel u rooster op om weeklikse verslae te sien.',
     // Alert / confirm messages
-    alert_grade_subject:"Kies eers 'n Graad en Vak.",
     alert_gen_lp_first:"Genereer eers 'n lesplan.",
     alert_gen_ws_first:"Genereer eers 'n werksvel.",
     alert_enter_name:'Voer asseblief u volle naam in.',
@@ -1456,9 +1454,8 @@ const UI_STRINGS = {
     err_lp_generic:'Iets het verkeerd geloop. Probeer asseblief weer.',
     btn_generating:'Genereer tans...',
     lp_ai_wait:'Leuro Assistent berei tans u lesplan voor. Dit kan 10–15 sekondes neem...',
-    // Generating states
-    gen_lp:'Genereer CAPS-ooreenstemmende lesplan...',
-    gen_ws:'Genereer werksvel en memo...',
+    ws_err_field_required:'Voltooi asseblief hierdie veld.',
+    ws_ai_wait:'Leuro Assistent bou tans u werksvel. Dit kan 15–20 sekondes neem...',
     // Dashboard
     dash_more_periods:'meer periodes',
     // Moderation stat
@@ -2083,13 +2080,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
 // ════════════════════════════════════════════
 // LESSON PLAN GENERATOR + CAPS PDF EXPORT
 // ════════════════════════════════════════════
-function getTeacherProfile(){
-  return{
-    name:document.getElementById('profileName')?.value||'Ms. N. Molefe',
-    school:document.getElementById('profileSchool')?.value||'Kempton Park Primary School'
-  };
-}
-
 let currentLessonData=null;
 
 async function generateLessonPlan(){
@@ -2340,91 +2330,6 @@ function downloadLessonPDF(){
 
 let currentWsData = null;
 
-// ── Sample data builder ──
-function buildWorksheetData(grade, subject, topic, qcount, marks, qtype) {
-  const p = getTeacherProfile();
-  const today = new Date().toLocaleDateString('en-ZA',{day:'2-digit',month:'long',year:'numeric'});
-  const totalQ = parseInt(qcount)||8;
-  const totalM = parseInt(marks)||30;
-
-  // Build questions array
-  const questions = [];
-
-  // Section A: True/False (2 questions)
-  questions.push({
-    section:'A', sectionTitle:'Section A — True or False',
-    type:'tf', num:1,
-    text:'Filtration is used to separate a dissolved solid from water.',
-    marks:1, answer:'False — Filtration separates an insoluble solid from a liquid. Evaporation is used for dissolved solids.'
-  });
-  questions.push({
-    section:'A', sectionTitle:null,
-    type:'tf', num:2,
-    text:'A mixture is made up of two or more substances that are not chemically combined.',
-    marks:1, answer:'True — A mixture consists of substances that retain their own properties and can be separated by physical means.'
-  });
-
-  // Section B: MCQ (3 questions)
-  questions.push({
-    section:'B', sectionTitle:'Section B — Multiple Choice',
-    type:'mcq', num:3,
-    text:'Which method would you use to separate sand from water?',
-    options:['A. Evaporation','B. Filtration','C. Distillation','D. Condensation'],
-    marks:1, answer:'B. Filtration', answerNote:'Sand is insoluble in water and can be caught by filter paper.'
-  });
-  questions.push({
-    section:'B', sectionTitle:null,
-    type:'mcq', num:4,
-    text:'What is left behind in the filter paper after filtration?',
-    options:['A. The filtrate','B. The solvent','C. The residue','D. The solution'],
-    marks:1, answer:'C. The residue', answerNote:'The insoluble solid that cannot pass through the filter paper is called the residue.'
-  });
-  questions.push({
-    section:'B', sectionTitle:null,
-    type:'mcq', num:5,
-    text:'Which of the following is an example of a homogeneous mixture?',
-    options:['A. Sand and gravel','B. Salt water','C. Oil and water','D. Soil'],
-    marks:1, answer:'B. Salt water', answerNote:'Salt water is homogeneous — the salt is evenly distributed throughout.'
-  });
-
-  // Section C: Short Answer (3 questions)
-  questions.push({
-    section:'C', sectionTitle:'Section C — Short Answer',
-    type:'short', num:6,
-    text:'Define the term "filtrate" in your own words.',
-    lines:3, marks:2,
-    answer:'The filtrate is the liquid that passes through the filter paper during filtration. It contains any dissolved substances but no insoluble particles.'
-  });
-  questions.push({
-    section:'C', sectionTitle:null,
-    type:'short', num:7,
-    text:'Explain the process of evaporation and give ONE example of when it is used to separate a mixture.',
-    lines:4, marks:3,
-    answer:'Evaporation is the process where a liquid is heated until it turns into a gas (vapour), leaving behind the dissolved solid. Example: Heating salt water to obtain salt / recovering salt from seawater.'
-  });
-  questions.push({
-    section:'C', sectionTitle:null,
-    type:'short', num:8,
-    text:'Name TWO apparatus (equipment) used during the filtration process and describe the function of each.',
-    lines:5, marks:4,
-    answer:'1. Funnel — holds the filter paper in place and directs the liquid through the filter paper into the beaker.\n2. Filter paper — acts as a barrier that allows the liquid to pass through but traps insoluble solid particles (residue).\nAlso accept: beaker (collects filtrate), retort stand (supports funnel).'
-  });
-
-  const totalGiven = questions.reduce((s,q)=>s+q.marks,0);
-
-  return {
-    school: p.school,
-    educator: p.name,
-    subject: subject||'Natural Sciences & Technology',
-    grade: grade||'Grade 6',
-    topic: topic||'Separation of Mixtures — Filtration and Evaporation',
-    date: today,
-    term: '2',
-    totalMarks: totalGiven,
-    questions: questions
-  };
-}
-
 // ── Tab switching ──
 function showWsTab(tab) {
   const isWs = tab === 'ws';
@@ -2440,25 +2345,96 @@ function closeWsPreview() {
 }
 
 // ── Generate ──
-function generateWorksheet() {
-  const grade   = document.getElementById('ws_grade')?.value;
-  const subject = document.getElementById('ws_subject')?.value;
-  const topic   = document.getElementById('ws_topic')?.value;
-  const qcount  = document.getElementById('ws_qcount')?.value;
-  const qtype   = document.getElementById('ws_qtype')?.value;
-  if(!grade||!subject){alert(T('alert_grade_subject'));return;}
-  document.getElementById('wsFormSection').style.display = 'none';
-  const preview = document.getElementById('wsPreview');
-  preview.style.display = 'block';
-  document.getElementById('wsContent').innerHTML = `<div class="lp-generating"><div class="lp-spinner"></div>${T('gen_ws')}</div>`;
-  document.getElementById('memoContent').innerHTML = '';
-  showWsTab('ws');
-  setTimeout(()=>{
-    currentWsData = buildWorksheetData(grade,subject,topic,qcount,30,qtype);
+const WS_TYPE_MAP = { true_false:'tf', multiple_choice:'mcq', short_answer:'short' };
+
+async function generateWorksheet() {
+  const grade            = document.getElementById('ws_grade')?.value;
+  const language         = document.getElementById('ws_lang')?.value;
+  const subject          = document.getElementById('ws_subject')?.value;
+  const topic            = document.getElementById('ws_topic')?.value?.trim()||'';
+  const questionTypes    = document.getElementById('ws_qtype')?.value;
+  const numberOfQuestions= document.getElementById('ws_qcount')?.value;
+
+  const subjErr = document.getElementById('ws_subject_err');
+  const topicErr = document.getElementById('ws_topic_err');
+  if(subjErr){ subjErr.style.display='none'; subjErr.textContent=''; }
+  if(topicErr){ topicErr.style.display='none'; topicErr.textContent=''; }
+
+  let valid=true;
+  if(!subject){ if(subjErr){subjErr.textContent=T('ws_err_field_required');subjErr.style.display='block';} valid=false; }
+  if(!topic){ if(topicErr){topicErr.textContent=T('ws_err_field_required');topicErr.style.display='block';} valid=false; }
+  if(!valid) return;
+
+  const btn = document.getElementById('wsGenerateBtn');
+  const status = document.getElementById('wsGenStatus');
+  const originalBtnHtml = btn?btn.innerHTML:'';
+  if(btn){ btn.disabled=true; btn.innerHTML='<span class="lp-btn-spin">&#10227;</span> '+T('btn_generating'); }
+  if(status){ status.textContent=T('ws_ai_wait'); status.style.display='block'; }
+
+  function restoreBtn(){
+    if(btn){ btn.disabled=false; btn.innerHTML=originalBtnHtml; }
+  }
+
+  try{
+    const { data:{ user } } = await _sb.auth.getUser();
+    const meta = user?.user_metadata || {};
+    const teacherName = meta.full_name||user?.email||'';
+    const schoolName = meta.school_name||'';
+
+    const { data, error } = await _sb.functions.invoke('generate-worksheet', {
+      body:{ grade, language, subject, topic, questionTypes, numberOfQuestions, teacherName, schoolName }
+    });
+
+    if(error||!data||data.error){
+      if(status){ status.textContent=T('err_lp_generic'); }
+      restoreBtn();
+      return;
+    }
+
+    const today = new Date().toLocaleDateString('en-ZA',{day:'2-digit',month:'long',year:'numeric'});
+    const questions=[];
+    (data.sections||[]).forEach(section=>{
+      const type = WS_TYPE_MAP[section.type]||'short';
+      (section.questions||[]).forEach((q,qi)=>{
+        questions.push({
+          sectionTitle: qi===0 ? escHtml(section.title||'') : null,
+          memoSectionTitle: qi===0 ? escHtml(section.memo_title||'') : null,
+          type,
+          num: q.number,
+          text: escHtml(q.question||''),
+          marks: q.marks,
+          options: Array.isArray(q.options) ? q.options.map(o=>escHtml(o)) : null,
+          answer: escHtml(q.answer||''),
+          answerNote: q.answer_note ? escHtml(q.answer_note) : null,
+          lines: q.lines||3
+        });
+      });
+    });
+
+    currentWsData = {
+      school:escHtml(schoolName), educator:escHtml(teacherName),
+      subject:escHtml(subject), grade:escHtml(grade),
+      topic:escHtml(topic), date:today,
+      totalMarks:data.total_marks,
+      instructions:escHtml(data.instructions||''),
+      questions
+    };
+
+    document.getElementById('wsFormSection').style.display = 'none';
+    const preview = document.getElementById('wsPreview');
+    preview.style.display = 'block';
+    document.getElementById('memoContent').innerHTML = '';
     renderWorksheet(currentWsData);
     renderMemo(currentWsData);
+    showWsTab('ws');
     docsGenerated++; updateDashboardStats();
-  },800);
+
+    if(status){ status.style.display='none'; status.textContent=''; }
+    restoreBtn();
+  } catch(err){
+    if(status){ status.textContent=T('err_lp_generic'); }
+    restoreBtn();
+  }
 }
 
 // ── Render worksheet ──
@@ -2482,7 +2458,7 @@ function renderWorksheet(d) {
         <div class="ws-learner-field"><span class="ws-learner-label">Class:</span><div class="ws-learner-line"></div></div>
       </div>
     </div>
-    <div class="ws-instructions" contenteditable="true">Instructions: Answer ALL questions. Write neatly. Show all working where applicable. No calculators unless stated.</div>`;
+    <div class="ws-instructions" contenteditable="true">${d.instructions || 'Instructions: Answer ALL questions. Write neatly. Show all working where applicable. No calculators unless stated.'}</div>`;
 
   let currentSection = '';
   d.questions.forEach((q, i) => {
@@ -2546,7 +2522,7 @@ function renderMemo(d) {
   let currentSection = '';
   d.questions.forEach(q => {
     if(q.sectionTitle){
-      html += `<div class="ws-section-title" style="color:var(--color-green);border-color:var(--color-green)" contenteditable="true">${q.sectionTitle} — Answers</div>`;
+      html += `<div class="ws-section-title" style="color:var(--color-green);border-color:var(--color-green)" contenteditable="true">${q.memoSectionTitle || (q.sectionTitle + ' — Answers')}</div>`;
     }
     html += `<div class="memo-q">
       <div class="memo-q-row">
