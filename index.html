@@ -148,22 +148,6 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
   letter-spacing: -0.3px;
 }
 
-.ai-toggle-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: rgba(255,255,255,0.75);
-  font-size: 13px;
-  cursor: pointer;
-}
-
-.ai-toggle-label input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-  accent-color: var(--color-accent);
-}
-
 .ai-chips {
   display: flex;
   flex-wrap: wrap;
@@ -378,6 +362,15 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 /* FORMS */
 .form-body{padding:18px;display:flex;flex-direction:column;gap:14px}
 .input-label{font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:5px;display:block}
+.settings-toggle-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:6px 0;cursor:pointer}
+.settings-toggle-title{font-size:0.82rem;font-weight:600;color:var(--color-text)}
+.settings-toggle-desc{font-size:0.7rem;color:var(--color-text-muted);margin-top:3px;max-width:420px}
+.settings-toggle-switch{display:inline-flex;position:relative;flex-shrink:0}
+.settings-toggle-switch input{position:absolute;opacity:0;width:0;height:0}
+.settings-toggle-track{display:inline-block;width:40px;height:23px;background:var(--color-border);border-radius:999px;position:relative;transition:background 0.2s}
+.settings-toggle-thumb{position:absolute;top:2px;left:2px;width:19px;height:19px;background:var(--color-surface);border-radius:50%;box-shadow:var(--shadow-sm);transition:transform 0.2s}
+.settings-toggle-switch input:checked + .settings-toggle-track{background:var(--color-primary)}
+.settings-toggle-switch input:checked + .settings-toggle-track .settings-toggle-thumb{transform:translateX(17px)}
 .select-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .select-row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .select-input,.text-input,.number-input{background:var(--color-background);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:9px 12px;color:var(--color-text);font-family:var(--font-family);font-size:0.8rem;width:100%;appearance:none;cursor:pointer;transition:border-color 0.18s}
@@ -839,10 +832,6 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
       <div class="dashboard-ai-card">
         <div class="ai-card-header">
           <span>🤖 Leuro Assistant</span>
-          <label class="ai-toggle-label">
-            <span data-i18n="ai_share_profile">Share my profile</span>
-            <input type="checkbox" id="ai-share-toggle">
-          </label>
         </div>
         <div class="ai-chips" id="ai-chips"></div>
         <div class="ai-input-row">
@@ -1265,6 +1254,22 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
           </div>
         </div>
       </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-icon">🤖</span><div class="card-title" data-i18n="card_ai_prefs">AI Preferences</div></div>
+        <div class="form-body" style="gap:0">
+          <label class="settings-toggle-row">
+            <div>
+              <div class="settings-toggle-title" data-i18n="ai_pref_toggle_label">Personalised responses</div>
+              <div class="settings-toggle-desc" data-i18n="ai_pref_toggle_desc">Share your name and school with Leuro Assistant for more relevant answers.</div>
+            </div>
+            <span class="settings-toggle-switch">
+              <input type="checkbox" id="aiPrefToggle">
+              <span class="settings-toggle-track"><span class="settings-toggle-thumb"></span></span>
+            </span>
+          </label>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -1380,6 +1385,9 @@ const UI_STRINGS = {
     lbl_full_name:'Full Name',lbl_post_level:'Post Level',lbl_school:'School',btn_save_profile:'Save Profile',
     notif_email:'Email reminders',notif_mod:'Moderation due alerts',
     notif_carryover:'Carry-over notifications',notif_caps:'CAPS calendar auto-reminders',
+    card_ai_prefs:'AI Preferences',
+    ai_pref_toggle_label:'Personalised responses',
+    ai_pref_toggle_desc:'Share your name and school with Leuro Assistant for more relevant answers.',
     // Notifications dropdown
     notif_title:'Notifications',notif_empty:'No notifications yet.',
     // Timetable dynamic labels
@@ -1398,7 +1406,6 @@ const UI_STRINGS = {
     btn_signout:'Sign Out',
     ai_placeholder:'Ask Leuro Assistant anything…',btn_ask_ai:'Ask →',
     // Leuro Assistant card
-    ai_share_profile:'Share my profile',
     ai_input_ph:'Ask anything about teaching...',
     ai_ask_btn:'Ask →',
     ai_thinking:'Leuro is thinking...',
@@ -1560,6 +1567,9 @@ const UI_STRINGS = {
     lbl_full_name:'Volle Naam',lbl_post_level:'Posvlak',lbl_school:'Skool',btn_save_profile:'Stoor Profiel',
     notif_email:'E-posherinneringe',notif_mod:'Modereringsverfaldatumwaarskuwings',
     notif_carryover:'Oordraggeringskennisgewings',notif_caps:'CAPS-kalender outoherinneringe',
+    card_ai_prefs:'KI-voorkeure',
+    ai_pref_toggle_label:'Gepersonaliseerde antwoorde',
+    ai_pref_toggle_desc:'Deel jou naam en skool met Leuro Assistent vir meer relevante antwoorde.',
     // Notifications dropdown
     notif_title:'Kennisgewings',notif_empty:'Nog geen kennisgewings nie.',
     // Timetable dynamic labels
@@ -1578,7 +1588,6 @@ const UI_STRINGS = {
     btn_signout:'Teken Uit',
     ai_placeholder:'Vra Leuro Assistent enigiets…',btn_ask_ai:'Vra →',
     // Leuro Assistant card
-    ai_share_profile:'Deel my profiel',
     ai_input_ph:'Vra enigiets oor onderrig...',
     ai_ask_btn:'Vra →',
     ai_thinking:'Leuro dink...',
@@ -2291,6 +2300,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   ttRenderBreaks();
   initAuth();
   initAssistantCard();
+  initAiPrefToggle();
 });
 
 // ════════════════════════════════════════════
@@ -3718,22 +3728,25 @@ function renderAssistantChips(){
 }
 
 function initAssistantCard(){
-  const toggle = document.getElementById('ai-share-toggle');
-  if(toggle){
-    toggle.checked = assistantShareProfile;
-    toggle.addEventListener('change', () => {
-      assistantShareProfile = toggle.checked;
-      localStorage.setItem('leuro_share_profile', assistantShareProfile ? 'true' : 'false');
-      renderAssistantChips();
-    });
-  }
-
   const askBtn = document.getElementById('ai-ask-btn');
   const input = document.getElementById('ai-input');
   if(askBtn) askBtn.addEventListener('click', askAssistant);
   if(input) input.addEventListener('keypress', (e) => { if(e.key === 'Enter') askAssistant(); });
 
   renderAssistantChips();
+}
+
+function initAiPrefToggle(){
+  const toggle = document.getElementById('aiPrefToggle');
+  if(!toggle) return;
+  toggle.checked = assistantShareProfile;
+  toggle.addEventListener('change', () => {
+    assistantShareProfile = toggle.checked;
+    localStorage.setItem('leuro_share_profile', assistantShareProfile ? 'true' : 'false');
+    if(document.getElementById('screen-dashboard')?.classList.contains('visible')){
+      renderAssistantChips();
+    }
+  });
 }
 
 function renderMarkdown(text) {
