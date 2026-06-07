@@ -80,10 +80,14 @@ Deno.serve(async (req: Request) => {
     }
 
     const anthropicData = await anthropicRes.json();
-    const rawText = anthropicData?.content?.[0]?.text ?? '';
+    let rawText = anthropicData?.content?.[0]?.text ?? '';
 
     let lessonPlan;
     try {
+      rawText = rawText.trim();
+      if (rawText.startsWith('```')) {
+        rawText = rawText.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+      }
       lessonPlan = JSON.parse(rawText);
     } catch (_err) {
       return new Response(JSON.stringify({ error: 'AI response could not be parsed.' }), {
