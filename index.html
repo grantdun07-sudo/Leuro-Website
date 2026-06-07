@@ -865,13 +865,13 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
             <div><label class="input-label" data-i18n="lbl_subject">Subject</label>
               <select class="select-input" id="lp_subject">
                 <option value="" data-i18n="opt_select_subject">Select subject...</option>
-                <option>Natural Sciences &amp; Technology</option>
-                <option>Afrikaans Home Language</option>
-                <option>English Home Language</option>
-                <option>Mathematics</option>
-                <option>Social Sciences</option>
-                <option>Life Skills</option>
-                <option>Arts &amp; Culture</option>
+                <option value="Natural Sciences &amp; Technology" data-i18n="subj_nst">Natural Sciences &amp; Technology</option>
+                <option value="Afrikaans Home Language" data-i18n="subj_afr_hl">Afrikaans Home Language</option>
+                <option value="English Home Language" data-i18n="subj_eng_hl">English Home Language</option>
+                <option value="Mathematics" data-i18n="subj_math">Mathematics</option>
+                <option value="Social Sciences" data-i18n="subj_ss">Social Sciences</option>
+                <option value="Life Skills" data-i18n="subj_ls">Life Skills</option>
+                <option value="Arts &amp; Culture" data-i18n="subj_ac">Arts &amp; Culture</option>
               </select>
               <div id="lp_subject_err" class="lp-field-error" style="display:none;color:var(--color-red);font-size:0.7rem;margin-top:4px"></div>
             </div>
@@ -893,11 +893,11 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
               </div>
             </div>
             <div><label class="input-label" data-i18n="lbl_topic">Topic / CAPS Section</label>
-              <textarea class="textarea-input" id="lp_topic" placeholder="e.g. Separation of mixtures — filtration and evaporation"></textarea>
+              <textarea class="textarea-input" id="lp_topic" placeholder="e.g. Separation of mixtures — filtration and evaporation" data-i18n-placeholder="lp_topic_ph"></textarea>
               <div id="lp_topic_err" class="lp-field-error" style="display:none;color:var(--color-red);font-size:0.7rem;margin-top:4px"></div>
             </div>
             <div><label class="input-label" data-i18n="lbl_ai_notes">Additional Notes for AI (optional)</label>
-              <textarea class="textarea-input" id="lp_notes" placeholder="e.g. Class has 28 learners, some need additional support with vocabulary..."></textarea>
+              <textarea class="textarea-input" id="lp_notes" placeholder="e.g. Class has 28 learners, some need additional support with vocabulary..." data-i18n-placeholder="lp_notes_ph"></textarea>
             </div>
             <button class="btn-primary" id="lpGenerateBtn" onclick="generateLessonPlan()" data-i18n="btn_generate_lp">🤖 Generate CAPS Lesson Plan</button>
             <div id="lpGenStatus" style="display:none;font-size:0.72rem;color:var(--color-text-mid);margin-top:8px"></div>
@@ -946,24 +946,24 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
               </div>
               <div><label class="input-label" data-i18n="lbl_language">Language</label>
                 <select class="select-input" id="ws_lang">
-                  <option>English</option><option>Afrikaans</option><option>Both</option>
+                  <option>English</option><option>Afrikaans</option><option data-i18n="opt_lang_both">Both</option>
                 </select>
               </div>
             </div>
             <div><label class="input-label" data-i18n="lbl_subject">Subject</label>
               <select class="select-input" id="ws_subject">
                 <option value="" data-i18n="opt_select_subject">Select subject...</option>
-                <option>Natural Sciences &amp; Technology</option>
-                <option>Afrikaans Home Language</option>
-                <option>English Home Language</option>
-                <option>Mathematics</option>
-                <option>Social Sciences</option>
-                <option>Life Skills</option>
+                <option value="Natural Sciences &amp; Technology" data-i18n="subj_nst">Natural Sciences &amp; Technology</option>
+                <option value="Afrikaans Home Language" data-i18n="subj_afr_hl">Afrikaans Home Language</option>
+                <option value="English Home Language" data-i18n="subj_eng_hl">English Home Language</option>
+                <option value="Mathematics" data-i18n="subj_math">Mathematics</option>
+                <option value="Social Sciences" data-i18n="subj_ss">Social Sciences</option>
+                <option value="Life Skills" data-i18n="subj_ls">Life Skills</option>
               </select>
               <div id="ws_subject_err" class="lp-field-error" style="display:none;color:var(--color-red);font-size:0.7rem;margin-top:4px"></div>
             </div>
             <div><label class="input-label" data-i18n="lbl_topic">Topic / CAPS Section</label>
-              <textarea class="textarea-input" id="ws_topic" placeholder="e.g. Separation of mixtures — filtration and evaporation"></textarea>
+              <textarea class="textarea-input" id="ws_topic" placeholder="e.g. Separation of mixtures — filtration and evaporation" data-i18n-placeholder="ws_topic_ph"></textarea>
               <div id="ws_topic_err" class="lp-field-error" style="display:none;color:var(--color-red);font-size:0.7rem;margin-top:4px"></div>
             </div>
             <div class="select-row-2">
@@ -1247,6 +1247,13 @@ const UI_STRINGS = {
     // Grade / subject / question types
     grade_prefix:'Grade',opt_select:'Select...',opt_select_subject:'Select subject...',
     opt_ws_mixed:'Mixed',opt_ws_mcq:'MCQ Only',opt_ws_short:'Short Answer',opt_ws_tf:'True/False + Short Answer',
+    opt_lang_both:'Both',
+    subj_nst:'Natural Sciences & Technology',subj_afr_hl:'Afrikaans Home Language',subj_eng_hl:'English Home Language',
+    subj_math:'Mathematics',subj_ss:'Social Sciences',subj_ls:'Life Skills',subj_ac:'Arts & Culture',
+    subj_tech:'Technology',subj_ems:'Economic & Management Sciences',
+    lp_topic_ph:'e.g. Separation of mixtures — filtration and evaporation',
+    lp_notes_ph:'e.g. Class has 28 learners, some need additional support with vocabulary...',
+    ws_topic_ph:'e.g. Separation of mixtures — filtration and evaporation',
     // Stats dynamic
     stat_rem_1:'reminder set',stat_rems_n:'reminders set',
     stat_item_out:'item outstanding',stat_items_out:'items outstanding',stat_all_uptodate:'All up to date',
@@ -1404,6 +1411,13 @@ const UI_STRINGS = {
     // Grade / subject / question types
     grade_prefix:'Graad',opt_select:'Kies...',opt_select_subject:'Kies vak...',
     opt_ws_mixed:'Gemengd',opt_ws_mcq:'Meervoudige Keuse Slegs',opt_ws_short:'Kort Antwoord',opt_ws_tf:'Waar/Onwaar + Kort Antwoord',
+    opt_lang_both:'Beide',
+    subj_nst:'Natuurwetenskappe & Tegnologie',subj_afr_hl:'Afrikaans Huistaal',subj_eng_hl:'Engels Huistaal',
+    subj_math:'Wiskunde',subj_ss:'Sosiale Wetenskappe',subj_ls:'Lewensvaardighede',subj_ac:'Kuns & Kultuur',
+    subj_tech:'Tegnologie',subj_ems:'Ekonomiese & Bestuurswetenskappe',
+    lp_topic_ph:'bv. Skeiding van mengsels — filtrasie en verdamping',
+    lp_notes_ph:'bv. Klas het 28 leerders, sommige benodig ekstra ondersteuning met woordeskat...',
+    ws_topic_ph:'bv. Skeiding van mengsels — filtrasie en verdamping',
     // Stats dynamic
     stat_rem_1:'herinnering gestel',stat_rems_n:'herinneringe gestel',
     stat_item_out:'item uitstaande',stat_items_out:'items uitstaande',stat_all_uptodate:'Alles op datum',
