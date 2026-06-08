@@ -625,6 +625,9 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 .auth-tab.active{color:var(--color-primary);border-bottom-color:var(--color-primary);background:var(--color-primary-xl)}
 .auth-form{padding:22px 28px 28px;display:flex;flex-direction:column;gap:13px}
 .auth-field{display:flex;flex-direction:column;gap:5px}
+.phase-checkbox-group{display:flex;flex-direction:column;gap:8px;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:10px 12px;background:var(--color-background)}
+.phase-checkbox-item{display:flex;align-items:center;gap:9px;font-size:0.78rem;color:var(--color-text-mid);cursor:pointer}
+.phase-checkbox-item input{width:16px;height:16px;accent-color:var(--color-primary);cursor:pointer;flex-shrink:0}
 .auth-msg{font-size:0.75rem;padding:9px 12px;border-radius:var(--radius-sm);display:none;line-height:1.5}
 .auth-msg.visible{display:block}
 .auth-msg.error{color:var(--color-red);background:var(--color-red-lt);border:1px solid rgba(224,84,84,0.25)}
@@ -649,6 +652,15 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 .plan-subject-group{border-bottom:1px solid var(--color-border-lt);padding:14px 18px 16px}
 .plan-subject-group:last-child{border-bottom:none}
 .plan-focus-row{margin-bottom:10px}
+.focus-tag-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.focus-tag{display:inline-flex;align-items:center;gap:6px;background:var(--color-primary-xl);color:var(--color-primary);border-radius:20px;padding:5px 10px;font-size:0.72rem;font-weight:600}
+.focus-tag.completed{opacity:0.65}
+.focus-tag.completed .focus-tag-text{text-decoration:line-through}
+.focus-tag-check{cursor:pointer;accent-color:var(--color-primary)}
+.focus-tag-remove{background:none;border:none;cursor:pointer;color:var(--color-primary);font-size:0.9rem;line-height:1;padding:0 2px;opacity:0.6}
+.focus-tag-remove:hover{opacity:1}
+.focus-tag-add-row{display:flex;gap:8px;align-items:center}
+.focus-tag-add-row .focus-tag-input{flex:1}
 .plan-period-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--color-border-lt);flex-wrap:wrap}
 .plan-period-meta{display:flex;align-items:center;gap:6px;flex-shrink:0;width:120px}
 .plan-day-badge{font-size:0.67rem;background:var(--color-primary-xl);color:var(--color-primary);padding:2px 7px;border-radius:20px;font-weight:700}
@@ -727,6 +739,16 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
         <div class="auth-field">
           <label class="input-label">Full Name</label>
           <input type="text" class="text-input" id="regName" placeholder="e.g. Ms. N. Molefe" required autocomplete="name">
+        </div>
+        <div class="auth-field">
+          <label class="input-label" data-i18n="lbl_phases">Which phase(s) do you teach?</label>
+          <div class="phase-checkbox-group" id="regPhases">
+            <label class="phase-checkbox-item"><input type="checkbox" value="Foundation Phase — Grade R, 1, 2, 3"><span>Foundation Phase — Grade R, 1, 2, 3</span></label>
+            <label class="phase-checkbox-item"><input type="checkbox" value="Intermediate Phase — Grade 4, 5, 6"><span>Intermediate Phase — Grade 4, 5, 6</span></label>
+            <label class="phase-checkbox-item"><input type="checkbox" value="Senior Phase — Grade 7, 8, 9"><span>Senior Phase — Grade 7, 8, 9</span></label>
+            <label class="phase-checkbox-item"><input type="checkbox" value="FET Phase — Grade 10, 11, 12"><span>FET Phase — Grade 10, 11, 12</span></label>
+            <label class="phase-checkbox-item"><input type="checkbox" value="Multi-grade / Other"><span>Multi-grade / Other</span></label>
+          </div>
         </div>
         <div class="auth-field">
           <label class="input-label">School</label>
@@ -811,7 +833,7 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
           <div class="notif-drop-empty" data-i18n="notif_empty">No notifications yet.</div>
         </div>
       </div>
-      <div class="icon-btn" onclick="openHelp()">❓</div>
+      <div class="icon-btn" onclick="openHelp()" title="Help" data-i18n-title="help_tooltip">❓</div>
     </div>
   </div>
 
@@ -1234,6 +1256,16 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
           <div class="card-header"><span class="card-icon">👤</span><div class="card-title" data-i18n="card_profile">Profile</div></div>
           <div class="form-body">
             <div><label class="input-label" data-i18n="lbl_full_name">Full Name</label><input type="text" class="text-input" id="profileName" placeholder="e.g. Ms. N. Molefe"></div>
+            <div>
+              <label class="input-label" data-i18n="lbl_phases_settings">Phase(s) I teach</label>
+              <div class="phase-checkbox-group" id="settingsPhases">
+                <label class="phase-checkbox-item"><input type="checkbox" value="Foundation Phase — Grade R, 1, 2, 3"><span>Foundation Phase — Grade R, 1, 2, 3</span></label>
+                <label class="phase-checkbox-item"><input type="checkbox" value="Intermediate Phase — Grade 4, 5, 6"><span>Intermediate Phase — Grade 4, 5, 6</span></label>
+                <label class="phase-checkbox-item"><input type="checkbox" value="Senior Phase — Grade 7, 8, 9"><span>Senior Phase — Grade 7, 8, 9</span></label>
+                <label class="phase-checkbox-item"><input type="checkbox" value="FET Phase — Grade 10, 11, 12"><span>FET Phase — Grade 10, 11, 12</span></label>
+                <label class="phase-checkbox-item"><input type="checkbox" value="Multi-grade / Other"><span>Multi-grade / Other</span></label>
+              </div>
+            </div>
             <div><label class="input-label" data-i18n="lbl_post_level">Post Level</label><select class="select-input">
               <option value="Post Level 1" data-i18n="opt_post_1">Post Level 1</option>
               <option value="Post Level 2 (HOD)" data-i18n="opt_post_2">Post Level 2 (HOD)</option>
@@ -1383,6 +1415,7 @@ const UI_STRINGS = {
     settings_tt_card:'Timetable Setup',
     card_profile:'Profile',card_notifications:'Notifications',
     lbl_full_name:'Full Name',lbl_post_level:'Post Level',lbl_school:'School',btn_save_profile:'Save Profile',
+    lbl_phases:'Which phase(s) do you teach?',lbl_phases_settings:'Phase(s) I teach',
     notif_email:'Email reminders',notif_mod:'Moderation due alerts',
     notif_carryover:'Carry-over notifications',notif_caps:'CAPS calendar auto-reminders',
     card_ai_prefs:'AI Preferences',
@@ -1455,7 +1488,7 @@ const UI_STRINGS = {
     tt_lbl_start:'School Start Time',tt_lbl_periods:'Periods Per Day',tt_lbl_duration:'Period Duration (min)',tt_lbl_class:'Class',
     tt_lbl_num_breaks:'Number of Breaks',tt_lbl_breaks:'Breaks',
     tt_add_break:'+ Add Break',tt_no_breaks:'No breaks configured.',
-    tt_break_name_ph:'Break name...',tt_after_period:'After period #',
+    tt_break_label:'Break',tt_break_name_ph:'Break name...',tt_after_period:'After period #',
     tt_same_daily:'Same every day',tt_diff_daily:'Different per day',
     tt_next_1:'Next: Schedule Type →',tt_next_2:'Next: Period Setup →',tt_next_3:'Next: Review & Save →',
     tt_back:'← Back',tt_ready:'✅ Timetable Ready to Save',
@@ -1473,6 +1506,7 @@ const UI_STRINGS = {
     reports_sub:'Track your weekly lesson completion, carry-overs, and subject progress.',
     plan_prev_week:'← Previous Week',plan_next_week:'Next Week →',
     plan_weekly_focus:'Weekly Focus',plan_focus_ph:'What are you covering this week in this subject?',
+    focus_tag_ph:'Type a focus area and press Enter...',focus_tag_add:'Add',focus_tag_remove:'Remove',
     plan_lesson_ph:"Today's lesson focus",plan_completed:'Lesson completed ✓',
     plan_save_btn:'💾 Save Week Plan',plan_saving:'Saving…',plan_saved:'✅ Week plan saved!',
     plan_no_tt:'Set up your timetable first to use weekly planning.',
@@ -1483,6 +1517,10 @@ const UI_STRINGS = {
     carry_banner:'You have',carry_banner2:'carry-over(s) pending',carry_from:'Carry-over from',
     report_done:'done',report_missed:'not done',report_carry:'carry-over(s)',
     report_no_tt:'Set up your timetable to view weekly reports.',
+    help_tooltip:'Help',
+    help_modal_title:'❓ Leuro Assistant — Help',
+    help_modal_body:'<b>🏠 Dashboard</b> — Overview of your day, reminders, and documents.<br><b>📅 My Timetable</b> — View your teaching schedule. Configure it in Settings first.<br><b>📝 Lesson Prep</b> — Generate CAPS-aligned lesson plans as printable PDFs.<br><b>📄 Worksheets &amp; Memos</b> — Create worksheets with answer memos and export as PDFs.<br><b>🔍 Moderation</b> — Track SBA moderation progress per subject and grade.<br><b>🔔 Reminders</b> — Add and manage deadlines and teaching reminders.<br><b>⚙️ Settings</b> — Update your profile, school name, and set up your timetable.',
+    help_modal_close:'Got it ✓',
     // Alert / confirm messages
     alert_gen_lp_first:'Generate a lesson plan first.',
     alert_gen_ws_first:'Generate a worksheet first.',
@@ -1565,6 +1603,7 @@ const UI_STRINGS = {
     settings_tt_card:'Roosteropstelling',
     card_profile:'Profiel',card_notifications:'Kennisgewings',
     lbl_full_name:'Volle Naam',lbl_post_level:'Posvlak',lbl_school:'Skool',btn_save_profile:'Stoor Profiel',
+    lbl_phases:'Watter fase(s) onderrig jy?',lbl_phases_settings:'Fase(s) wat ek onderrig',
     notif_email:'E-posherinneringe',notif_mod:'Modereringsverfaldatumwaarskuwings',
     notif_carryover:'Oordraggeringskennisgewings',notif_caps:'CAPS-kalender outoherinneringe',
     card_ai_prefs:'KI-voorkeure',
@@ -1638,7 +1677,7 @@ const UI_STRINGS = {
     tt_lbl_start:'Skool Begintyd',tt_lbl_periods:'Periodes Per Dag',tt_lbl_duration:'Periodduur (min)',tt_lbl_class:'Klas',
     tt_lbl_num_breaks:'Aantal Pouses',tt_lbl_breaks:'Pouses',
     tt_add_break:'+ Voeg Pouse By',tt_no_breaks:'Geen pouses opgestel nie.',
-    tt_break_name_ph:'Pousenaam...',tt_after_period:'Na periode #',
+    tt_break_label:'Pouse',tt_break_name_ph:'Pousenaam...',tt_after_period:'Na periode #',
     tt_same_daily:'Dieselfde elke dag',tt_diff_daily:'Verskillend per dag',
     tt_next_1:'Volgende: Roostertipe →',tt_next_2:'Volgende: Periodeopstelling →',tt_next_3:'Volgende: Oorsig & Stoor →',
     tt_back:'← Terug',tt_ready:'✅ Rooster Gereed om te Stoor',
@@ -1656,6 +1695,7 @@ const UI_STRINGS = {
     reports_sub:'Volg u weeklikse lesse, oordraers en vakvordering.',
     plan_prev_week:'← Vorige Week',plan_next_week:'Volgende Week →',
     plan_weekly_focus:'Weeklikse Fokus',plan_focus_ph:'Wat dek u hierdie week in hierdie vak?',
+    focus_tag_ph:"Tik 'n fokusarea en druk Enter...",focus_tag_add:'Voeg By',focus_tag_remove:'Verwyder',
     plan_lesson_ph:"Vandag se lesfokus",plan_completed:'Les voltooi ✓',
     plan_save_btn:'💾 Stoor Weekplan',plan_saving:'Stoor…',plan_saved:'✅ Weekplan gestoor!',
     plan_no_tt:'Stel eers u rooster op om weekplanning te gebruik.',
@@ -1666,6 +1706,10 @@ const UI_STRINGS = {
     carry_banner:'U het',carry_banner2:'oordrager(s) hangende',carry_from:'Oordrag van',
     report_done:'gedoen',report_missed:'nie gedoen',report_carry:'oordraer(s)',
     report_no_tt:'Stel u rooster op om weeklikse verslae te sien.',
+    help_tooltip:'Hulp',
+    help_modal_title:'❓ Leuro Assistent — Hulp',
+    help_modal_body:'<b>🏠 Tuisblad</b> — Oorsig van jou dag, herinneringe en dokumente.<br><b>📅 My Rooster</b> — Bekyk jou onderrigskedule. Stel dit eers in Instellings op.<br><b>📝 Lesvoorbereiding</b> — Genereer KABV-belynde lesplanne as drukbare PDF-dokumente.<br><b>📄 Werkkaarte &amp; Memorandums</b> — Skep werkkaarte met antwoordmemorandums en voer uit as PDF-dokumente.<br><b>🔍 Moderering</b> — Volg SBA-moderering per vak en graad.<br><b>🔔 Herinneringe</b> — Voeg sperdatums en onderrigherinneringe by en bestuur dit.<br><b>⚙️ Instellings</b> — Werk jou profiel, skoolnaam by en stel jou rooster op.',
+    help_modal_close:'Reg so ✓',
     // Alert / confirm messages
     alert_gen_lp_first:"Genereer eers 'n lesplan.",
     alert_gen_ws_first:"Genereer eers 'n werksvel.",
@@ -1709,6 +1753,10 @@ function setLang(lang, btn){
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
     const key = el.dataset.i18nPlaceholder;
     if(t[key] !== undefined) el.placeholder = t[key];
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.dataset.i18nTitle;
+    if(t[key] !== undefined) el.title = t[key];
   });
   document.querySelectorAll('[data-grade-option]').forEach(opt => {
     opt.textContent = T('grade_prefix') + ' ' + opt.dataset.gradeOption;
@@ -1766,25 +1814,125 @@ function updateGreeting(){
 // ════════════════════════════════════════════
 
 // ─── CAPS SUBJECTS ───
-const CAPS_SUBJECTS_LIST = [
-  'Afrikaans','English','Afrikaans Home Language','English Home Language',
-  'Afrikaans First Additional Language','English First Additional Language',
-  'Mathematics','Mathematical Literacy','Life Sciences','Physical Sciences',
-  'Geography','History','Economics','Business Studies','Accounting',
-  'Life Orientation','Technology','Natural Sciences','Social Sciences',
-  'Arts and Culture','Economic and Management Sciences',
-  'Computer Applications Technology','Information Technology',
-  'Dramatic Arts','Visual Arts','Music','Religion Studies',
-  'Consumer Studies','Hospitality Studies','Agricultural Sciences',
-  'Civil Technology','Electrical Technology','Mechanical Technology',
-  'Engineering Graphics and Design','Sport and Exercise Science',
-  'Home Language','First Additional Language',
-  'Life Skills','Arts & Culture','Creative Arts'
-];
+const PHASE_SUBJECTS = {
+  'foundation': [
+    'Life Skills', 'Afrikaans Home Language', 'English Home Language',
+    'Mathematics', 'Setswana', 'Zulu', 'Xhosa', 'Sotho'
+  ],
+  'intermediate': [
+    'Afrikaans Home Language', 'English Home Language', 'Mathematics',
+    'Natural Sciences & Technology', 'Social Sciences', 'Life Skills',
+    'Arts & Culture', 'Economic & Management Sciences'
+  ],
+  'senior': [
+    'Afrikaans Home Language', 'Afrikaans First Additional Language',
+    'English Home Language', 'English First Additional Language',
+    'Mathematics', 'Mathematical Literacy', 'Natural Sciences',
+    'Technology', 'Social Sciences', 'Life Orientation',
+    'Economic & Management Sciences', 'Arts & Culture',
+    'Creative Arts', 'Physical Sciences'
+  ],
+  'fet': [
+    'Afrikaans Home Language', 'Afrikaans First Additional Language',
+    'English Home Language', 'English First Additional Language',
+    'Mathematics', 'Mathematical Literacy', 'Technical Mathematics',
+    'Physical Sciences', 'Technical Sciences', 'Life Sciences',
+    'Geography', 'History', 'Accounting', 'Business Studies',
+    'Economics', 'Life Orientation', 'Computer Applications Technology',
+    'Information Technology', 'Engineering Graphics & Design',
+    'Visual Arts', 'Music', 'Dramatic Arts', 'Consumer Studies',
+    'Tourism', 'Agricultural Sciences', 'Agricultural Technology',
+    'Civil Technology', 'Electrical Technology', 'Mechanical Technology'
+  ],
+  'multi': [
+    'Afrikaans Home Language', 'English Home Language', 'Mathematics',
+    'Natural Sciences & Technology', 'Social Sciences', 'Life Skills',
+    'Life Orientation', 'Physical Sciences', 'Life Sciences', 'Other'
+  ]
+};
+
+const PHASE_KEY_MAP = {
+  'Foundation Phase — Grade R, 1, 2, 3': 'foundation',
+  'Intermediate Phase — Grade 4, 5, 6': 'intermediate',
+  'Senior Phase — Grade 7, 8, 9': 'senior',
+  'FET Phase — Grade 10, 11, 12': 'fet',
+  'Multi-grade / Other': 'multi'
+};
+
+function mapPhaseToKey(phase) {
+  return PHASE_KEY_MAP[phase] || null;
+}
+
+function getCombinedSubjects(phases) {
+  const combined = [];
+  phases.forEach(phase => {
+    const key = mapPhaseToKey(phase);
+    if (PHASE_SUBJECTS[key]) {
+      PHASE_SUBJECTS[key].forEach(subject => {
+        if (!combined.includes(subject)) combined.push(subject);
+      });
+    }
+  });
+  return combined.sort();
+}
+
+function getAllSubjectsCombined() {
+  const combined = [];
+  Object.keys(PHASE_SUBJECTS).forEach(key => {
+    PHASE_SUBJECTS[key].forEach(subject => {
+      if (!combined.includes(subject)) combined.push(subject);
+    });
+  });
+  return combined.sort();
+}
+
+function getDisplaySubjects() {
+  return (Array.isArray(currentPhases) && currentPhases.length)
+    ? getCombinedSubjects(currentPhases)
+    : getAllSubjectsCombined();
+}
+
+const SUBJECT_TRANSLATIONS_AF = {
+  'Life Skills':'Lewensvaardighede',
+  'Mathematics':'Wiskunde',
+  'Natural Sciences & Technology':'Natuurwetenskappe & Tegnologie',
+  'Natural Sciences':'Natuurwetenskappe',
+  'Social Sciences':'Sosiale Wetenskappe',
+  'Life Orientation':'Lewensoriëntering',
+  'Physical Sciences':'Fisiese Wetenskappe',
+  'Life Sciences':'Lewenswetenskappe',
+  'Geography':'Geografie',
+  'History':'Geskiedenis',
+  'Accounting':'Rekeningkunde',
+  'Business Studies':'Besigheidstudies',
+  'Economics':'Ekonomie',
+  'Computer Applications Technology':'Rekenaartoepassingstegnologie',
+  'Information Technology':'Inligtingstegnologie',
+  'Engineering Graphics & Design':'Ingenieursgrafika & Ontwerp',
+  'Visual Arts':'Visuele Kuns',
+  'Dramatic Arts':'Dramatiese Kuns',
+  'Consumer Studies':'Verbruikerstudies',
+  'Tourism':'Toerisme',
+  'Agricultural Sciences':'Landbouwetenskappe',
+  'Arts & Culture':'Kuns & Kultuur',
+  'Creative Arts':'Kreatiewe Kunste',
+  'Technical Mathematics':'Tegniese Wiskunde',
+  'Technical Sciences':'Tegniese Wetenskappe',
+  'Economic & Management Sciences':'Ekonomiese & Bestuurswetenskappe',
+  'Technology':'Tegnologie',
+  'Music':'Musiek',
+  'Other':'Ander'
+};
+
+function translateSubject(name) {
+  if (currentLang === 'af' && SUBJECT_TRANSLATIONS_AF[name]) return SUBJECT_TRANSLATIONS_AF[name];
+  return name || '';
+}
 
 // ─── STATE ───
 let savedTimetable = null;
 let currentDay = 'Monday';
+let currentPhases = [];
 let docsGenerated = 0;
 const TT_DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
 
@@ -1973,7 +2121,7 @@ function ttStartEdit(){
 // ─── STEP 1: BREAKS ───
 function ttRenderBreaks(){
   const n = parseInt(document.getElementById('ttNumBreaks')?.value)||0;
-  while(ttSetupData.breaks.length < n) ttSetupData.breaks.push({name:'Break '+(ttSetupData.breaks.length+1), after_period:Math.floor(parseInt(document.getElementById('ttPeriodsPerDay')?.value||8)/2), duration:20});
+  while(ttSetupData.breaks.length < n) ttSetupData.breaks.push({name:T('tt_break_label')+' '+(ttSetupData.breaks.length+1), after_period:Math.floor(parseInt(document.getElementById('ttPeriodsPerDay')?.value||8)/2), duration:20});
   ttSetupData.breaks = ttSetupData.breaks.slice(0,n);
   const wrap = document.getElementById('ttBreaksWrap');
   if(!wrap) return;
@@ -1994,7 +2142,7 @@ function ttAddBreak(){
   const cur = parseInt(nb?.value||0);
   if(cur>=4) return;
   if(nb) nb.value = cur+1;
-  ttSetupData.breaks.push({name:'Break '+(cur+1), after_period:Math.ceil(parseInt(document.getElementById('ttPeriodsPerDay')?.value||8)/2), duration:20});
+  ttSetupData.breaks.push({name:T('tt_break_label')+' '+(cur+1), after_period:Math.ceil(parseInt(document.getElementById('ttPeriodsPerDay')?.value||8)/2), duration:20});
   ttRenderBreaks();
 }
 
@@ -2049,7 +2197,7 @@ function ttRenderPeriodsGrid(dayKey){
   const times = calcPeriodTimes(ttSetupData.startTime, ttSetupData.periodDuration, ttSetupData.breaks, n);
   if(!ttSetupData.periods[dayKey]) ttSetupData.periods[dayKey]=[];
 
-  const subjectOpts = CAPS_SUBJECTS_LIST.map(s=>`<option value="${escHtml(s)}">${escHtml(s)}</option>`).join('');
+  const subjectOpts = getDisplaySubjects().map(s=>`<option value="${escHtml(s)}">${escHtml(translateSubject(s))}</option>`).join('');
 
   let html='';
   for(let i=0;i<n;i++){
@@ -2057,7 +2205,7 @@ function ttRenderPeriodsGrid(dayKey){
     const t = times[i];
     if(i>0){
       const brk = (ttSetupData.breaks||[]).find(b=>parseInt(b.after_period)===i);
-      if(brk) html+=`<div style="font-size:0.7rem;color:var(--color-accent-dk);font-weight:600;padding:4px 0;display:flex;align-items:center;gap:6px"><span>☕</span><span>${escHtml(brk.name||'Break')} · ${brk.duration} min</span></div>`;
+      if(brk) html+=`<div style="font-size:0.7rem;color:var(--color-accent-dk);font-weight:600;padding:4px 0;display:flex;align-items:center;gap:6px"><span>☕</span><span>${escHtml(brk.name||T('tt_break_label'))} · ${brk.duration} min</span></div>`;
     }
     html+=`<div class="tt-period-row">
       <div class="tt-period-num">P${i+1}</div>
@@ -2192,14 +2340,14 @@ function renderTimetable(){
     const hasSubj=!!(p.subject);
     const lk = lKey(wi.year, wi.weekNum, currentDay, i);
     const entry = lessonData[lk] || {};
-    const weekFocus = hasSubj ? ((planData[pKey(wi.year,wi.weekNum,p.subject,p.grade||'',p.class_name||'')]||{}).focus||'') : '';
+    const weekFocusTags = hasSubj ? _focusAsTags((planData[pKey(wi.year,wi.weekNum,p.subject,p.grade||'',p.class_name||'')]||{}).focus) : [];
     let carryInfo = null;
     if(entry.carry_over_from){ try{ carryInfo = JSON.parse(entry.carry_over_from); }catch(e){} }
 
     html+=`<div class="period-card${hasSubj?'':' period-card-empty'}">
       <div class="period-card-num">P${i+1}</div>
       <div class="period-card-info" style="flex:1;min-width:0">
-        <div class="period-card-subj">${hasSubj?escHtml(p.subject):T('tt_no_subject')}</div>
+        <div class="period-card-subj">${hasSubj?escHtml(translateSubject(p.subject)):T('tt_no_subject')}</div>
         <div class="period-card-meta">${t.start}–${t.end}${hasSubj&&p.class_name?' · '+escHtml(p.class_name):''}${hasSubj&&p.grade?' · '+escHtml(p.grade):''}${hasSubj&&p.room?' · '+escHtml(p.room):''}</div>
       </div>
     </div>`;
@@ -2207,7 +2355,7 @@ function renderTimetable(){
     if(hasSubj){
       const subj_s = escHtml(p.subject), grade_s = escHtml(p.grade||''), cls_s = escHtml(p.class_name||'');
       html += `<div class="period-track" id="pt_${i}">`;
-      if(weekFocus) html += `<div class="period-track-focus">📋 ${escHtml(weekFocus)}</div>`;
+      if(weekFocusTags.length) html += `<div class="period-track-focus">📋 ${escHtml(weekFocusTags.map(t=>t.text).join(', '))}</div>`;
       if(carryInfo) html += `<div class="period-carry-banner">🔁 ${T('carry_from')}: <b>${escHtml(carryInfo.topic||'')}</b></div>`;
       html += `<div class="period-track-row">
         <input type="text" class="text-input period-track-input"
@@ -2231,7 +2379,7 @@ function renderTimetable(){
     }
 
     const brk=(savedTimetable.breaks||[]).find(b=>parseInt(b.after_period)===i+1);
-    if(brk) html+=`<div class="tt-break-sep"><div class="tt-break-sep-line"></div><div class="tt-break-sep-label">☕ ${escHtml(brk.name||'Break')} · ${brk.duration} min</div><div class="tt-break-sep-line"></div></div>`;
+    if(brk) html+=`<div class="tt-break-sep"><div class="tt-break-sep-line"></div><div class="tt-break-sep-label">☕ ${escHtml(brk.name||T('tt_break_label'))} · ${brk.duration} min</div><div class="tt-break-sep-line"></div></div>`;
   }
   html+='</div>';
   body.innerHTML=html;
@@ -2272,7 +2420,7 @@ function renderDashboardPeriods(){
       html+=`<div class="period-card${hasSubj?'':' period-card-empty'}">
         <div class="period-card-num">P${i+1}</div>
         <div class="period-card-info">
-          <div class="period-card-subj">${hasSubj?escHtml(p.subject):T('tt_no_subject')}</div>
+          <div class="period-card-subj">${hasSubj?escHtml(translateSubject(p.subject)):T('tt_no_subject')}</div>
           <div class="period-card-meta">${t.start}–${t.end}${hasSubj&&p.class_name?' · '+escHtml(p.class_name):''}${hasSubj&&p.grade?' · '+escHtml(p.grade):''}</div>
         </div>
       </div>`;
@@ -3010,10 +3158,20 @@ function _getInitials(name){
   return (name||'--').slice(0,2).toUpperCase();
 }
 
+function getCheckedPhases(containerId){
+  return Array.from(document.querySelectorAll('#'+containerId+' input[type=checkbox]:checked')).map(cb=>cb.value);
+}
+
+function setCheckedPhases(containerId, phases){
+  const arr = Array.isArray(phases) ? phases : [];
+  document.querySelectorAll('#'+containerId+' input[type=checkbox]').forEach(cb=>{ cb.checked = arr.includes(cb.value); });
+}
+
 function _populateProfile(user){
   const meta   = user.user_metadata || {};
   const name   = meta.full_name || user.email || 'Teacher';
   const school = meta.school || '';
+  currentPhases = Array.isArray(meta.phases) ? meta.phases : [];
 
   document.getElementById('userAvatar').textContent = _getInitials(name);
   document.getElementById('userName').textContent   = name;
@@ -3023,6 +3181,7 @@ function _populateProfile(user){
   const ps = document.getElementById('profileSchool');
   if(pn) pn.value = name;
   if(ps) ps.value = school;
+  setCheckedPhases('settingsPhases', currentPhases);
 
   updateGreeting();
 }
@@ -3086,6 +3245,7 @@ async function handleLogin(e){
 async function handleRegister(e){
   e.preventDefault();
   const name     = document.getElementById('regName').value.trim();
+  const phases   = getCheckedPhases('regPhases');
   const school   = document.getElementById('regSchool').value.trim();
   const email    = document.getElementById('regEmail').value.trim();
   const password = document.getElementById('regPassword').value;
@@ -3107,7 +3267,7 @@ async function handleRegister(e){
 
   const { data, error } = await _sb.auth.signUp({
     email, password,
-    options: { data: { full_name: name, school: school } }
+    options: { data: { full_name: name, school: school, phases: phases } }
   });
 
   if(error){
@@ -3129,6 +3289,7 @@ async function handleRegister(e){
 async function saveProfile(e){
   const name   = document.getElementById('profileName').value.trim();
   const school = document.getElementById('profileSchool').value.trim();
+  const phases = getCheckedPhases('settingsPhases');
   if(!name){ alert(T('alert_enter_name')); return; }
 
   const btn      = e.currentTarget;
@@ -3137,7 +3298,7 @@ async function saveProfile(e){
   btn.textContent = 'Saving…';
 
   const { error } = await _sb.auth.updateUser({
-    data: { full_name: name, school: school }
+    data: { full_name: name, school: school, phases: phases }
   });
 
   if(error){
@@ -3145,6 +3306,7 @@ async function saveProfile(e){
     btn.disabled    = false;
     btn.textContent = origText;
   } else {
+    currentPhases = phases;
     document.getElementById('userAvatar').textContent = _getInitials(name);
     document.getElementById('userName').textContent   = name;
     document.getElementById('userRole').textContent   = school || 'Leuro Teacher';
@@ -3428,16 +3590,21 @@ async function renderPlanningScreen(){
   subjects.forEach(sg=>{
     const pk = pKey(wi.year,wi.weekNum,sg.subject,sg.grade,sg.class_name);
     const plan = planData[pk]||{};
-    const sLabel = escHtml(sg.subject)+(sg.class_name?' · '+escHtml(sg.class_name):'')+(sg.grade?' · '+escHtml(sg.grade):'');
+    const focusTags = _focusAsTags(plan.focus);
+    const sLabel = escHtml(translateSubject(sg.subject))+(sg.class_name?' · '+escHtml(sg.class_name):'')+(sg.grade?' · '+escHtml(sg.grade):'');
     html += `<div class="plan-subject-group">
       <div style="font-size:0.85rem;font-weight:700;color:var(--color-primary);margin-bottom:8px">📚 ${sLabel}</div>
       <div class="plan-focus-row">
         <label class="input-label" style="display:block;margin-bottom:4px">${T('plan_weekly_focus')}: ${sLabel}</label>
-        <input type="text" class="text-input"
+        <div class="focus-tag-box"
           data-yr="${wi.year}" data-wk="${wi.weekNum}"
-          data-subj="${escHtml(sg.subject)}" data-grade="${escHtml(sg.grade)}" data-cls="${escHtml(sg.class_name)}"
-          value="${escHtml(plan.focus||'')}"
-          placeholder="${T('plan_focus_ph')}">
+          data-subj="${escHtml(sg.subject)}" data-grade="${escHtml(sg.grade)}" data-cls="${escHtml(sg.class_name)}">
+          <div class="focus-tag-list">${focusTags.map((tag,ti)=>renderFocusTag(tag,ti)).join('')}</div>
+          <div class="focus-tag-add-row">
+            <input type="text" class="text-input focus-tag-input" maxlength="120" placeholder="${T('focus_tag_ph')}">
+            <button type="button" class="btn-secondary focus-tag-add-btn">${T('focus_tag_add')}</button>
+          </div>
+        </div>
       </div>
       <div style="margin-top:6px">`;
     sg.periods.forEach(pp=>{
@@ -3464,6 +3631,61 @@ async function renderPlanningScreen(){
   });
 
   body.innerHTML = html;
+  _wireFocusTagBoxes(body);
+}
+
+function _focusAsTags(focus){
+  if(Array.isArray(focus)) return focus;
+  if(typeof focus === 'string' && focus.trim()) return [{text:focus.trim(), completed:false}];
+  return [];
+}
+
+function _focusTagsFor(pk){
+  if(!planData[pk]) planData[pk] = {};
+  if(!Array.isArray(planData[pk].focus)) planData[pk].focus = _focusAsTags(planData[pk].focus);
+  return planData[pk].focus;
+}
+
+function renderFocusTag(tag, idx){
+  return `<span class="focus-tag${tag.completed?' completed':''}">
+    <input type="checkbox" class="focus-tag-check" data-idx="${idx}" ${tag.completed?'checked':''}>
+    <span class="focus-tag-text">${escHtml(tag.text||'')}</span>
+    <button type="button" class="focus-tag-remove" data-idx="${idx}" title="${T('focus_tag_remove')}">×</button>
+  </span>`;
+}
+
+function _wireFocusTagBoxes(scope){
+  scope.querySelectorAll('.focus-tag-box').forEach(box=>{
+    const pk = pKey(box.dataset.yr, box.dataset.wk, box.dataset.subj, box.dataset.grade, box.dataset.cls);
+    const inp = box.querySelector('.focus-tag-input');
+    const addBtn = box.querySelector('.focus-tag-add-btn');
+    const addTag = ()=>{
+      const text = (inp.value||'').trim();
+      if(!text) return;
+      const tags = _focusTagsFor(pk);
+      if(tags.length>=10) return;
+      tags.push({text, completed:false});
+      renderPlanningScreen();
+    };
+    if(addBtn) addBtn.addEventListener('click', addTag);
+    if(inp) inp.addEventListener('keypress', e=>{ if(e.key==='Enter'){ e.preventDefault(); addTag(); } });
+    box.querySelectorAll('.focus-tag-check').forEach(chk=>{
+      chk.addEventListener('change', ()=>{
+        const tags = _focusTagsFor(pk);
+        const idx = parseInt(chk.dataset.idx);
+        if(tags[idx]) tags[idx].completed = chk.checked;
+        renderPlanningScreen();
+      });
+    });
+    box.querySelectorAll('.focus-tag-remove').forEach(rbtn=>{
+      rbtn.addEventListener('click', ()=>{
+        const tags = _focusTagsFor(pk);
+        const idx = parseInt(rbtn.dataset.idx);
+        tags.splice(idx,1);
+        renderPlanningScreen();
+      });
+    });
+  });
 }
 
 async function savePlanWeek(){
@@ -3494,11 +3716,12 @@ async function savePlanWeek(){
 
     // Collect plan focuses from DOM
     const planPayloads = [];
-    document.querySelectorAll('.plan-focus-row input[data-yr]').forEach(inp=>{
+    document.querySelectorAll('.focus-tag-box[data-yr]').forEach(box=>{
+      const pk = pKey(box.dataset.yr, box.dataset.wk, box.dataset.subj, box.dataset.grade, box.dataset.cls);
       planPayloads.push({
-        user_id:uid, year:parseInt(inp.dataset.yr), week_number:parseInt(inp.dataset.wk),
-        subject:inp.dataset.subj||'', grade:inp.dataset.grade||'', class_name:inp.dataset.cls||'',
-        focus:inp.value||'', updated_at:new Date().toISOString()
+        user_id:uid, year:parseInt(box.dataset.yr), week_number:parseInt(box.dataset.wk),
+        subject:box.dataset.subj||'', grade:box.dataset.grade||'', class_name:box.dataset.cls||'',
+        focus:_focusTagsFor(pk), updated_at:new Date().toISOString()
       });
     });
 
@@ -3550,7 +3773,7 @@ async function renderReportScreen(){
   subjects.forEach(sg=>{
     const pk = pKey(wi.year,wi.weekNum,sg.subject,sg.grade,sg.class_name);
     const plan = planData[pk]||{};
-    const sLabel = escHtml(sg.subject)+(sg.class_name?' · '+escHtml(sg.class_name):'')+(sg.grade?' · '+escHtml(sg.grade):'');
+    const sLabel = escHtml(translateSubject(sg.subject))+(sg.class_name?' · '+escHtml(sg.class_name):'')+(sg.grade?' · '+escHtml(sg.grade):'');
     let done=0, missed=0, carries=0;
     sg.periods.forEach(pp=>{
       const e = lessonData[lKey(wi.year,wi.weekNum,pp.day,pp.idx)]||{};
@@ -3561,7 +3784,7 @@ async function renderReportScreen(){
     const total=sg.periods.length;
     html+=`<div class="report-subject-row">
       <div class="report-subject-name">📚 ${sLabel}</div>
-      ${plan.focus?`<div class="report-focus">"${escHtml(plan.focus)}"</div>`:''}
+      ${(()=>{ const ft=_focusAsTags(plan.focus); return ft.length?`<div class="report-focus">"${escHtml(ft.map(t=>t.text).join(', '))}"</div>`:''; })()}
       <div class="report-chips">
         <span class="report-chip chip-done">✓ ${done}/${total} ${T('report_done')}</span>
         ${missed?`<span class="report-chip chip-missed">✗ ${missed} ${T('report_missed')}</span>`:''}
@@ -3794,8 +4017,8 @@ async function askAssistant(){
 <!-- HELP MODAL -->
 <div class="modal-overlay" id="helpModal">
   <div class="modal" style="max-width:480px;width:92%">
-    <h3>❓ Leuro Assistant — Help</h3>
-    <div style="font-size:0.8rem;color:var(--color-text-mid);line-height:1.8;margin-bottom:0">
+    <h3 data-i18n="help_modal_title">❓ Leuro Assistant — Help</h3>
+    <div style="font-size:0.8rem;color:var(--color-text-mid);line-height:1.8;margin-bottom:0" data-i18n-html="help_modal_body">
       <b>🏠 Dashboard</b> — Overview of your day, reminders, and documents.<br>
       <b>📅 My Timetable</b> — View your teaching schedule. Configure it in Settings first.<br>
       <b>📝 Lesson Prep</b> — Generate CAPS-aligned lesson plans as printable PDFs.<br>
@@ -3805,7 +4028,7 @@ async function askAssistant(){
       <b>⚙️ Settings</b> — Update your profile, school name, and set up your timetable.
     </div>
     <div class="modal-actions" style="margin-top:24px">
-      <button class="btn-primary" onclick="closeModal('helpModal')">Got it ✓</button>
+      <button class="btn-primary" data-i18n="help_modal_close" onclick="closeModal('helpModal')">Got it ✓</button>
     </div>
   </div>
 </div>
