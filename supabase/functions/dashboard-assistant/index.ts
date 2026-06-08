@@ -13,38 +13,52 @@ Deno.serve(async (req: Request) => {
     const body = await req.json();
     const { question, context } = body;
 
-    const apiKey = Deno.env.get('GEMINI_API_KEY');
+    const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
 
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: 'API key not found', debug: 'GEMINI_API_KEY secret is missing' }), {
+      return new Response(JSON.stringify({ error: 'API key not found' }), {
         status: 500,
         headers: { ...CORS_HEADERS, 'content-type': 'application/json' },
       });
     }
 
-    const systemPrompt = `You are Leuro Assistant, an AI productivity assistant built specifically for South African teachers (Grade 1–12). You help teachers with lesson planning, classroom management, parent communication, CAPS curriculum questions, professional development, and daily teaching challenges. Keep responses concise, practical, and relevant to the South African school context.${context ? ` Teacher context: ${JSON.stringify(context)}` : ''}`;
+    const systemPrompt = `You are Leuro Assistant, an AI productivity assistant built specifically for South African teachers (Grade 1–12). You help teachers with lesson planning, classroom management, parent communication, CAPS curriculum questions, professional development, and daily teaching challenges. Keep responses concise, practical, and relevant to the South African school context. Reference CAPS, terms, SBA, DBE, or South African school realities where relevant.${context ? ` Teacher context: ${JSON.stringify(context)}` : ''}`;
 
-    const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-beta': 'prompt-caching-2024-07-31',
+        'content-type': 'application/json',
+      },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: systemPrompt + '\n\nQuestion: ' + question }] }]
+        model: 'claude-haiku-4-5',
+        max_tokens: 1024,
+        system: [
+          {
+            type: 'text',
+            text: systemPrompt,
+            cache_control: { type: 'ephemeral' },
+          },
+        ],
+        messages: [{ role: 'user', content: question }],
       }),
     });
 
-    const geminiData = await geminiRes.json();
+    const data = await response.json();
 
-    if (!geminiRes.ok) {
-      return new Response(JSON.stringify({ error: 'Gemini API error', debug: geminiData }), {
+    if (!response.ok) {
+      return new Response(JSON.stringify({ error: 'AI error', debug: data }), {
         status: 500,
         headers: { ...CORS_HEADERS, 'content-type': 'application/json' },
       });
     }
 
-    const text = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const text = data?.content?.[0]?.text;
 
     if (!text) {
-      return new Response(JSON.stringify({ error: 'No response from Gemini', debug: geminiData }), {
+      return new Response(JSON.stringify({ error: 'No response from AI', debug: data }), {
         status: 500,
         headers: { ...CORS_HEADERS, 'content-type': 'application/json' },
       });
