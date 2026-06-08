@@ -1,0 +1,29 @@
+name: Deploy Supabase Edge Functions
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Supabase CLI
+        run: npm install -g supabase
+
+      - name: Deploy Edge Functions
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          supabase functions deploy dashboard-assistant --project-ref xekmcqzsqifcqpmjycct
+          supabase functions deploy generate-lesson-plan --project-ref xekmcqzsqifcqpmjycct
+          supabase functions deploy generate-worksheet --project-ref xekmcqzsqifcqpmjycct
