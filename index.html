@@ -25,6 +25,10 @@
   --color-green-lt:   #D4F0DC;
   --color-red:        #E05454;
   --color-red-lt:     #FFE8E8;
+  --color-orange:     #E07B39;
+  --color-orange-lt:  #FBE6D7;
+  --color-grey:       #8A8A8A;
+  --color-grey-lt:    #EAEAEA;
   --font-family:      'Poppins', sans-serif;
   --sidebar-w:        252px;
   --sidebar-w-col:    64px;
@@ -326,11 +330,38 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 .reminder-item.urgent{border-left-color:var(--color-red)}.reminder-item.soon{border-left-color:var(--color-accent)}.reminder-item.info{border-left-color:var(--color-primary)}
 .reminder-item:hover{background:var(--color-border-lt)}
 .reminder-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.dot-red{background:var(--color-red)}.dot-amber{background:var(--color-accent)}.dot-purple{background:var(--color-primary)}
+.dot-red{background:var(--color-red)}.dot-amber{background:var(--color-accent)}.dot-purple{background:var(--color-primary)}.dot-orange{background:var(--color-orange)}.dot-grey{background:var(--color-grey)}
 .reminder-text{flex:1}
 .reminder-title{font-size:0.78rem;font-weight:600;color:var(--color-text)}
 .reminder-meta{font-size:0.65rem;color:var(--color-text-muted);margin-top:2px}
 .reminder-time{font-size:0.68rem;color:var(--color-text-mid);font-weight:600;white-space:nowrap}
+
+/* PRIORITY BADGES */
+.priority-badge{display:inline-block;font-size:0.6rem;font-weight:700;padding:2px 9px;border-radius:99px;letter-spacing:0.02em;white-space:nowrap}
+.priority-low{background:var(--color-grey-lt);color:var(--color-grey)}
+.priority-normal{background:var(--color-primary-xl);color:var(--color-primary)}
+.priority-high{background:var(--color-orange-lt);color:var(--color-orange)}
+.priority-urgent{background:var(--color-red-lt);color:var(--color-red)}
+
+/* REMINDER CARDS (All Reminders) */
+.reminder-card{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:var(--radius-sm);background:var(--color-background);border-left:3px solid transparent;transition:all 0.18s}
+.reminder-card.overdue{border-left-color:var(--color-red)}
+.reminder-card.complete{opacity:0.55}
+.reminder-card.complete .reminder-card-title{text-decoration:line-through;color:var(--color-text-muted)}
+.reminder-card-body{flex:1;min-width:0}
+.reminder-card-title{font-size:0.82rem;font-weight:700;color:var(--color-text)}
+.reminder-card-meta{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+.reminder-card-date{font-size:0.7rem;color:var(--color-text-mid);font-weight:600}
+.reminder-overdue-label{font-size:0.6rem;font-weight:700;color:var(--color-red);text-transform:uppercase;letter-spacing:0.05em}
+.reminder-card-notes{font-size:0.68rem;color:var(--color-text-muted);margin-top:6px;line-height:1.5}
+.reminder-tick-btn{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--color-border);background:var(--color-surface);color:var(--color-text-muted);font-size:0.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;font-family:var(--font-family)}
+.reminder-tick-btn:hover{border-color:var(--color-green);color:var(--color-green)}
+.reminder-tick-btn.active{background:var(--color-green);color:#fff;border-color:var(--color-green)}
+
+/* THIS WEEK WIDGET */
+.week-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);background:var(--color-background)}
+.week-date-pill{font-size:0.62rem;font-weight:700;color:var(--color-primary);background:var(--color-primary-xl);padding:4px 10px;border-radius:99px;white-space:nowrap;flex-shrink:0}
+.week-item-title{flex:1;font-size:0.76rem;font-weight:600;color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* DOCS */
 .docs-body{padding:12px 18px;display:flex;flex-direction:column;gap:8px}
@@ -861,6 +892,10 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
           <button id="ai-ask-btn" class="btn-primary" data-i18n="ai_ask_btn">Ask →</button>
         </div>
         <div class="ai-response" id="ai-response" style="display:none;"></div>
+      </div>
+      <div class="card" style="margin-bottom:20px;flex-shrink:0">
+        <div class="card-header"><span class="card-icon">📆</span><div class="card-title" data-i18n="this_week_title">This Week</div><button class="card-action" id="thisWeekViewAll" style="display:none" data-i18n="wk_view_all" onclick="switchScreen('reminders',null)">View all</button></div>
+        <div id="thisWeekBody"></div>
       </div>
       <div class="two-col">
         <div class="card">
@@ -1459,6 +1494,13 @@ const UI_STRINGS = {
     rem_when_ph:'e.g. Tomorrow, 8am · Wednesday · Fri 3pm',
     opt_normal:'Normal',opt_soon:'Soon',opt_urgent:'Urgent',
     btn_add_rem_action:'Add Reminder',btn_cancel:'Cancel',
+    lbl_date:'Date',lbl_time_opt:'Time (optional)',
+    pr_low:'Low',pr_normal:'Normal',pr_high:'High',pr_urgent:'Urgent',
+    rem_overdue:'Overdue',rem_mark_complete:'Mark complete',
+    alert_enter_reminder_date:'Please enter a title and date for the reminder.',
+    this_week_title:'This Week',
+    this_week_empty:"No reminders this week. You're all clear.",
+    wk_view_all:'View all',
     // Moderation modal
     mod_modal_add_title:'🔍 Add Moderation Entry',mod_modal_edit_title:'✏️ Edit Moderation Entry',
     mod_title_ph:'e.g. Gr 6 · Afrikaans HT — Term 2 SBA',
@@ -1648,6 +1690,13 @@ const UI_STRINGS = {
     rem_when_ph:'bv. Môre, 8vm · Woensdag · Vr 3nm',
     opt_normal:'Normaal',opt_soon:'Gou',opt_urgent:'Dringend',
     btn_add_rem_action:'Voeg Herinnering By',btn_cancel:'Kanselleer',
+    lbl_date:'Datum',lbl_time_opt:'Tyd (opsioneel)',
+    pr_low:'Laag',pr_normal:'Normaal',pr_high:'Hoog',pr_urgent:'Dringend',
+    rem_overdue:'Agterstallig',rem_mark_complete:'Merk as voltooi',
+    alert_enter_reminder_date:"Voer asseblief 'n titel en datum vir die herinnering in.",
+    this_week_title:'Hierdie Week',
+    this_week_empty:'Geen herinnerings hierdie week nie. Jy is gereed.',
+    wk_view_all:'Sien alles',
     // Moderation modal
     mod_modal_add_title:'🔍 Voeg Modereringsinskrywing By',mod_modal_edit_title:'✏️ Wysig Modereringsinskrywing',
     mod_title_ph:'bv. Gr 6 · Afrikaans HT — Kwartaal 2 SBA',
@@ -1767,6 +1816,7 @@ function setLang(lang, btn){
   updateDashboardStats();
   // Re-render dynamic content so JS-generated strings update
   renderDashboardReminders();
+  renderThisWeekWidget();
   renderDashboardModeration();
   renderAssistantChips();
   const visible = document.querySelector('.screen.visible');
@@ -2441,6 +2491,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   renderDashboardPeriods();
   renderRemindersScreen();
   renderDashboardReminders();
+  renderThisWeekWidget();
   renderModerationScreen();
   renderDashboardModeration();
   updateDashboardStats();
@@ -3194,6 +3245,7 @@ function _showApp(user){
   ttLoad();
   lessonDataLoad();
   loadAssistantProfile();
+  loadReminders();
 }
 
 function _showAuth(){
@@ -3325,6 +3377,54 @@ function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&l
 // ─── REMINDERS ───
 let reminders = [];
 
+function _todayStr(){ return new Date().toISOString().slice(0,10); }
+
+function _fmtReminderDate(dateStr){
+  if(!dateStr) return '';
+  const d = new Date(dateStr+'T00:00:00');
+  const locale = currentLang === 'af' ? 'af-ZA' : 'en-ZA';
+  const wd  = d.toLocaleDateString(locale,{weekday:'short'});
+  const mon = d.toLocaleDateString(locale,{month:'short'});
+  return `${wd}, ${d.getDate()} ${mon} ${d.getFullYear()}`;
+}
+
+function _fmtReminderDateTime(dateStr,timeStr){
+  const datePart = _fmtReminderDate(dateStr);
+  if(timeStr) return `${datePart} · ${timeStr.slice(0,5)}`;
+  return datePart;
+}
+
+function _fmtShortDate(dateStr){
+  if(!dateStr) return '';
+  const d = new Date(dateStr+'T00:00:00');
+  const locale = currentLang === 'af' ? 'af-ZA' : 'en-ZA';
+  const wd  = d.toLocaleDateString(locale,{weekday:'short'});
+  const mon = d.toLocaleDateString(locale,{month:'short'});
+  return `${wd} ${d.getDate()} ${mon}`;
+}
+
+function _sortedReminders(){
+  return [...reminders].sort((a,b)=>{
+    if(a.is_complete !== b.is_complete) return a.is_complete ? 1 : -1;
+    return (a.reminder_date||'').localeCompare(b.reminder_date||'');
+  });
+}
+
+async function loadReminders(){
+  try {
+    const uid = await _getUid();
+    if(!uid) return;
+    const { data, error } = await _sb.from('reminders').select('*').eq('user_id',uid);
+    if(!error && data){
+      reminders = data;
+      renderRemindersScreen();
+      renderDashboardReminders();
+      renderThisWeekWidget();
+      updateDashboardStats();
+    }
+  } catch(e){ console.warn('Reminders load error:',e); }
+}
+
 function renderRemindersScreen(){
   const body = document.getElementById('remindersBody');
   if(!body) return;
@@ -3332,16 +3432,23 @@ function renderRemindersScreen(){
     body.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔔</div>${T('rem_empty')}<br><span style="font-size:0.73rem">${T('rem_empty_sub')}</span></div>`;
     return;
   }
-  body.innerHTML = '<div class="reminders-body" style="padding:10px 14px 14px">' + reminders.map((r,i)=>{
-    const dot = r.urgency==='urgent'?'dot-red':r.urgency==='soon'?'dot-amber':'dot-purple';
-    return `<div class="reminder-item ${r.urgency}" style="display:flex;align-items:center">
-      <div class="reminder-dot ${dot}"></div>
-      <div class="reminder-text">
-        <div class="reminder-title">${escHtml(r.title)}</div>
-        ${r.notes?`<div class="reminder-meta">${escHtml(r.notes)}</div>`:''}
+  const today = _todayStr();
+  body.innerHTML = '<div class="reminders-body" style="padding:10px 14px 14px">' + _sortedReminders().map(r=>{
+    const overdue = !r.is_complete && r.reminder_date < today;
+    const pKey    = 'pr_' + (r.priority||'Normal').toLowerCase();
+    const pClass  = 'priority-' + (r.priority||'Normal').toLowerCase();
+    return `<div class="reminder-card ${overdue?'overdue':''} ${r.is_complete?'complete':''}">
+      <button class="reminder-tick-btn ${r.is_complete?'active':''}" onclick="toggleReminderComplete('${r.id}')" title="${escHtml(T('rem_mark_complete'))}">✓</button>
+      <div class="reminder-card-body">
+        <div class="reminder-card-title">${escHtml(r.title)}</div>
+        <div class="reminder-card-meta">
+          <span class="reminder-card-date">${escHtml(_fmtReminderDateTime(r.reminder_date,r.reminder_time))}</span>
+          <span class="priority-badge ${pClass}">${escHtml(T(pKey))}</span>
+          ${overdue?`<span class="reminder-overdue-label">${escHtml(T('rem_overdue'))}</span>`:''}
+        </div>
+        ${r.notes?`<div class="reminder-card-notes">${escHtml(r.notes)}</div>`:''}
       </div>
-      <div class="reminder-time">${escHtml(r.time)}</div>
-      <button class="rem-delete-btn" onclick="deleteReminder(${i})" title="Remove">✕</button>
+      <button class="rem-delete-btn" onclick="deleteReminder('${r.id}')" title="Remove">🗑</button>
     </div>`;
   }).join('') + '</div>';
 }
@@ -3349,40 +3456,103 @@ function renderRemindersScreen(){
 function renderDashboardReminders(){
   const body = document.getElementById('dashRemBody');
   if(!body) return;
-  if(!reminders.length){
+  const upcoming = reminders.filter(r=>!r.is_complete).sort((a,b)=>(a.reminder_date||'').localeCompare(b.reminder_date||''));
+  if(!upcoming.length){
     body.innerHTML = `<div class="empty-state" style="padding:14px 18px;text-align:left"><span style="color:var(--color-text-muted);font-size:0.78rem">${T('dash_no_rem')}</span></div>`;
     return;
   }
-  body.innerHTML = '<div class="reminders-body" style="padding:8px 14px 10px">' + reminders.slice(0,3).map(r=>{
-    const dot = r.urgency==='urgent'?'dot-red':r.urgency==='soon'?'dot-amber':'dot-purple';
-    return `<div class="reminder-item ${r.urgency}">
+  body.innerHTML = '<div class="reminders-body" style="padding:8px 14px 10px">' + upcoming.slice(0,3).map(r=>{
+    const dot = r.priority==='Urgent'?'dot-red':r.priority==='High'?'dot-orange':r.priority==='Low'?'dot-grey':'dot-purple';
+    return `<div class="reminder-item">
       <div class="reminder-dot ${dot}"></div>
       <div class="reminder-text"><div class="reminder-title">${escHtml(r.title)}</div>${r.notes?`<div class="reminder-meta">${escHtml(r.notes)}</div>`:''}</div>
-      <div class="reminder-time">${escHtml(r.time)}</div>
+      <div class="reminder-time">${escHtml(_fmtReminderDateTime(r.reminder_date,r.reminder_time))}</div>
     </div>`;
   }).join('') + '</div>';
 }
 
-function openAddReminder(){ closeModal('reminderModal'); document.getElementById('remTitle').value=''; document.getElementById('remNotes').value=''; document.getElementById('remTime').value=''; document.getElementById('remUrgency').value='info'; document.getElementById('reminderModal').classList.add('open'); }
+function renderThisWeekWidget(){
+  const body = document.getElementById('thisWeekBody');
+  const viewAllBtn = document.getElementById('thisWeekViewAll');
+  if(!body) return;
+  const today = _todayStr();
+  const weekEnd = new Date(); weekEnd.setDate(weekEnd.getDate()+7);
+  const weekEndStr = weekEnd.toISOString().slice(0,10);
+  const upcoming = reminders
+    .filter(r=>!r.is_complete && r.reminder_date >= today && r.reminder_date <= weekEndStr)
+    .sort((a,b)=>(a.reminder_date||'').localeCompare(b.reminder_date||''));
 
-function saveReminder(){
-  const title   = document.getElementById('remTitle').value.trim();
-  const notes   = document.getElementById('remNotes').value.trim();
-  const time    = document.getElementById('remTime').value.trim();
-  const urgency = document.getElementById('remUrgency').value;
-  if(!title){ alert(T('alert_enter_reminder')); return; }
-  reminders.push({title,notes,time,urgency});
-  closeModal('reminderModal');
-  renderRemindersScreen();
-  renderDashboardReminders();
-  updateDashboardStats();
+  if(!upcoming.length){
+    body.innerHTML = `<div class="empty-state" style="padding:14px 18px;text-align:left"><span style="color:var(--color-text-muted);font-size:0.78rem">${T('this_week_empty')}</span></div>`;
+    if(viewAllBtn) viewAllBtn.style.display = 'none';
+    return;
+  }
+  body.innerHTML = '<div style="padding:8px 14px 14px;display:flex;flex-direction:column;gap:6px">' + upcoming.slice(0,5).map(r=>{
+    const pKey   = 'pr_' + (r.priority||'Normal').toLowerCase();
+    const pClass = 'priority-' + (r.priority||'Normal').toLowerCase();
+    return `<div class="week-item">
+      <span class="week-date-pill">${escHtml(_fmtShortDate(r.reminder_date))}</span>
+      <span class="week-item-title">${escHtml(r.title)}</span>
+      <span class="priority-badge ${pClass}">${escHtml(T(pKey))}</span>
+    </div>`;
+  }).join('') + '</div>';
+  if(viewAllBtn) viewAllBtn.style.display = upcoming.length > 5 ? '' : 'none';
 }
 
-function deleteReminder(i){
-  reminders.splice(i,1);
-  renderRemindersScreen();
-  renderDashboardReminders();
-  updateDashboardStats();
+function openAddReminder(){
+  closeModal('reminderModal');
+  document.getElementById('remTitle').value='';
+  document.getElementById('remNotes').value='';
+  document.getElementById('remDate').value='';
+  document.getElementById('remTimeInput').value='';
+  document.getElementById('remPriority').value='Normal';
+  document.getElementById('reminderModal').classList.add('open');
+}
+
+async function saveReminder(){
+  const title    = document.getElementById('remTitle').value.trim();
+  const notes    = document.getElementById('remNotes').value.trim();
+  const date     = document.getElementById('remDate').value;
+  const time     = document.getElementById('remTimeInput').value;
+  const priority = document.getElementById('remPriority').value;
+  if(!title || !date){ alert(T('alert_enter_reminder_date')); return; }
+
+  const uid = await _getUid();
+  if(!uid) return;
+
+  const btn = document.getElementById('remSaveBtn');
+  const origText = btn.textContent;
+  btn.disabled = true;
+
+  const { error } = await _sb.from('reminders').insert({
+    user_id: uid,
+    title,
+    notes: notes || null,
+    reminder_date: date,
+    reminder_time: time || null,
+    priority
+  });
+
+  btn.disabled = false;
+  btn.textContent = origText;
+
+  if(error){ alert('Error saving reminder: ' + error.message); return; }
+  closeModal('reminderModal');
+  await loadReminders();
+}
+
+async function toggleReminderComplete(id){
+  const r = reminders.find(x=>x.id===id);
+  if(!r) return;
+  const { error } = await _sb.from('reminders').update({ is_complete: !r.is_complete }).eq('id',id);
+  if(error){ alert('Error updating reminder: ' + error.message); return; }
+  await loadReminders();
+}
+
+async function deleteReminder(id){
+  const { error } = await _sb.from('reminders').delete().eq('id',id);
+  if(error){ alert('Error deleting reminder: ' + error.message); return; }
+  await loadReminders();
 }
 
 // ─── MODERATION ───
@@ -4040,18 +4210,22 @@ async function askAssistant(){
     <div style="display:flex;flex-direction:column;gap:14px;margin-top:8px">
       <div><label class="input-label" data-i18n="lbl_title_req">Title *</label><input type="text" class="text-input" id="remTitle" placeholder="e.g. Term 2 Moderation Pack due" data-i18n-placeholder="rem_title_ph"></div>
       <div><label class="input-label" data-i18n="lbl_notes_opt">Notes (optional)</label><input type="text" class="text-input" id="remNotes" placeholder="e.g. HOD submission · Gr 6 & 7" data-i18n-placeholder="rem_notes_ph"></div>
-      <div><label class="input-label" data-i18n="lbl_when">When</label><input type="text" class="text-input" id="remTime" placeholder="e.g. Tomorrow, 8am · Wednesday · Fri 3pm" data-i18n-placeholder="rem_when_ph"></div>
+      <div style="display:flex;gap:12px">
+        <div style="flex:1"><label class="input-label" data-i18n="lbl_date">Date</label><input type="date" class="text-input" id="remDate"></div>
+        <div style="flex:1"><label class="input-label" data-i18n="lbl_time_opt">Time (optional)</label><input type="time" class="text-input" id="remTimeInput"></div>
+      </div>
       <div><label class="input-label" data-i18n="lbl_priority">Priority</label>
-        <select class="select-input" id="remUrgency">
-          <option value="info" data-i18n="opt_normal">Normal</option>
-          <option value="soon" data-i18n="opt_soon">Soon</option>
-          <option value="urgent" data-i18n="opt_urgent">Urgent</option>
+        <select class="select-input" id="remPriority">
+          <option value="Low" data-i18n="pr_low">Low</option>
+          <option value="Normal" selected data-i18n="pr_normal">Normal</option>
+          <option value="High" data-i18n="pr_high">High</option>
+          <option value="Urgent" data-i18n="pr_urgent">Urgent</option>
         </select>
       </div>
     </div>
     <div class="modal-actions" style="margin-top:20px">
       <button class="btn-secondary" onclick="closeModal('reminderModal')" data-i18n="btn_cancel">Cancel</button>
-      <button class="btn-primary" onclick="saveReminder()" data-i18n="btn_add_rem_action">Add Reminder</button>
+      <button class="btn-primary" id="remSaveBtn" onclick="saveReminder()" data-i18n="btn_add_rem_action">Add Reminder</button>
     </div>
   </div>
 </div>
