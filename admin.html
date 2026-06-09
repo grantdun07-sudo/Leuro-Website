@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leuro Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple:    #5A3E76;
+  --purple-dk: #432D58;
+  --purple-lt: #7B5A9E;
+  --purple-xl: #EDE7F4;
+  --gold:      #E6B347;
+  --gold-lt:   #FDF3DC;
+  --gold-dk:   #C99A2E;
+  --bg:        #F9F9F7;
+  --surface:   #FFFFFF;
+  --text:      #363636;
+  --text-mid:  #6B6B6B;
+  --text-muted:#9B9B9B;
+  --border:    #E4E2E8;
+  --green:     #2DC653;
+  --green-lt:  #D4F0DC;
+  --red:       #E05454;
+  --red-lt:    #FFE8E8;
+  --blue:      #3B82F6;
+  --blue-lt:   #DBEAFE;
+  --grey:      #8A8A8A;
+  --grey-lt:   #EAEAEA;
+  --radius:    10px;
+  --radius-sm: 8px;
+  --shadow:    0 2px 12px rgba(90,62,118,0.09);
+  --shadow-md: 0 4px 20px rgba(90,62,118,0.13);
+  --sidebar-w: 240px;
+  --header-h:  60px;
+  --font:      'Poppins', sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--text);height:100vh;display:flex;overflow:hidden;font-size:14px}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);background:var(--purple-dk);display:flex;flex-direction:column;flex-shrink:0;height:100vh;overflow-y:auto}
+.sidebar-logo{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.logo-row{display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;box-shadow:0 3px 10px rgba(230,179,71,0.35)}
+.logo-name{font-size:1rem;font-weight:700;color:#fff;line-height:1.1}
+.logo-sub{font-size:0.6rem;font-weight:600;color:var(--gold);letter-spacing:0.12em;text-transform:uppercase;margin-top:1px}
+.admin-badge{margin-top:12px;background:rgba(230,179,71,0.12);border:1px solid rgba(230,179,71,0.28);border-radius:6px;padding:7px 10px;font-size:0.65rem;font-weight:600;color:var(--gold);letter-spacing:0.05em;text-transform:uppercase;text-align:center}
+.sidebar-nav{flex:1;padding:12px 8px;display:flex;flex-direction:column;gap:2px}
+.nav-group-label{font-size:0.55rem;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;color:rgba(255,255,255,0.3);padding:10px 10px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);cursor:pointer;font-size:0.82rem;font-weight:500;color:rgba(255,255,255,0.55);transition:all 0.18s;border:1px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,0.08);color:#fff}
+.nav-item.active{background:rgba(255,255,255,0.12);color:#fff;border-color:rgba(255,255,255,0.07)}
+.nav-icon{font-size:1rem;width:22px;text-align:center;flex-shrink:0}
+
+/* ── SHELL ── */
+.shell{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── HEADER ── */
+.header{height:var(--header-h);background:var(--purple);display:flex;align-items:center;padding:0 24px;gap:14px;flex-shrink:0;box-shadow:0 2px 10px rgba(0,0,0,0.18)}
+.header-title{font-size:1.05rem;font-weight:700;color:#fff;flex:1}
+.header-title span{color:var(--gold)}
+.header-email{font-size:0.72rem;color:rgba(255,255,255,0.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
+.sign-out-btn{padding:8px 16px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:var(--radius-sm);color:#fff;font-family:var(--font);font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.18s;flex-shrink:0}
+.sign-out-btn:hover{background:rgba(255,255,255,0.18)}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;padding:28px}
+.section{display:none}
+.section.active{display:block}
+.section-title{font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:22px;display:flex;align-items:center;gap:9px}
+
+/* ── STAT GRID ── */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:22px 24px 18px;box-shadow:var(--shadow);border-top:3px solid var(--purple);position:relative;overflow:hidden}
+.stat-card::after{content:attr(data-icon);position:absolute;right:18px;top:16px;font-size:1.9rem;opacity:0.15;pointer-events:none}
+.stat-number{font-size:2.1rem;font-weight:800;color:var(--purple);line-height:1}
+.stat-label{font-size:0.68rem;font-weight:600;color:var(--text-mid);margin-top:8px;text-transform:uppercase;letter-spacing:0.06em}
+.stat-number.loading{color:var(--text-muted);font-size:1.2rem}
+
+/* ── SEARCH + ACTIONS BAR ── */
+.toolbar{display:flex;gap:10px;margin-bottom:16px;align-items:center}
+.search-input{flex:1;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font);font-size:0.82rem;background:var(--surface);color:var(--text);outline:none;transition:border-color 0.18s}
+.search-input:focus{border-color:var(--purple)}
+.toolbar-btn{padding:9px 16px;background:var(--purple-xl);color:var(--purple);border:none;border-radius:var(--radius-sm);font-family:var(--font);font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.18s;white-space:nowrap}
+.toolbar-btn:hover{background:var(--purple);color:#fff}
+
+/* ── TABLE ── */
+.table-wrap{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:600px}
+th{background:var(--purple-xl);color:var(--purple);font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;padding:13px 16px;text-align:left;white-space:nowrap}
+td{padding:13px 16px;border-bottom:1px solid var(--border);font-size:0.79rem;vertical-align:middle;color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFAF8}
+.td-truncate{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.td-nowrap{white-space:nowrap}
+.td-center{text-align:center}
+td.placeholder{text-align:center;color:var(--text-muted);padding:36px;font-size:0.82rem}
+
+/* ── BADGES ── */
+.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:0.66rem;font-weight:700;white-space:nowrap;letter-spacing:0.03em}
+.badge-trial   {background:var(--blue-lt);color:var(--blue)}
+.badge-active  {background:var(--green-lt);color:var(--green)}
+.badge-lapsed,
+.badge-expired {background:var(--red-lt);color:var(--red)}
+.badge-revoked,
+.badge-none    {background:var(--grey-lt);color:var(--grey)}
+
+/* ── BUTTONS ── */
+.btn{padding:6px 12px;border:none;border-radius:6px;font-family:var(--font);font-size:0.72rem;font-weight:600;cursor:pointer;transition:all 0.16s;white-space:nowrap}
+.btn:hover{opacity:0.78;transform:translateY(-1px)}
+.btn-view  {background:var(--purple-xl);color:var(--purple)}
+.btn-grant {background:var(--green-lt);color:var(--green)}
+.btn-revoke{background:var(--red-lt);color:var(--red)}
+.btn-reset {background:var(--gold-lt);color:var(--gold-dk)}
+.btn-group{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ── SLIDE-IN PANEL ── */
+.panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.28);z-index:200;display:none}
+.panel-overlay.open{display:block}
+.user-panel{position:fixed;top:0;right:-500px;width:460px;height:100vh;background:var(--surface);box-shadow:var(--shadow-md);z-index:201;display:flex;flex-direction:column;transition:right 0.3s cubic-bezier(.4,0,.2,1)}
+.user-panel.open{right:0}
+.panel-header{padding:20px 24px;background:var(--purple);color:#fff;display:flex;align-items:flex-start;gap:12px;flex-shrink:0}
+.panel-close{width:30px;height:30px;border:none;border-radius:8px;background:rgba(255,255,255,0.1);color:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;margin-left:auto;flex-shrink:0;font-family:var(--font)}
+.panel-body{padding:24px;flex:1;overflow-y:auto}
+.panel-section{margin-bottom:24px}
+.panel-section-title{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-mid);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.field-row{display:flex;gap:10px;margin-bottom:9px;align-items:flex-start}
+.field-label{font-size:0.71rem;font-weight:600;color:var(--text-mid);width:110px;flex-shrink:0;padding-top:1px}
+.field-value{font-size:0.79rem;color:var(--text);flex:1;word-break:break-word}
+.panel-action-btn{width:100%;padding:10px 16px;margin-top:6px;border:none;border-radius:var(--radius-sm);font-family:var(--font);font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.18s;text-align:left}
+.panel-action-btn:hover{opacity:0.8}
+.panel-grant{background:var(--green-lt);color:var(--green)}
+.panel-revoke{background:var(--red-lt);color:var(--red)}
+.panel-reset{background:var(--gold-lt);color:var(--gold-dk)}
+
+/* ── APP CONTROLS ── */
+.controls-grid{display:flex;flex-direction:column;gap:20px;max-width:660px}
+.control-card{background:var(--surface);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow)}
+.control-card-title{font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:5px}
+.control-card-desc{font-size:0.73rem;color:var(--text-muted);margin-bottom:20px;line-height:1.65}
+.toggle-row{display:flex;align-items:center;gap:14px}
+.toggle{width:50px;height:28px;background:var(--grey-lt);border-radius:99px;position:relative;cursor:pointer;transition:background 0.22s;flex-shrink:0;border:none;outline:none}
+.toggle.on{background:var(--red)}
+.toggle::after{content:'';position:absolute;width:22px;height:22px;border-radius:50%;background:#fff;top:3px;left:3px;transition:left 0.22s;box-shadow:0 1px 4px rgba(0,0,0,0.22)}
+.toggle.on::after{left:25px}
+.toggle-info{display:flex;flex-direction:column;gap:2px}
+.toggle-label{font-size:0.85rem;font-weight:600;color:var(--text)}
+.toggle-status{font-size:0.72rem;color:var(--text-muted)}
+.ann-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font);font-size:0.82rem;color:var(--text);outline:none;resize:vertical;min-height:76px;transition:border-color 0.18s;line-height:1.5}
+.ann-input:focus{border-color:var(--purple)}
+.ann-actions{display:flex;gap:10px;margin-top:12px}
+.btn-publish{padding:10px 22px;background:var(--purple);color:#fff;border:none;border-radius:var(--radius-sm);font-family:var(--font);font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.18s}
+.btn-publish:hover{background:var(--purple-dk)}
+.btn-clear-ann{padding:10px 22px;background:var(--grey-lt);color:var(--grey);border:none;border-radius:var(--radius-sm);font-family:var(--font);font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.18s}
+.btn-clear-ann:hover{background:var(--border)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--purple-dk);color:#fff;padding:12px 24px;border-radius:var(--radius-sm);font-size:0.82rem;font-weight:600;box-shadow:var(--shadow-md);z-index:400;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+
+/* ── AUTH LOADING OVERLAY ── */
+#authGuard{position:fixed;inset:0;background:var(--purple-dk);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:16px}
+#authGuard .loader{width:36px;height:36px;border:3px solid rgba(255,255,255,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite}
+#authGuard .loader-text{color:rgba(255,255,255,0.6);font-size:0.82rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- Auth guard — covers page until access is confirmed -->
+<div id="authGuard">
+  <div class="loader"></div>
+  <div class="loader-text">Verifying access…</div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-row">
+      <div class="logo-icon">🎓</div>
+      <div>
+        <div class="logo-name">Leuro</div>
+        <div class="logo-sub">Assistant</div>
+      </div>
+    </div>
+    <div class="admin-badge">⚙️ Admin Panel</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group-label">Navigation</div>
+    <div class="nav-item active" onclick="showSection('dashboard',this)">
+      <span class="nav-icon">📊</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showSection('users',this)">
+      <span class="nav-icon">👥</span> Users
+    </div>
+    <div class="nav-item" onclick="showSection('subscriptions',this)">
+      <span class="nav-icon">💳</span> Subscriptions
+    </div>
+    <div class="nav-item" onclick="showSection('appcontrols',this)">
+      <span class="nav-icon">🛠️</span> App Controls
+    </div>
+  </nav>
+</aside>
+
+<!-- SHELL -->
+<div class="shell">
+  <header class="header">
+    <div class="header-title">Leuro <span>Admin</span></div>
+    <div class="header-email" id="adminEmailDisplay"></div>
+    <button class="sign-out-btn" onclick="signOut()">Sign Out</button>
+  </header>
+
+  <main class="main">
+
+    <!-- ── DASHBOARD ── -->
+    <section class="section active" id="sec-dashboard">
+      <div class="section-title">📊 Dashboard</div>
+      <div class="stat-grid" id="statGrid">
+        <div class="stat-card" data-icon="👥">
+          <div class="stat-number loading" id="stat-total">—</div>
+          <div class="stat-label">Total Registered Users</div>
+        </div>
+        <div class="stat-card" data-icon="✅">
+          <div class="stat-number loading" id="stat-active">—</div>
+          <div class="stat-label">Active Subscribers</div>
+        </div>
+        <div class="stat-card" data-icon="⏱️">
+          <div class="stat-number loading" id="stat-trial">—</div>
+          <div class="stat-label">Free Trial Users</div>
+        </div>
+        <div class="stat-card" data-icon="📉">
+          <div class="stat-number loading" id="stat-lapsed">—</div>
+          <div class="stat-label">Lapsed / Expired</div>
+        </div>
+        <div class="stat-card" data-icon="🆕">
+          <div class="stat-number loading" id="stat-week">—</div>
+          <div class="stat-label">New This Week</div>
+        </div>
+        <div class="stat-card" data-icon="📅">
+          <div class="stat-number loading" id="stat-month">—</div>
+          <div class="stat-label">New This Month</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── USERS ── -->
+    <section class="section" id="sec-users">
+      <div class="section-title">👥 Users</div>
+      <div class="toolbar">
+        <input type="text" class="search-input" id="userSearch" placeholder="Search by email, name or school…" oninput="filterUsers()">
+        <button class="toolbar-btn" onclick="loadUsers()">↻ Refresh</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Full Name</th>
+              <th>School</th>
+              <th>Phase(s)</th>
+              <th>Joined</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersBody">
+            <tr><td colspan="7" class="placeholder">Loading users…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── SUBSCRIPTIONS ── -->
+    <section class="section" id="sec-subscriptions">
+      <div class="section-title">💳 Subscriptions</div>
+      <div class="toolbar">
+        <button class="toolbar-btn" onclick="loadSubscriptions()">↻ Refresh</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Trial Start</th>
+              <th>Trial End</th>
+              <th>Last Payment</th>
+              <th>Next Billing</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="subsBody">
+            <tr><td colspan="7" class="placeholder">Loading subscriptions…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── APP CONTROLS ── -->
+    <section class="section" id="sec-appcontrols">
+      <div class="section-title">🛠️ App Controls</div>
+      <div class="controls-grid">
+
+        <div class="control-card">
+          <div class="control-card-title">🔧 Maintenance Mode</div>
+          <div class="control-card-desc">When ON, all users except hello@leuroai.co.za see a full-screen maintenance page instead of the app. Toggle off to restore normal access.</div>
+          <div class="toggle-row">
+            <button class="toggle" id="maintenanceToggle" onclick="toggleMaintenance()" aria-label="Toggle maintenance mode"></button>
+            <div class="toggle-info">
+              <div class="toggle-label" id="maintenanceLabel">Off</div>
+              <div class="toggle-status" id="maintenanceStatus">App is running normally for all users</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-card">
+          <div class="control-card-title">📢 Announcement Banner</div>
+          <div class="control-card-desc">Displays a dismissible gold banner at the top of the app for all logged-in users. Clearing the message removes the banner. Each user can dismiss it once per session.</div>
+          <textarea class="ann-input" id="announcementInput" placeholder="e.g. Leuro will be offline for maintenance on Saturday 15 Jun from 10:00–12:00. Thank you for your patience."></textarea>
+          <div class="ann-actions">
+            <button class="btn-publish" onclick="publishAnnouncement()">Publish</button>
+            <button class="btn-clear-ann" onclick="clearAnnouncement()">Clear</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- SLIDE-IN USER PANEL -->
+<div class="panel-overlay" id="panelOverlay" onclick="closeUserPanel()"></div>
+<div class="user-panel" id="userPanel">
+  <div class="panel-header">
+    <div style="flex:1;min-width:0">
+      <div style="font-size:0.68rem;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.09em;margin-bottom:3px">User Details</div>
+      <div id="panelEmailDisplay" style="font-weight:700;font-size:0.88rem;word-break:break-all"></div>
+    </div>
+    <button class="panel-close" onclick="closeUserPanel()">✕</button>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const ADMIN_EMAIL = 'hello@leuroai.co.za';
+const _sb = supabase.createClient(
+  'https://xekmcqzsqifcqpmjycct.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhla21jcXpzcWlmY3FwbWp5Y2N0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1ODczMjUsImV4cCI6MjA5NjE2MzMyNX0.T8RJ4i6bDz3dvJV2L0B96o-_NI9m2Gy--QCgdDzkB6k'
+);
+
+let allProfiles = [];
+let allSubs     = [];
+let maintenanceOn = false;
+
+// ── AUTH GUARD ──────────────────────────────────────────────
+async function init() {
+  try {
+    const { data: { session } } = await _sb.auth.getSession();
+    if (!session || session.user.email !== ADMIN_EMAIL) {
+      window.location.href = 'index.html';
+      return;
+    }
+    document.getElementById('adminEmailDisplay').textContent = session.user.email;
+    document.getElementById('authGuard').style.display = 'none';
+
+    // Kick off all data loads in parallel
+    loadDashboard();
+    loadUsers();
+    loadSubscriptions();
+    loadAppControls();
+  } catch (err) {
+    window.location.href = 'index.html';
+  }
+}
+
+async function signOut() {
+  await _sb.auth.signOut();
+  window.location.href = 'index.html';
+}
+
+// ── NAVIGATION ──────────────────────────────────────────────
+function showSection(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  el.classList.add('active');
+}
+
+// ── UTILS ───────────────────────────────────────────────────
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function fmtDate(str) {
+  if (!str) return '—';
+  const d = new Date(str);
+  if (isNaN(d)) return '—';
+  return d.toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function statusBadge(status) {
+  const cls = {
+    trial:   'badge-trial',
+    active:  'badge-active',
+    lapsed:  'badge-lapsed',
+    expired: 'badge-expired',
+    revoked: 'badge-revoked',
+  };
+  return `<span class="badge ${cls[status] || 'badge-none'}">${esc(status || 'none')}</span>`;
+}
+
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ── DASHBOARD ───────────────────────────────────────────────
+async function loadDashboard() {
+  const weekAgo  = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
+  const monthAgo = new Date(); monthAgo.setDate(monthAgo.getDate() - 30);
+
+  const [totalR, activeR, trialR, lapsedR, weekR, monthR] = await Promise.all([
+    _sb.from('profiles').select('*', { count: 'exact', head: true }),
+    _sb.from('subscriptions').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+    _sb.from('subscriptions').select('*', { count: 'exact', head: true }).eq('status', 'trial'),
+    _sb.from('subscriptions').select('*', { count: 'exact', head: true }).in('status', ['lapsed', 'expired']),
+    _sb.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', weekAgo.toISOString()),
+    _sb.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', monthAgo.toISOString()),
+  ]);
+
+  const pairs = [
+    ['stat-total',  totalR.count],
+    ['stat-active', activeR.count],
+    ['stat-trial',  trialR.count],
+    ['stat-lapsed', lapsedR.count],
+    ['stat-week',   weekR.count],
+    ['stat-month',  monthR.count],
+  ];
+  pairs.forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    el.textContent = val ?? '—';
+    el.classList.remove('loading');
+  });
+}
+
+// ── USERS ───────────────────────────────────────────────────
+async function loadUsers() {
+  document.getElementById('usersBody').innerHTML = '<tr><td colspan="7" class="placeholder">Loading…</td></tr>';
+
+  const [profileRes, subRes] = await Promise.all([
+    _sb.from('profiles').select('*').order('created_at', { ascending: false }),
+    _sb.from('subscriptions').select('*'),
+  ]);
+
+  allProfiles = profileRes.data || [];
+  allSubs     = subRes.data     || [];
+
+  if (profileRes.error) {
+    document.getElementById('usersBody').innerHTML = `<tr><td colspan="7" class="placeholder">Error loading profiles: ${esc(profileRes.error.message)}</td></tr>`;
+    return;
+  }
+
+  renderUsersTable(allProfiles);
+}
+
+function renderUsersTable(profiles) {
+  const body = document.getElementById('usersBody');
+  if (!profiles.length) {
+    body.innerHTML = '<tr><td colspan="7" class="placeholder">No users found.</td></tr>';
+    return;
+  }
+  body.innerHTML = profiles.map(p => {
+    const sub    = allSubs.find(s => s.user_id === p.id) || null;
+    const status = sub?.status || 'none';
+    const phases = Array.isArray(p.phases) ? p.phases.join(', ') : (p.phases || '—');
+    return `<tr>
+      <td class="td-truncate" title="${esc(p.email || '')}">${esc(p.email || '—')}</td>
+      <td>${esc(p.full_name || '—')}</td>
+      <td class="td-truncate" title="${esc(p.school || '')}">${esc(p.school || '—')}</td>
+      <td style="font-size:0.72rem;color:var(--text-mid)">${esc(phases)}</td>
+      <td class="td-nowrap">${fmtDate(p.created_at)}</td>
+      <td>${statusBadge(status)}</td>
+      <td><button class="btn btn-view" onclick="openUserPanel('${esc(p.id)}')">View</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterUsers() {
+  const q = document.getElementById('userSearch').value.toLowerCase();
+  if (!q) { renderUsersTable(allProfiles); return; }
+  renderUsersTable(allProfiles.filter(p =>
+    (p.email     || '').toLowerCase().includes(q) ||
+    (p.full_name || '').toLowerCase().includes(q) ||
+    (p.school    || '').toLowerCase().includes(q)
+  ));
+}
+
+// ── SUBSCRIPTIONS ───────────────────────────────────────────
+async function loadSubscriptions() {
+  document.getElementById('subsBody').innerHTML = '<tr><td colspan="7" class="placeholder">Loading…</td></tr>';
+
+  const [subRes, profileRes] = await Promise.all([
+    _sb.from('subscriptions').select('*').order('created_at', { ascending: false }),
+    _sb.from('profiles').select('id, email, full_name'),
+  ]);
+
+  allSubs = subRes.data || [];
+  const profiles = profileRes.data || [];
+
+  const body = document.getElementById('subsBody');
+  if (subRes.error) {
+    body.innerHTML = `<tr><td colspan="7" class="placeholder">Error: ${esc(subRes.error.message)}</td></tr>`;
+    return;
+  }
+  if (!allSubs.length) {
+    body.innerHTML = '<tr><td colspan="7" class="placeholder">No subscription records yet.</td></tr>';
+    return;
+  }
+
+  body.innerHTML = allSubs.map(s => {
+    const p = profiles.find(pr => pr.id === s.user_id) || {};
+    return `<tr>
+      <td class="td-truncate" title="${esc(p.email || s.user_id)}">${esc(p.email || s.user_id)}</td>
+      <td>${statusBadge(s.status)}</td>
+      <td class="td-nowrap">${fmtDate(s.trial_start)}</td>
+      <td class="td-nowrap">${fmtDate(s.trial_end)}</td>
+      <td class="td-nowrap">${fmtDate(s.last_payment_date)}</td>
+      <td class="td-nowrap">${fmtDate(s.next_billing_date)}</td>
+      <td>
+        <div class="btn-group">
+          <button class="btn btn-grant"  onclick="grantAccess('${esc(s.user_id)}')">Grant Access</button>
+          <button class="btn btn-revoke" onclick="revokeAccess('${esc(s.user_id)}')">Revoke Access</button>
+          <button class="btn btn-reset"  onclick="resetTrial('${esc(s.user_id)}')">Reset Trial</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── SUBSCRIPTION ACTIONS ────────────────────────────────────
+async function grantAccess(userId) {
+  const { error } = await _sb.from('subscriptions').upsert(
+    { user_id: userId, status: 'active', updated_at: new Date().toISOString() },
+    { onConflict: 'user_id' }
+  );
+  if (error) { alert('Error: ' + error.message); return; }
+  showToast('✅ Access granted');
+  loadSubscriptions();
+  loadUsers();
+  loadDashboard();
+}
+
+async function revokeAccess(userId) {
+  if (!confirm('Revoke access for this user?')) return;
+  const { error } = await _sb.from('subscriptions').upsert(
+    { user_id: userId, status: 'revoked', updated_at: new Date().toISOString() },
+    { onConflict: 'user_id' }
+  );
+  if (error) { alert('Error: ' + error.message); return; }
+  showToast('🚫 Access revoked');
+  loadSubscriptions();
+  loadUsers();
+  loadDashboard();
+}
+
+async function resetTrial(userId) {
+  if (!confirm('Reset trial for this user? They will get a fresh 7-day trial from today.')) return;
+  const now      = new Date();
+  const trialEnd = new Date(); trialEnd.setDate(trialEnd.getDate() + 7);
+  const { error } = await _sb.from('subscriptions').upsert(
+    {
+      user_id:     userId,
+      status:      'trial',
+      trial_start: now.toISOString(),
+      trial_end:   trialEnd.toISOString(),
+      updated_at:  now.toISOString(),
+    },
+    { onConflict: 'user_id' }
+  );
+  if (error) { alert('Error: ' + error.message); return; }
+  showToast('⏱️ Trial reset — 7 days from today');
+  loadSubscriptions();
+  loadUsers();
+  loadDashboard();
+}
+
+// ── APP CONTROLS ─────────────────────────────────────────────
+async function loadAppControls() {
+  const { data, error } = await _sb
+    .from('app_settings')
+    .select('key, value')
+    .in('key', ['maintenance_mode', 'announcement']);
+  if (error) return;
+
+  const settings = {};
+  (data || []).forEach(r => { settings[r.key] = r.value; });
+
+  maintenanceOn = settings.maintenance_mode === 'true';
+  applyMaintenanceUI(maintenanceOn);
+
+  document.getElementById('announcementInput').value = settings.announcement || '';
+}
+
+function applyMaintenanceUI(on) {
+  document.getElementById('maintenanceToggle').classList.toggle('on', on);
+  document.getElementById('maintenanceLabel').textContent   = on ? 'ON — Maintenance active' : 'Off';
+  document.getElementById('maintenanceStatus').textContent  = on
+    ? 'Users see a maintenance page instead of the app'
+    : 'App is running normally for all users';
+}
+
+async function toggleMaintenance() {
+  maintenanceOn = !maintenanceOn;
+  applyMaintenanceUI(maintenanceOn);
+  const { error } = await _sb.from('app_settings').upsert(
+    { key: 'maintenance_mode', value: maintenanceOn ? 'true' : 'false', updated_at: new Date().toISOString() },
+    { onConflict: 'key' }
+  );
+  if (error) {
+    maintenanceOn = !maintenanceOn;
+    applyMaintenanceUI(maintenanceOn);
+    alert('Error: ' + error.message);
+    return;
+  }
+  showToast(maintenanceOn ? '🔧 Maintenance mode ON' : '✅ Maintenance mode OFF');
+}
+
+async function publishAnnouncement() {
+  const text = document.getElementById('announcementInput').value.trim();
+  if (!text) { alert('Enter an announcement message first.'); return; }
+  const { error } = await _sb.from('app_settings').upsert(
+    { key: 'announcement', value: text, updated_at: new Date().toISOString() },
+    { onConflict: 'key' }
+  );
+  if (error) { alert('Error: ' + error.message); return; }
+  showToast('📢 Announcement published');
+}
+
+async function clearAnnouncement() {
+  if (!confirm('Clear the announcement banner?')) return;
+  const { error } = await _sb.from('app_settings').upsert(
+    { key: 'announcement', value: '', updated_at: new Date().toISOString() },
+    { onConflict: 'key' }
+  );
+  if (error) { alert('Error: ' + error.message); return; }
+  document.getElementById('announcementInput').value = '';
+  showToast('🧹 Announcement cleared');
+}
+
+// ── USER DETAIL PANEL ────────────────────────────────────────
+function openUserPanel(userId) {
+  const p   = allProfiles.find(x => x.id === userId) || {};
+  const sub = allSubs.find(x => x.user_id === userId) || null;
+  const phases = Array.isArray(p.phases) ? p.phases.join(', ') : (p.phases || '—');
+
+  document.getElementById('panelEmailDisplay').textContent = p.email || userId;
+
+  document.getElementById('panelBody').innerHTML = `
+    <div class="panel-section">
+      <div class="panel-section-title">Profile</div>
+      <div class="field-row"><span class="field-label">Email</span><span class="field-value">${esc(p.email || '—')}</span></div>
+      <div class="field-row"><span class="field-label">Full Name</span><span class="field-value">${esc(p.full_name || '—')}</span></div>
+      <div class="field-row"><span class="field-label">School</span><span class="field-value">${esc(p.school || '—')}</span></div>
+      <div class="field-row"><span class="field-label">Phase(s)</span><span class="field-value">${esc(phases)}</span></div>
+      <div class="field-row"><span class="field-label">Joined</span><span class="field-value">${fmtDate(p.created_at)}</span></div>
+      <div class="field-row"><span class="field-label">User ID</span><span class="field-value" style="font-size:0.68rem;color:var(--text-muted)">${esc(p.id || '—')}</span></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-section-title">Subscription</div>
+      ${sub ? `
+        <div class="field-row"><span class="field-label">Status</span><span class="field-value">${statusBadge(sub.status)}</span></div>
+        <div class="field-row"><span class="field-label">Trial Start</span><span class="field-value">${fmtDate(sub.trial_start)}</span></div>
+        <div class="field-row"><span class="field-label">Trial End</span><span class="field-value">${fmtDate(sub.trial_end)}</span></div>
+        <div class="field-row"><span class="field-label">Last Payment</span><span class="field-value">${fmtDate(sub.last_payment_date)}</span></div>
+        <div class="field-row"><span class="field-label">Next Billing</span><span class="field-value">${fmtDate(sub.next_billing_date)}</span></div>
+        ${sub.payfast_subscription_id ? `<div class="field-row"><span class="field-label">PayFast ID</span><span class="field-value" style="font-size:0.72rem">${esc(sub.payfast_subscription_id)}</span></div>` : ''}
+      ` : '<div style="color:var(--text-muted);font-size:0.78rem">No subscription record for this user yet.</div>'}
+    </div>
+    <div class="panel-section">
+      <div class="panel-section-title">Override Actions</div>
+      <button class="panel-action-btn panel-grant"  onclick="grantAccess('${esc(userId)}');closeUserPanel()">✅ Grant Access</button>
+      <button class="panel-action-btn panel-revoke" onclick="revokeAccess('${esc(userId)}');closeUserPanel()">🚫 Revoke Access</button>
+      <button class="panel-action-btn panel-reset"  onclick="resetTrial('${esc(userId)}');closeUserPanel()">⏱️ Reset Trial (7 days)</button>
+    </div>
+  `;
+
+  document.getElementById('panelOverlay').classList.add('open');
+  document.getElementById('userPanel').classList.add('open');
+}
+
+function closeUserPanel() {
+  document.getElementById('panelOverlay').classList.remove('open');
+  document.getElementById('userPanel').classList.remove('open');
+}
+
+// ── BOOT ─────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>

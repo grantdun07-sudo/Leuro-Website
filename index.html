@@ -549,6 +549,21 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 .modal p{font-size:0.8rem;color:var(--color-text-mid);line-height:1.6;margin-bottom:20px}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end}
 
+/* ANNOUNCEMENT BANNER */
+#announcementBanner{display:none;align-items:center;gap:12px;padding:11px 18px;background:var(--color-accent);color:var(--color-primary-dk);font-size:0.8rem;font-weight:600;flex-shrink:0;border-bottom:2px solid var(--color-accent-dk)}
+#announcementBanner .ann-text{flex:1;line-height:1.45}
+#announcementBanner .ann-dismiss{width:26px;height:26px;border:none;border-radius:6px;background:rgba(0,0,0,0.1);color:var(--color-primary-dk);cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font-family);font-weight:700}
+#announcementBanner .ann-dismiss:hover{background:rgba(0,0,0,0.2)}
+
+/* MAINTENANCE SCREEN */
+#maintenanceScreen{display:none;position:fixed;inset:0;background:var(--color-primary-dk);z-index:9999;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center}
+.maint-icon{width:72px;height:72px;background:var(--color-accent);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 24px;box-shadow:0 8px 28px rgba(230,179,71,0.4)}
+.maint-logo{font-size:1.8rem;font-weight:800;color:#fff;margin-bottom:4px}
+.maint-sub{font-size:0.75rem;font-weight:600;color:var(--color-accent);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:32px}
+.maint-divider{width:48px;height:3px;background:var(--color-accent);border-radius:2px;margin:0 auto 28px}
+.maint-title{font-size:1.25rem;font-weight:700;color:#fff;margin-bottom:14px}
+.maint-msg{font-size:0.9rem;color:rgba(255,255,255,0.65);line-height:1.7;max-width:480px}
+
 /* SCREENS */
 .screen{display:none}
 .screen.visible{display:contents}
@@ -736,6 +751,16 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
 </head>
 <body>
 
+<!-- MAINTENANCE SCREEN (shown when maintenance_mode=true for non-admin users) -->
+<div id="maintenanceScreen">
+  <div class="maint-icon">🔧</div>
+  <div class="maint-logo">Leuro</div>
+  <div class="maint-sub">Assistant</div>
+  <div class="maint-divider"></div>
+  <div class="maint-title">We're updating Leuro Assistant.</div>
+  <div class="maint-msg">We'll be back shortly. Thank you for your patience.</div>
+</div>
+
 <!-- ═══════════ AUTH SCREEN ═══════════ -->
 <div id="authScreen">
   <div class="auth-card">
@@ -866,6 +891,12 @@ body{font-family:var(--font-family);background:var(--color-background);color:var
       </div>
       <div class="icon-btn" onclick="openHelp()" title="Help" data-i18n-title="help_tooltip">❓</div>
     </div>
+  </div>
+
+  <!-- ANNOUNCEMENT BANNER (shown when app_settings announcement is set) -->
+  <div id="announcementBanner">
+    <span class="ann-text" id="announcementText"></span>
+    <button class="ann-dismiss" onclick="dismissAnnouncement()" title="Dismiss">✕</button>
   </div>
 
   <div class="content" id="mainContent">
@@ -3237,7 +3268,10 @@ function _populateProfile(user){
   updateGreeting();
 }
 
-function _showApp(user){
+async function _showApp(user){
+  const proceed = await checkAppSettings(user);
+  if (!proceed) return;
+
   const screen = document.getElementById('authScreen');
   screen.classList.add('fading');
   setTimeout(() => { screen.style.display = 'none'; screen.classList.remove('fading'); }, 300);
@@ -3246,6 +3280,33 @@ function _showApp(user){
   lessonDataLoad();
   loadAssistantProfile();
   loadReminders();
+}
+
+// ─── APP SETTINGS (maintenance + announcement) ───
+async function checkAppSettings(user) {
+  try {
+    const { data, error } = await _sb.from('app_settings').select('key,value').in('key', ['maintenance_mode', 'announcement']);
+    if (error) return true; // table not ready yet — let app proceed
+    const settings = {};
+    (data || []).forEach(r => { settings[r.key] = r.value; });
+
+    if (settings.maintenance_mode === 'true' && user?.email !== 'hello@leuroai.co.za') {
+      document.getElementById('maintenanceScreen').style.display = 'flex';
+      return false;
+    }
+
+    const ann = (settings.announcement || '').trim();
+    if (ann && !sessionStorage.getItem('leuro_ann_dismissed')) {
+      document.getElementById('announcementText').textContent = ann;
+      document.getElementById('announcementBanner').style.display = 'flex';
+    }
+    return true;
+  } catch (_) { return true; }
+}
+
+function dismissAnnouncement() {
+  sessionStorage.setItem('leuro_ann_dismissed', '1');
+  document.getElementById('announcementBanner').style.display = 'none';
 }
 
 function _showAuth(){
@@ -3358,6 +3419,16 @@ async function saveProfile(e){
     btn.disabled    = false;
     btn.textContent = origText;
   } else {
+    // Mirror to profiles table so admin panel can read user details
+    const { data:{ session:s } } = await _sb.auth.getSession();
+    if(s){
+      await _sb.from('profiles').upsert({
+        id: s.user.id, email: s.user.email,
+        full_name: name, school: school || null,
+        phases: phases.length ? phases : null,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'id' });
+    }
     currentPhases = phases;
     document.getElementById('userAvatar').textContent = _getInitials(name);
     document.getElementById('userName').textContent   = name;
